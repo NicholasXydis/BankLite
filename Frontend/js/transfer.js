@@ -21,7 +21,7 @@ async function loadTransfer() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} - $${account.balance.toFixed(2)}`;
+      option.textContent = `${account.type} $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       accountSelect.appendChild(option);
     });
 
@@ -29,7 +29,7 @@ async function loadTransfer() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} - $${account.balance.toFixed(2)}`;
+      option.textContent = `${account.type} $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       toAccountSelect.appendChild(option);
     });
   } catch (error) {
@@ -65,6 +65,12 @@ document
       return;
     }
 
+    if (amount > 1000000) {
+      errorMsg.textContent = "Maximum transfer amount is $1,000,000.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
     if (toAccountId === accountId) {
       errorMsg.textContent = "Cannot transfer to same account";
       errorMsg.style.display = "block";
@@ -77,12 +83,24 @@ document
 
     try {
       await transfer(token, accountId, toAccountId, amount);
-      successMsg.textContent = `Successfully transferred $${amount.toFixed(2)}!`;
+      successMsg.textContent = `Successfully transferred $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
+      setTimeout(() => {
+        successMsg.style.display = "none";
+      }, 3000);
       document.getElementById("amount").value = "";
+      const selectEl = document.getElementById("account-select");
+      selectEl.classList.add("flash-green");
+      setTimeout(() => selectEl.classList.remove("flash-green"), 1000);
+      const selectedId = accountId;
+      const selectedToId = toAccountId;
       await loadTransfer();
+      document.getElementById("account-select").value = selectedId;
+      document.getElementById("to-account-select").value = selectedToId;
     } catch (error) {
-      errorMsg.textContent = error.message;
+      errorMsg.textContent = error.message.includes("entity")
+        ? "An error occurred. Please try again."
+        : error.message;
       errorMsg.style.display = "block";
     } finally {
       btn.disabled = false;

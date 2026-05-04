@@ -3,7 +3,6 @@ async function loadWithdraw() {
   if (!token) return;
 
   const accountSelect = document.getElementById("account-select");
-  const balanceDisplay = document.getElementById("balance-display");
   const errorMsg = document.getElementById("error-msg");
   const successMsg = document.getElementById("success-msg");
   let accounts = [];
@@ -21,17 +20,8 @@ async function loadWithdraw() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} - $${account.balance.toFixed(2)}`;
+      option.textContent = `${account.type} $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       accountSelect.appendChild(option);
-    });
-
-    balanceDisplay.textContent = `$${accounts[0].balance.toFixed(2)}`;
-
-    accountSelect.addEventListener("change", function () {
-      const selected = accounts.find((a) => a.id === this.value);
-      if (selected) {
-        balanceDisplay.textContent = `$${selected.balance.toFixed(2)}`;
-      }
     });
   } catch (error) {
     errorMsg.textContent = error.message;
@@ -65,25 +55,35 @@ document
       return;
     }
 
+    if (amount > 1000000) {
+      errorMsg.textContent = "Maximum withdrawal amount is $1,000,000.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
     const btn = document.getElementById("withdraw-btn");
     btn.disabled = true;
     btn.classList.add("btn-loading");
 
     try {
       await withdraw(token, accountId, amount);
-      successMsg.textContent = `Successfully withdrew $${amount.toFixed(2)}!`;
+      successMsg.textContent = `Successfully withdrew $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
+      setTimeout(() => {
+        successMsg.style.display = "none";
+      }, 3000);
 
-      const balanceEl = document.getElementById("balance-display");
-      const currentBalance = parseFloat(balanceEl.textContent.replace("$", ""));
-      const newBalance = currentBalance - amount;
-      balanceEl.textContent = `$${newBalance.toFixed(2)}`;
-      balanceEl.classList.add("flash-red");
-      setTimeout(() => balanceEl.classList.remove("flash-red"), 1000);
-
+      const selectEl = document.getElementById("account-select");
+      selectEl.classList.add("flash-red");
+      setTimeout(() => selectEl.classList.remove("flash-red"), 1000);
+      const selectedId = accountId;
+      await loadWithdraw();
+      document.getElementById("account-select").value = selectedId;
       document.getElementById("amount").value = "";
     } catch (error) {
-      errorMsg.textContent = error.message;
+      errorMsg.textContent = error.message.includes("entity")
+        ? "An error occurred. Please try again."
+        : error.message;
       errorMsg.style.display = "block";
     } finally {
       btn.disabled = false;
