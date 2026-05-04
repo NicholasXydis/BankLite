@@ -32,11 +32,11 @@ async function loadTransactions(accountId, page) {
       const row = document.createElement("div");
       row.className = `transaction-row ${transaction.type.toLowerCase()}`;
       row.innerHTML = `
-      <div class="transaction-top">
+      <div class="transaction-left">
         <span class="transaction-type">${transaction.type} ${transaction.type === "Deposit" ? '<span class="transaction-arrow">↑</span>' : '<span class="transaction-arrow">↓</span>'}</span>
-        <span class="transaction-amount">${transaction.type === "Deposit" ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-        </div>
         <span class="transaction-date">${new Date(transaction.createdAt).toLocaleString("en-CA", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}</span>
+        </div>
+        <span class="transaction-amount">${transaction.type === "Deposit" ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
       `;
       transactionsList.appendChild(row);
     });
