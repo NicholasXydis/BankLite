@@ -46,9 +46,9 @@ p {
 }
 
 label {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #1f2937;
+  color: #0f2340;
 }
 
 form {
@@ -73,7 +73,8 @@ input {
   padding: 0 14px 0 40px;
   border: 1.5px solid #cbd5e1;
   border-radius: 10px;
-  font-size: 0.9375rem;
+  font-size: 1rem;
+  font-weight: 500;
   color: #1f2937;
   background: #f1f5f9;
   outline: none;
@@ -83,6 +84,10 @@ input {
 
 .input-wrap {
   position: relative;
+}
+
+.no-icon-input {
+  padding-left: 16px;
 }
 
 .input-icon {
@@ -186,6 +191,7 @@ a:hover {
   border-radius: 8px;
   font-size: 0.875rem;
   text-align: center;
+  margin-bottom: 0.5rem;
 }
 
 input.error {
@@ -227,7 +233,8 @@ input.error {
   background: linear-gradient(180deg, #1a3a5c 0%, #0f2340 100%);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  padding: 4rem 1.25rem 2rem;
+  gap: 3rem;
   flex-shrink: 0;
 }
 
@@ -238,7 +245,7 @@ input.error {
   color: #fff;
   font-size: 1.2rem;
   font-weight: 700;
-  padding-left: 0.82rem;
+  padding-left: 1rem;
 }
 
 .sidebar-nav {
@@ -274,6 +281,8 @@ input.error {
   padding-left: calc(1rem - 2px);
   font-weight: 500;
   margin-left: 2px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 #logout-btn {
@@ -457,11 +466,13 @@ input.error {
 }
 
 .form-card {
+  margin-top: 1.5rem;
   background: #fff;
   border-radius: 12px;
-  padding: 1.75rem;
+  padding: 2.5rem;
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
+  min-height: 320px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
@@ -473,6 +484,11 @@ input.error {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  padding-left: 0.25rem;
 }
 
 .form-card button {
@@ -481,10 +497,11 @@ input.error {
 
 .form-group select {
   height: 48px;
-  padding: 0 14px;
+  padding: 0 14px 0 12px;
   border: 1.5px solid #cbd5e1;
   border-radius: 10px;
-  font-size: 0.9375rem;
+  font-size: 1rem;
+  font-weight: 500;
   color: #1f2937;
   background: #f1f5f9;
   outline: none;
@@ -512,6 +529,7 @@ input.error {
   border-radius: 8px;
   font-size: 0.875rem;
   text-align: center;
+  margin-bottom: 0.5rem;
 }
 
 .transaction-row {
@@ -741,4 +759,15 @@ input.error {
   text-align: right;
   margin-top: -0.25rem;
   margin-bottom: 0.25rem;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }

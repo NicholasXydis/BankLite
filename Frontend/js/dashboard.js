@@ -45,7 +45,7 @@ async function loadDashboard() {
     let delay = 400;
     document.querySelectorAll(".account-balance-amount").forEach((el) => {
       const target = parseFloat(el.dataset.balance);
-      setTimeout(() => countUp(el, target, 1000), delay);
+      setTimeout(() => countUp(el, target, 800), delay);
       delay += 400;
     });
 
@@ -61,11 +61,7 @@ async function loadDashboard() {
       `;
 
     accountsContainer.insertBefore(totalEl, accountsContainer.firstChild);
-    countUp(
-      document.getElementById("total-balance-amount"),
-      totalBalance,
-      1000,
-    );
+    countUp(document.getElementById("total-balance-amount"), totalBalance, 800);
 
     const hasChequing = accounts.some((a) => a.type === "Chequing");
     const hasSavings = accounts.some((a) => a.type === "Savings");
@@ -139,7 +135,7 @@ function countUp(element, target, duration = 1000) {
       current = target;
       clearInterval(timer);
     }
-    element.textContent = `$${current.toFixed(2)}`;
+    element.textContent = `$${current.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }, 16);
 }
 

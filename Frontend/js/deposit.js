@@ -3,7 +3,6 @@ async function loadDeposit() {
   if (!token) return;
 
   const accountSelect = document.getElementById("account-select");
-  const balanceDisplay = document.getElementById("balance-display");
   const errorMsg = document.getElementById("error-msg");
   const successMsg = document.getElementById("success-msg");
   let accounts = [];
@@ -21,20 +20,13 @@ async function loadDeposit() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} - $${account.balance.toFixed(2)}`;
+      option.textContent = `${account.type}  $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       accountSelect.appendChild(option);
     });
-
-    balanceDisplay.textContent = `$${accounts[0].balance.toFixed(2)}`;
-
-    accountSelect.addEventListener("change", function () {
-      const selected = accounts.find((a) => a.id === this.value);
-      if (selected) {
-        balanceDisplay.textContent = `$${selected.balance.toFixed(2)}`;
-      }
-    });
   } catch (error) {
-    errorMsg.textContent = error.message;
+    errorMsg.textContent = error.message.includes("entity")
+      ? "An error occurred. Please try again."
+      : error.message;
     errorMsg.style.display = "block";
   }
 }
@@ -65,21 +57,31 @@ document
       return;
     }
 
+    if (amount > 1000000) {
+      errorMsg.textContent = "Maximum deposit amount is $1,000,000.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
     const btn = document.getElementById("deposit-btn");
     btn.disabled = true;
     btn.classList.add("btn-loading");
 
     try {
       await deposit(token, accountId, amount);
-      successMsg.textContent = `Successfully deposited $${amount.toFixed(2)}!`;
+      successMsg.textContent = `Successfully deposited $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
 
-      const balanceEl = document.getElementById("balance-display");
-      const currentBalance = parseFloat(balanceEl.textContent.replace("$", ""));
-      const newBalance = currentBalance + amount;
-      balanceEl.textContent = `$${newBalance.toFixed(2)}`;
-      balanceEl.classList.add("flash-green");
-      setTimeout(() => balanceEl.classList.remove("flash-green"), 1000);
+      setTimeout(() => {
+        successMsg.style.display = "none";
+      }, 3000);
+
+      const selectEl = document.getElementById("account-select");
+      selectEl.classList.add("flash-green");
+      setTimeout(() => selectEl.classList.remove("flash-green"), 1000);
+      const selectedId = accountId;
+      await loadDeposit();
+      document.getElementById("account-select").value = selectedId;
 
       const isFirstDeposit = !sessionStorage.getItem("hasDeposited");
       if (isFirstDeposit) {
