@@ -850,3 +850,65 @@ input[type="number"] {
 #create-account-section {
   margin-top: 2.5rem;
 }
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  padding-left: 220px;
+  background: rgba(15, 35, 64, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.modal-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f2340;
+  margin-bottom: 0.5rem;
+}
+
+.modal-text {
+  color: #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-cancel {
+  background: #f1f5f9;
+  color: #1a3a5c;
+  width: 120px;
+  box-shadow: none;
+}
+
+.modal-cancel:hover {
+  background: #e2e8f0;
+  transform: none;
+  box-shadow: none;
+}
+
+.modal-confirm {
+  width: 120px;
+  background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+  box-shadow: 0 4px 12px rgba(153, 27, 27, 0.3);
+}
+
+.modal-confirm:hover {
+  box-shadow: 0 8px 20px rgba(153, 27, 27, 0.4);
+}

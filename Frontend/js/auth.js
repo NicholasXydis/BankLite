@@ -112,6 +112,21 @@ document.addEventListener("DOMContentLoaded", function () {
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function () {
+      const modal = document.getElementById("logout-modal");
+      if (modal) modal.style.display = "flex";
+    });
+  }
+
+  const modalCancel = document.getElementById("modal-cancel-btn");
+  if (modalCancel) {
+    modalCancel.addEventListener("click", function () {
+      document.getElementById("logout-modal").style.display = "none";
+    });
+  }
+
+  const modalConfirm = document.getElementById("modal-confirm-btn");
+  if (modalConfirm) {
+    modalConfirm.addEventListener("click", function () {
       logout();
       window.location.href = "index.html";
     });
