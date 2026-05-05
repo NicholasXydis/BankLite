@@ -15,6 +15,42 @@ function logout() {
   sessionStorage.removeItem("authToken");
 }
 
+function getTokenExpiry() {
+  const token = getToken();
+  if (!token) return null;
+  const payload = JSON.parse(atob(token.split(".")[1]));
+  return payload.exp * 1000;
+}
+
+function startSessionTimer() {
+  const expiry = getTokenExpiry();
+  if (!expiry) return;
+
+  const warningTime = 58 * 60 * 1000;
+
+  setInterval(function () {
+    const now = Date.now();
+    const timeLeft = expiry - now;
+
+    if (timeLeft <= 0) {
+      logout();
+      window.location.href = "index.html";
+      return;
+    }
+
+    if (timeLeft <= warningTime) {
+      const minutes = Math.floor(timeLeft / 60000);
+      const seconds = Math.floor((timeLeft % 60000) / 1000);
+      const warning = document.getElementById("session-warning");
+      const countdown = document.getElementById("session-countdown");
+      if (warning && countdown) {
+        warning.style.display = "flex";
+        countdown.textContent = `Your session expires in ${minutes}:${seconds.toString().padStart(2, "0")}`;
+      }
+    }
+  }, 1000);
+}
+
 function requireAuth() {
   const token = getToken();
   if (!token) {
@@ -129,6 +165,15 @@ document.addEventListener("DOMContentLoaded", function () {
     modalConfirm.addEventListener("click", function () {
       logout();
       window.location.href = "index.html";
+    });
+  }
+
+  if (getToken()) startSessionTimer();
+
+  const stayBtn = document.getElementById("session-stay-btn");
+  if (stayBtn) {
+    stayBtn.addEventListener("click", function () {
+      document.getElementById("session-warning").style.display = "none";
     });
   }
 });
