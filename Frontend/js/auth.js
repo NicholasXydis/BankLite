@@ -78,6 +78,15 @@ if (registerForm) {
       button.classList.remove("btn-loading");
       return;
     }
+
+    if (!/^[a-zA-Z\s]+$/.test(fullName.trim())) {
+      errorMsg.textContent = "Full name can only contain letters and spaces.";
+      errorMsg.style.display = "block";
+      button.disabled = false;
+      button.classList.remove("btn-loading");
+      return;
+    }
+
     if (password !== confirmPassword) {
       errorMsg.textContent = "Passwords do not match.";
       errorMsg.style.display = "block";
@@ -94,7 +103,7 @@ if (registerForm) {
       errorMsg.textContent = error.message;
       errorMsg.style.display = "block";
       button.disabled = false;
-      button.textContent = "Register";
+      button.classList.remove("btn-loading");
     }
   });
 }
