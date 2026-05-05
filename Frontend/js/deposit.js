@@ -85,9 +85,11 @@ document
       await loadDeposit();
       document.getElementById("account-select").value = selectedId;
 
-      const isFirstDeposit = !sessionStorage.getItem("hasDeposited");
+      const isFirstDeposit = !sessionStorage.getItem(
+        `hasDeposited_${accountId}`,
+      );
       if (isFirstDeposit) {
-        sessionStorage.setItem("hasDeposited", "true");
+        sessionStorage.setItem(`hasDeposited_${accountId}`, "true");
         confetti({
           particleCount: 150,
           spread: 100,
