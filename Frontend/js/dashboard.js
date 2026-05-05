@@ -156,12 +156,15 @@ document
 
     const number = btn.dataset.number;
     navigator.clipboard.writeText(number).then(() => {
-      const original = btn.innerHTML;
+      if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
+      if (!btn._originalHTML) btn._originalHTML = btn.innerHTML;
       btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
       btn.style.background = "#dcfce7";
-      setTimeout(() => {
-        btn.innerHTML = original;
+      btn._copyTimeout = setTimeout(() => {
+        btn.innerHTML = btn._originalHTML;
         btn.style.background = "";
+        btn._originalHTML = null;
+        btn._copyTimeout = null;
       }, 1200);
     });
   });
