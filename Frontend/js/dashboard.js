@@ -49,19 +49,25 @@ async function loadDashboard() {
       delay += 400;
     });
 
-    const totalBalance = accounts.reduce(
-      (sum, account) => sum + account.balance,
-      0,
-    );
-    const totalEl = document.createElement("div");
-    totalEl.className = "total-balance";
-    totalEl.innerHTML = `
+    if (accounts.length > 0) {
+      const totalBalance = accounts.reduce(
+        (sum, account) => sum + account.balance,
+        0,
+      );
+      const totalEl = document.createElement("div");
+      totalEl.className = "total-balance";
+      totalEl.innerHTML = `
         <p>Total Balance</p>
         <h2 id="total-balance-amount">$0.00</h2>
       `;
 
-    accountsContainer.insertBefore(totalEl, accountsContainer.firstChild);
-    countUp(document.getElementById("total-balance-amount"), totalBalance, 800);
+      accountsContainer.insertBefore(totalEl, accountsContainer.firstChild);
+      countUp(
+        document.getElementById("total-balance-amount"),
+        totalBalance,
+        800,
+      );
+    }
 
     const hasChequing = accounts.some((a) => a.type === "Chequing");
     const hasSavings = accounts.some((a) => a.type === "Savings");
