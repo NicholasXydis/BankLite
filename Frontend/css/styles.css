@@ -950,3 +950,122 @@ input[type="number"] {
   box-shadow: none;
   opacity: 0.9;
 }
+
+.hamburger-btn {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1100;
+  width: 40px;
+  height: 40px;
+  background: #1a3a5c;
+  border: none;
+  border-radius: 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+  .hamburger-btn {
+    display: flex;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -220px;
+    top: 0;
+    z-index: 1050;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .dashboard-main {
+    padding: 5rem 1rem 2rem;
+    padding-bottom: 6rem;
+  }
+
+  .modal-overlay {
+    padding-left: 0;
+  }
+
+  #session-warning {
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+  }
+
+  .account-card p:last-child {
+    font-size: 1.4rem;
+  }
+
+  .total-balance h2 {
+    font-size: 1.4rem;
+  }
+
+  .account-card:active {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    background: #fff;
+  }
+
+  .account-card {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #session-warning {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+    margin-top: 1rem;
+    border-radius: 12px;
+    flex-direction: row;
+    text-align: center;
+    bottom: 1rem;
+    font-size: 0.8rem;
+    font-size: 0.8rem;
+    padding: 0.6rem 1rem;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  #session-stay-btn {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .pagination {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .pagination button {
+    width: 85px;
+    padding: 0.5rem 0;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  #page-info {
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+}

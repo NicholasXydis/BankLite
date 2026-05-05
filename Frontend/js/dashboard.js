@@ -45,7 +45,7 @@ async function loadDashboard() {
     let delay = 400;
     document.querySelectorAll(".account-balance-amount").forEach((el) => {
       const target = parseFloat(el.dataset.balance);
-      setTimeout(() => countUp(el, target, 800), delay);
+      setTimeout(() => countUp(el, target, 1100), delay);
       delay += 400;
     });
 
@@ -65,7 +65,7 @@ async function loadDashboard() {
       countUp(
         document.getElementById("total-balance-amount"),
         totalBalance,
-        800,
+        1100,
       );
     }
 
@@ -116,7 +116,7 @@ document
     }
   });
 
-function typeText(elementId, text, speed = 120) {
+function typeText(elementId, text, speed = 180) {
   const el = document.getElementById(elementId);
   let i = 0;
   el.textContent = "";

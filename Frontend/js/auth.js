@@ -150,6 +150,8 @@ document.addEventListener("DOMContentLoaded", function () {
     logoutBtn.addEventListener("click", function () {
       const modal = document.getElementById("logout-modal");
       if (modal) modal.style.display = "flex";
+      const sidebar = document.querySelector(".sidebar");
+      if (sidebar) sidebar.classList.remove("open");
     });
   }
 
@@ -174,6 +176,23 @@ document.addEventListener("DOMContentLoaded", function () {
   if (stayBtn) {
     stayBtn.addEventListener("click", function () {
       document.getElementById("session-warning").style.display = "none";
+    });
+  }
+  const hamburgerBtn = document.getElementById("hamburger-btn");
+  if (hamburgerBtn) {
+    hamburgerBtn.addEventListener("click", function () {
+      document.querySelector(".sidebar").classList.toggle("open");
+    });
+
+    document.addEventListener("click", function (e) {
+      const sidebar = document.querySelector(".sidebar");
+      if (
+        sidebar &&
+        !sidebar.contains(e.target) &&
+        !hamburgerBtn.contains(e.target)
+      ) {
+        sidebar.classList.remove("open");
+      }
     });
   }
 });

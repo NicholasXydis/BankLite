@@ -24,7 +24,7 @@ async function loadTransactions(accountId, page) {
       pageInfo.textContent = "";
       prevBtn.disabled = true;
       nextBtn.disabled = true;
-      document.querySelector(".pagination").style.display = "flex";
+      document.querySelector(".pagination").style.display = "none";
       return;
     }
 
@@ -75,7 +75,7 @@ async function loadAccounts() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} | $${account.balance.toFixed(2)}`;
+      option.textContent = `${account.type} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       accountSelect.appendChild(option);
     });
 
