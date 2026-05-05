@@ -40,7 +40,9 @@ document
     const errorMsg = document.getElementById("error-msg");
     const successMsg = document.getElementById("success-msg");
     const accountId = document.getElementById("account-select").value;
-    const amount = parseFloat(document.getElementById("amount").value);
+    const amount = parseFloat(
+      document.getElementById("amount").value.replace(/[$,]/g, ""),
+    );
 
     errorMsg.style.display = "none";
     successMsg.style.display = "none";
@@ -123,4 +125,14 @@ document
       btn.classList.remove("btn-loading");
     }
   });
+
+document.getElementById("amount").addEventListener("input", function () {
+  let raw = this.value.replace(/[^0-9.]/g, "");
+  const parts = raw.split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (parts.length > 2) parts.splice(2);
+  if (parts[1] !== undefined) parts[1] = parts[1].slice(0, 2);
+  this.value = raw === "" ? "" : "$" + parts.join(".");
+});
+
 loadDeposit();
