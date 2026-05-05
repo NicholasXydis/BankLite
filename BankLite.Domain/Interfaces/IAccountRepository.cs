@@ -10,5 +10,6 @@ namespace BankLite.Domain.Interfaces
         Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId);
         Task AddAsync(Account account);
         Task UpdateAsync(Account account);
+        Task<Account?> GetByAccountNumberAsync(string accountNumber);
     }
 }

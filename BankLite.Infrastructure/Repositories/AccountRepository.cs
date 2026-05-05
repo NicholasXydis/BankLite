@@ -34,5 +34,11 @@ namespace BankLite.Infrastructure.Repositories
         {
             _context.Accounts.Update(account);
         }
+
+        public async Task<Account?> GetByAccountNumberAsync(string accountNumber)
+        {
+            return await _context.Accounts
+                .FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
+        }
     }
 }

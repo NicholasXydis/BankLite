@@ -146,6 +146,57 @@ namespace BankLite.Application.Services
             });
         }
 
+        public async Task TransferExternalAsync(ExternalTransferDto dto, Guid userId)
+        {
+            var fromAccount = await _accountRepository.GetByIdAsync(dto.FromAccountId);
+            if (fromAccount == null || fromAccount.UserId != userId)
+            {
+                _logger.LogWarning("Unauthorized external transfer attempt by user {UserId} from account {AccountId}", userId, dto.FromAccountId);
+                throw new UnauthorizedAccessException("You do not have access to this account.");
+            }
+
+            var toAccount = await _accountRepository.GetByAccountNumberAsync(dto.ToAccountNumber);
+            if (toAccount == null) throw new InvalidOperationException("Account number not found.");
+            if (toAccount.Id == fromAccount.Id) throw new InvalidOperationException("Cannot transfer to the same account.");
+            if (dto.Amount > fromAccount.Balance) throw new InvalidOperationException("Insufficient Funds");
+
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                fromAccount.Balance -= dto.Amount;
+                toAccount.Balance += dto.Amount;
+                await _accountRepository.UpdateAsync(fromAccount);
+                await _accountRepository.UpdateAsync(toAccount);
+
+                var debitTransaction = new Transaction
+                {
+                    AccountId = dto.FromAccountId,
+                    Amount = dto.Amount,
+                    Type = TransactionType.Withdrawal,
+                    Description = $"Transfer to account {toAccount.AccountNumber}"
+                };
+
+                var creditTransaction = new Transaction
+                {
+                    AccountId = toAccount.Id,
+                    Amount = dto.Amount,
+                    Type = TransactionType.Deposit,
+                    Description = $"Transfer from account {fromAccount.AccountNumber}"
+                };
+
+                await _transactionRepository.AddAsync(debitTransaction);
+                await _transactionRepository.AddAsync(creditTransaction);
+            });
+
+            _logger.LogInformation("External transfer of {Amount} from account {FromAccountId} to account number {ToAccountNumber} by user {UserId}", dto.Amount, dto.FromAccountId, dto.ToAccountNumber, userId);
+
+            await _auditLogRepository.LogAsync(new AuditLog
+            {
+                Action = "ExternalTransfer",
+                Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account number {dto.ToAccountNumber}",
+                PerformedAt = DateTime.UtcNow,
+            });
+        }
+
         public async Task<PagedResultDto<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize)
         {
             var account = await _accountRepository.GetByIdAsync(accountId);

@@ -1,5 +1,6 @@
 ﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
+using BankLite.Application.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
@@ -18,12 +19,14 @@ namespace BankLite.API.Controllers
         private readonly ITransactionService _transactionService;
         private readonly IValidator<DepositWithdrawDto> _depositWithdrawValidator;
         private readonly IValidator<TransferDto> _transferValidator;
+        private readonly IValidator<ExternalTransferDto> _externalTransferValidator;
 
-        public TransactionController(ITransactionService transactionService, IValidator<DepositWithdrawDto> depositwithdrawValidator, IValidator<TransferDto> transferValidator)
+        public TransactionController(ITransactionService transactionService, IValidator<DepositWithdrawDto> depositwithdrawValidator, IValidator<TransferDto> transferValidator, IValidator<ExternalTransferDto> externalTransferValidator)
         {
             _transactionService = transactionService;
             _depositWithdrawValidator = depositwithdrawValidator;
             _transferValidator = transferValidator;
+            _externalTransferValidator = externalTransferValidator;
         }
 
         [HttpPost("deposit")]
@@ -78,6 +81,19 @@ namespace BankLite.API.Controllers
 
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             await _transactionService.TransferAsync(dto, userId);
+            return Ok(new { message = "Transfer successful", amount = dto.Amount });
+        }
+
+        [HttpPost("transfer-external")]
+        public async Task<IActionResult> TransferExternal([FromBody] ExternalTransferDto dto)
+        {
+
+            var validation = await _externalTransferValidator.ValidateAsync(dto);
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
+
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            await _transactionService.TransferExternalAsync(dto, userId);
             return Ok(new { message = "Transfer successful", amount = dto.Amount });
         }
 

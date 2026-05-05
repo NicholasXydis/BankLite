@@ -76,6 +76,7 @@ builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserValidator>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
 builder.Services.AddScoped<IValidator<DepositWithdrawDto>, DepositWithdrawValidator>();
 builder.Services.AddScoped<IValidator<TransferDto>, TransferValidator>();
+builder.Services.AddScoped<IValidator<ExternalTransferDto>, ExternalTransferValidator>();
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
