@@ -230,12 +230,16 @@ input.error {
 .sidebar {
   width: 220px;
   min-height: 100vh;
+  height: 100vh;
+  position: sticky;
+  top: 0;
   background: linear-gradient(180deg, #1a3a5c 0%, #0f2340 100%);
   display: flex;
   flex-direction: column;
   padding: 4rem 1.25rem 2rem;
   gap: 3rem;
   flex-shrink: 0;
+  overflow-y: auto;
 }
 
 .sidebar-brand {
@@ -306,7 +310,7 @@ input.error {
 
 .dashboard-main {
   flex: 1;
-  padding: 2rem;
+  padding: 3.5rem 2rem 2rem;
   background: #f1f5f9;
   display: flex;
   flex-direction: column;
@@ -316,10 +320,11 @@ input.error {
 
 .dashboard-title {
   color: #0f2340;
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
   text-align: left;
+  letter-spacing: -0.02rem;
 }
 
 .dashboard-layout {
@@ -480,6 +485,19 @@ input.error {
   animation: fadeInUp 0.5s ease both;
 }
 
+.form-card--create {
+  max-width: 500px;
+  padding: 2rem 2.5rem 2rem;
+  background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  min-height: unset;
+}
+
+.form-card--create .section-title {
+  text-align: center;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -629,20 +647,63 @@ input.error {
 }
 
 .empty-state {
-  background: #fff;
-  border-radius: 12px;
-  padding: 3rem 2rem;
+  background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 100%);
+  border-radius: 16px;
+  padding: 3rem 3rem;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  color: #0f2340;
-  font-size: 1.1rem;
-  font-weight: 600;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  border: 1px solid #e2e8f0;
 }
 
-.empty-state a {
-  color: #1a3a5c;
+.empty-state-icon {
+  width: 96px;
+  height: 64px;
+  background: #eef2ff;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state-title {
+  font-size: 1.5rem;
   font-weight: 700;
-  text-decoration: underline;
+  color: #0f2340;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state-text {
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.empty-state-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, #1a3a5c 0%, #0f2340 100%);
+  color: #ffffff !important;
+  padding: 0.75rem 1.75rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(26, 58, 92, 0.3);
+}
+
+.empty-state-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(26, 58, 92, 0.4);
+  color: #ffffff !important;
 }
 
 .btn-loading {
@@ -770,4 +831,15 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f2340;
+  margin-bottom: 0.5rem;
+}
+
+#create-account-section {
+  margin-top: 2.5rem;
 }
