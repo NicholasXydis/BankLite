@@ -183,6 +183,14 @@
             role="alert"
             aria-live="polite"
           ></div>
+          <div class="transfer-toggle">
+            <button class="toggle-btn active" id="toggle-my-accounts">
+              My Accounts
+            </button>
+            <button class="toggle-btn" id="toggle-external">
+              Send to Someone
+            </button>
+          </div>
           <div
             id="success-msg"
             class="success-msg"
@@ -200,6 +208,19 @@
             <select id="to-account-select">
               <option value="">Select account...</option>
             </select>
+          </div>
+          <div
+            class="form-group"
+            id="external-account-group"
+            style="display: none"
+          >
+            <label for="to-account-number">Recipient Account Number</label>
+            <input
+              type="text"
+              id="to-account-number"
+              class="no-icon-input"
+              placeholder="Enter account number"
+            />
           </div>
           <div class="form-group">
             <label for="amount">Amount</label>

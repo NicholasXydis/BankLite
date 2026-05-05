@@ -47,7 +47,9 @@ document
     const errorMsg = document.getElementById("error-msg");
     const successMsg = document.getElementById("success-msg");
     const accountId = document.getElementById("account-select").value;
+    const isExternal = toggleExternal.classList.contains("active");
     const toAccountId = document.getElementById("to-account-select").value;
+    const toAccountNumber = document.getElementById("to-account-number").value;
     const amount = parseFloat(
       document.getElementById("amount").value.replace(/[$,]/g, ""),
     );
@@ -57,6 +59,18 @@ document
 
     if (!accountId) {
       errorMsg.textContent = "Please select an account.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
+    if (isExternal && !toAccountNumber.trim()) {
+      errorMsg.textContent = "Please enter a recipient account number.";
+      errorMsg.style.display = "block";
+      return;
+    }
+
+    if (!isExternal && !toAccountId) {
+      errorMsg.textContent = "Please select a destination account.";
       errorMsg.style.display = "block";
       return;
     }
@@ -73,7 +87,7 @@ document
       return;
     }
 
-    if (toAccountId === accountId) {
+    if (!isExternal && toAccountId === accountId) {
       errorMsg.textContent = "Cannot transfer to same account";
       errorMsg.style.display = "block";
       return;
@@ -84,7 +98,16 @@ document
     btn.classList.add("btn-loading");
 
     try {
-      await transfer(token, accountId, toAccountId, amount);
+      if (isExternal) {
+        await transferExternal(
+          token,
+          accountId,
+          toAccountNumber.trim(),
+          amount,
+        );
+      } else {
+        await transfer(token, accountId, toAccountId, amount);
+      }
       successMsg.textContent = `Successfully transferred $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
       setTimeout(() => {
@@ -117,6 +140,27 @@ document.getElementById("amount").addEventListener("input", function () {
   if (parts.length > 2) parts.splice(2);
   if (parts[1] !== undefined) parts[1] = parts[1].slice(0, 2);
   this.value = raw === "" ? "" : "$" + parts.join(".");
+});
+
+const toggleMyAccounts = document.getElementById("toggle-my-accounts");
+const toggleExternal = document.getElementById("toggle-external");
+const toAccountSelect = document
+  .querySelector("#to-account-select")
+  .closest(".form-group");
+const externalGroup = document.getElementById("external-account-group");
+
+toggleMyAccounts.addEventListener("click", function () {
+  toggleMyAccounts.classList.add("active");
+  toggleExternal.classList.remove("active");
+  toAccountSelect.style.display = "flex";
+  externalGroup.style.display = "none";
+});
+
+toggleExternal.addEventListener("click", function () {
+  toggleExternal.classList.add("active");
+  toggleMyAccounts.classList.remove("active");
+  toAccountSelect.style.display = "none";
+  externalGroup.style.display = "flex";
 });
 
 loadTransfer();
