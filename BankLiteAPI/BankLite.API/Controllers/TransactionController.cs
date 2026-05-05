@@ -84,7 +84,7 @@ namespace BankLite.API.Controllers
             return Ok(new { message = "Transfer successful", amount = dto.Amount });
         }
 
-        [HttpPost("transfer-external")]
+        [HttpPost("transferexternal")]
         public async Task<IActionResult> TransferExternal([FromBody] ExternalTransferDto dto)
         {
 

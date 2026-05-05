@@ -110,6 +110,25 @@ async function transfer(token, fromAccountId, toAccountId, amount) {
   return data;
 }
 
+async function transferExternal(token, fromAccountId, toAccountNumber, amount) {
+  const response = await fetch(API_URL + "/api/transaction/transferexternal", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({ fromAccountId, toAccountNumber, amount }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to transfer funds");
+  }
+
+  return data;
+}
+
 async function getTransactions(token, accountId, page = 1, pageSize = 10) {
   const response = await fetch(
     API_URL + `/api/transaction/${accountId}?page=${page}&pageSize=${pageSize}`,
