@@ -621,15 +621,19 @@ input.error {
 }
 
 .pagination {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
   margin-top: 1rem;
   gap: 1rem;
 }
 
+.pagination button:last-child {
+  justify-self: end;
+}
+
 .pagination button {
-  width: auto;
+  width: 100px;
   height: auto;
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
@@ -637,7 +641,10 @@ input.error {
 
 #page-info {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #4b5563;
+  font-weight: 600;
+  flex: 1;
+  text-align: center;
 }
 
 .no-transactions {

@@ -34,7 +34,7 @@ async function loadTransactions(accountId, page) {
       row.innerHTML = `
       <div class="transaction-left">
         <span class="transaction-type">${transaction.type} ${transaction.type === "Deposit" ? '<span class="transaction-arrow">↑</span>' : '<span class="transaction-arrow">↓</span>'}</span>
-        <span class="transaction-date">${new Date(transaction.createdAt).toLocaleString("en-CA", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}</span>
+        <span class="transaction-date">${new Date(transaction.createdAt + "Z").toLocaleString("en-CA", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}</span>
         </div>
         <span class="transaction-amount">${transaction.type === "Deposit" ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
       `;
@@ -75,7 +75,7 @@ async function loadAccounts() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} - $${account.balance.toFixed(2)}`;
+      option.textContent = `${account.type} | $${account.balance.toFixed(2)}`;
       accountSelect.appendChild(option);
     });
 
