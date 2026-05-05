@@ -138,10 +138,27 @@
       <main class="dashboard-main">
         <h1 class="dashboard-title">Withdraw Funds</h1>
         <div id="empty-state" class="empty-state" style="display: none">
-          <p>
-            You have no accounts.
-            <a href="dashboard.html">Create one on the dashboard.</a>
-          </p>
+          <div class="empty-state-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="36"
+              height="36"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1a3a5c"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="5" width="20" height="14" rx="3" />
+              <line x1="2" y1="10" x2="22" y2="10" />
+              <line x1="6" y1="15" x2="10" y2="15" />
+              <circle cx="17" cy="15" r="1.5" fill="#1a3a5c" />
+            </svg>
+          </div>
+          <h3 class="empty-state-title">Your financial journey starts here</h3>
+          <p class="empty-state-text">Create your first account</p>
+          <a href="dashboard.html" class="empty-state-btn">Create Account</a>
         </div>
         <div class="form-card" style="display: none">
           <div
@@ -165,12 +182,11 @@
           <div class="form-group">
             <label for="amount">Amount</label>
             <input
-              type="number"
+              type="text"
               id="amount"
               class="no-icon-input"
-              placeholder="0.00"
-              min="0.01"
-              step="0.01"
+              placeholder="$0.00"
+              inputmode="decimal"
             />
           </div>
           <button id="withdraw-btn">Withdraw</button>
