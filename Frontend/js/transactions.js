@@ -45,7 +45,7 @@ async function loadTransactions(accountId, page) {
       const label = isToday ? "Today" : isYesterday ? "Yesterday" : dateStr;
 
       if (label !== lastDate) {
-        lastDate = label;   
+        lastDate = label;
         const header = document.createElement("div");
         header.className = "transaction-date-header";
         header.textContent = label;
@@ -141,6 +141,46 @@ document
   .addEventListener("click", async function () {
     const accountId = document.getElementById("account-select").value;
     await loadTransactions(accountId, currentPage + 1);
+  });
+
+document
+  .getElementById("export-csv-btn")
+  .addEventListener("click", async function () {
+    const token = requireAuth();
+    if (!token) return;
+
+    const accountId = document.getElementById("account-select").value;
+    if (!accountId) return;
+
+    try {
+      const result = await getTransactions(token, accountId, 1, 10000);
+      const rows = [["Date", "Type", "Amount", "Description"]];
+
+      result.items.forEach((t) => {
+        const date = new Date(t.createdAt + "Z").toLocaleString("en-CA", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        });
+        const amount = `${t.type === "Deposit" ? "+" : "-"}$${t.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        rows.push([date, t.type, amount, t.description]);
+      });
+
+      const csv = rows
+        .map((r) => r.map((cell) => `"${cell}"`).join(","))
+        .join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "transactions.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Export failed:", error);
+    }
   });
 
 loadAccounts();

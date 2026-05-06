@@ -152,7 +152,33 @@
         <button id="logout-btn">Logout</button>
       </aside>
       <main class="dashboard-main">
-        <h1 class="dashboard-title">Transactions</h1>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: flex;
+            margin-bottom: 1.5rem;
+          "
+        >
+          <h1 class="dashboard-title" style="margin-bottom: 0">Transactions</h1>
+          <button id="export-csv-btn" title="Export CSV">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="8 17 12 21 16 17" />
+              <line x1="12" y1="12" x2="12" y2="21" />
+              <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29" />
+            </svg>
+          </button>
+        </div>
         <div id="empty-state" class="empty-state" style="display: none">
           <div class="empty-state-icon">
             <svg
