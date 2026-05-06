@@ -26,7 +26,7 @@ function startSessionTimer() {
   const expiry = getTokenExpiry();
   if (!expiry) return;
 
-  const warningTime = 58 * 60 * 1000;
+  const warningTime = 59.9 * 60 * 1000;
 
   setInterval(function () {
     const now = Date.now();

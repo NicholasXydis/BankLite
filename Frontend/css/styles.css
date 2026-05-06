@@ -599,7 +599,6 @@ input.error {
 .transaction-row:hover {
   background: #f8fafc;
   border-radius: 8px;
-  cursor: pointer;
 }
 
 .transaction-row.deposit .transaction-type {
@@ -1099,4 +1098,12 @@ input[type="number"] {
   color: #fff;
   border-color: transparent;
   box-shadow: 0 4px 12px rgba(26, 58, 92, 0.3);
+}
+
+.transaction-date-header {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #6b7280;
+  padding: 1rem 0 0.25rem;
+  letter-spacing: 0.05rem;
 }
