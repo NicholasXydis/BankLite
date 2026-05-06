@@ -221,6 +221,21 @@
               <option value="">Loading accounts...</option>
             </select>
           </div>
+          <div class="transaction-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="deposit">Deposits</button>
+            <button class="filter-btn" data-filter="withdrawal">
+              Withdrawals
+            </button>
+            <button class="filter-btn" data-filter="transfer">Transfers</button>
+          </div>
+          <p
+            id="no-filter-results"
+            class="no-transactions"
+            style="display: none"
+          >
+            No transactions found
+          </p>
           <div id="transactions-list"></div>
           <div class="pagination">
             <button id="prev-btn">Previous</button>

@@ -12,15 +12,18 @@ async function loadTransactions(accountId, page) {
   const nextBtn = document.getElementById("next-btn");
 
   errorMsg.style.display = "none";
-  transactionsList.innerHTML = "<p>Loading...</p>";
+  transactionsList.innerHTML = "";
 
   try {
     const result = await getTransactions(token, accountId, page, pageSize);
     transactionsList.innerHTML = "";
+    document.getElementById("no-filter-results").style.display = "none";
 
     if (result.items.length === 0) {
-      transactionsList.innerHTML =
-        "<p class='no-transactions'>No transactions found</p>";
+      transactionsList.innerHTML = "";
+      document.getElementById("no-filter-results").textContent =
+        "No transactions found";
+      document.getElementById("no-filter-results").style.display = "block";
       pageInfo.textContent = "";
       prevBtn.disabled = true;
       nextBtn.disabled = true;
@@ -186,5 +189,49 @@ document
       console.error("Export failed:", error);
     }
   });
+
+let currentFilter = "all";
+
+document.querySelectorAll(".filter-btn").forEach((btn) => {
+  btn.addEventListener("click", function () {
+    document
+      .querySelectorAll(".filter-btn")
+      .forEach((b) => b.classList.remove("active"));
+    this.classList.add("active");
+    currentFilter = this.dataset.filter;
+
+    const rows = document.querySelectorAll(".transaction-row");
+    const headers = document.querySelectorAll(".transaction-date-header");
+
+    rows.forEach((row) => {
+      if (currentFilter === "all") {
+        row.style.display = "flex";
+      } else {
+        row.style.display = row.classList.contains(currentFilter)
+          ? "flex"
+          : "none";
+      }
+    });
+
+    headers.forEach((header) => {
+      header.style.display = "block";
+    });
+    const visibleRows = document.querySelectorAll(
+      ".transaction-row:not([style*='display: none'])",
+    );
+    const pagination = document.querySelector(".pagination");
+    const noFilterResults = document.getElementById("no-filter-results");
+
+    if (visibleRows.length === 0) {
+      noFilterResults.style.display = "block";
+      pagination.style.display = "none";
+      headers.forEach((header) => (header.style.display = "none"));
+    } else {
+      noFilterResults.style.display = "none";
+      pagination.style.display = "flex";
+      headers.forEach((header) => (header.style.display = "block"));
+    }
+  });
+});
 
 loadAccounts();
