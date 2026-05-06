@@ -35,5 +35,13 @@ namespace BankLite.Infrastructure.Repositories
             .Where(t => t.AccountId == accountId)
             .CountAsync();
         }
+
+        public async Task<IEnumerable<Transaction>> GetByAccountIdAndDateRangeAsync(Guid accountId, DateTime startDate, DateTime endDate)
+        {
+            return await _context.Transactions
+                .Where(t => t.AccountId == accountId && t.CreatedAt >= startDate && t.CreatedAt <= endDate)
+                .OrderByDescending(t => t.CreatedAt)
+                .ToListAsync();
+        }
     }
 }

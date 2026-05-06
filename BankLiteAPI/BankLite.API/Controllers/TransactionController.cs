@@ -120,5 +120,24 @@ namespace BankLite.API.Controllers
             };
             return Ok(response);
         }
+
+        [HttpGet("{accountId}/range")]
+        public async Task<IActionResult> GetTransactionsByDateRange(Guid accountId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var result = await _transactionService.GetTransactionsByDateRangeAsync(accountId, userId, startDate, endDate);
+
+            var response = result.Select(t => new TransactionResponseDto
+            {
+                Id = t.Id,
+                AccountId = t.AccountId,
+                Amount = t.Amount,
+                Type = t.Type.ToString(),
+                Description = t.Description,
+                CreatedAt = t.CreatedAt
+            });
+
+            return Ok(response);
+        }
     }
 }

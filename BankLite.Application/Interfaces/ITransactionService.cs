@@ -10,5 +10,6 @@ namespace BankLite.Application.Interfaces
         Task TransferAsync(TransferDto dto, Guid userId);
         Task TransferExternalAsync(ExternalTransferDto dto, Guid userId);
         Task<PagedResultDto<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize);
+        Task<IEnumerable<Transaction>> GetTransactionsByDateRangeAsync(Guid accountId, Guid userId, DateTime startDate, DateTime endDate);
     }
 }

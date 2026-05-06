@@ -216,5 +216,17 @@ namespace BankLite.Application.Services
                 PageSize = pageSize,
             };
         }
+
+        public async Task<IEnumerable<Transaction>> GetTransactionsByDateRangeAsync(Guid accountId, Guid userId, DateTime startDate, DateTime endDate)
+        {
+            var account = await _accountRepository.GetByIdAsync(accountId);
+            if (account == null || account.UserId != userId)
+            {
+                _logger.LogWarning("Unauthorized date range transaction access by user {UserId} on account {AccountId}", userId, accountId);
+                throw new UnauthorizedAccessException("You do not have access to this account.");
+            }
+
+            return await _transactionRepository.GetByAccountIdAndDateRangeAsync(accountId, startDate, endDate);
+        }
     }
 }
