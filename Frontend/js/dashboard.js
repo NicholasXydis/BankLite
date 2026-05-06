@@ -20,6 +20,10 @@ async function loadDashboard() {
     accounts.forEach((account) => {
       const card = document.createElement("div");
       card.className = "account-card";
+      card.addEventListener("click", function (e) {
+        if (e.target.closest(".copy-btn")) return;
+        window.location.href = `transactions.html?accountId=${account.id}`;
+      });
       card.innerHTML = `
       <div class="card-header">
       <div class="account-icon">

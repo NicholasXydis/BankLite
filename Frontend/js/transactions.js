@@ -79,7 +79,20 @@ async function loadAccounts() {
       accountSelect.appendChild(option);
     });
 
-    await loadTransactions(accounts[0].id, 1);
+    const urlParams = new URLSearchParams(window.location.search);
+    const preSelectedId = urlParams.get("accountId");
+
+    if (preSelectedId) {
+      const match = accounts.find((a) => a.id === preSelectedId);
+      if (match) {
+        accountSelect.value = match.id;
+        await loadTransactions(match.id, 1);
+      } else {
+        await loadTransactions(accounts[0].id, 1);
+      }
+    } else {
+      await loadTransactions(accounts[0].id, 1);
+    }
   } catch (error) {
     document.getElementById("error-msg").textContent = error.message;
     document.getElementById("error-msg").style.display = "block";
