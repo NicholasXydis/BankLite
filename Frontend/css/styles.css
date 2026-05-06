@@ -1034,6 +1034,12 @@ input[type="number"] {
     font-size: 0.75rem;
     white-space: nowrap;
   }
+
+  .transaction-filters .filter-btn {
+    font-size: 0.75rem;
+    height: 32px;
+    padding: 0;
+  }
 }
 
 .transfer-toggle {

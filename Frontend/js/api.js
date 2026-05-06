@@ -149,6 +149,31 @@ async function getTransactions(token, accountId, page = 1, pageSize = 10) {
   return data;
 }
 
+async function getTransactionsByDateRange(
+  token,
+  accountId,
+  startDate,
+  endDate,
+) {
+  const response = await fetch(
+    `${API_URL}/api/transaction/${accountId}/range?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    },
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch transactions");
+  }
+
+  return data;
+}
+
 async function createAccount(token, accountType) {
   const response = await fetch(API_URL + "/api/account/create", {
     method: "POST",
