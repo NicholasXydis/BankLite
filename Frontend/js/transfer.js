@@ -115,8 +115,18 @@ document
       }, 3000);
       document.getElementById("amount").value = "";
       const selectEl = document.getElementById("account-select");
-      selectEl.classList.add("flash-green");
-      setTimeout(() => selectEl.classList.remove("flash-green"), 1000);
+      selectEl.classList.add("flash-red");
+      setTimeout(() => selectEl.classList.remove("flash-red"), 1000);
+
+      if (isExternal) {
+        const toNumberInput = document.getElementById("to-account-number");
+        toNumberInput.classList.add("flash-green");
+        setTimeout(() => toNumberInput.classList.remove("flash-green"), 1000);
+      } else {
+        const toSelectEl = document.getElementById("to-account-select");
+        toSelectEl.classList.add("flash-green");
+        setTimeout(() => toSelectEl.classList.remove("flash-green"), 1000);
+      }
       const selectedId = accountId;
       const selectedToId = toAccountId;
       await loadTransfer();
