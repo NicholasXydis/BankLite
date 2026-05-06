@@ -52,14 +52,18 @@ async function loadTransactions(accountId, page) {
         transactionsList.appendChild(header);
       }
       const row = document.createElement("div");
-      row.className = `transaction-row ${transaction.type.toLowerCase()}`;
+      const isTransfer = transaction.description
+        .toLowerCase()
+        .includes("transfer");
+      const displayType = isTransfer ? "Transfer" : transaction.type;
+      row.className = `transaction-row ${transaction.type.toLowerCase()}${isTransfer ? " transfer" : ""}`;
       row.innerHTML = `
-        <div class="transaction-left">
-        <span class="transaction-type">${transaction.type} ${transaction.type === "Deposit" ? '<span class="transaction-arrow">↑</span>' : '<span class="transaction-arrow">↓</span>'}</span>
-        <span class="transaction-date">${txDate.toLocaleString("en-CA", { hour: "numeric", minute: "2-digit" })}</span>
-        </div>
-        <span class="transaction-amount">${transaction.type === "Deposit" ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-      `;
+    <div class="transaction-left">
+    <span class="transaction-type">${displayType} ${isTransfer ? '<span class="transaction-arrow" style="display:inline-flex;vertical-align:middle;margin-left:2px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>' : transaction.type === "Deposit" ? '<span class="transaction-arrow">↑</span>' : '<span class="transaction-arrow">↓</span>'}</span>
+    <span class="transaction-date">${txDate.toLocaleString("en-CA", { hour: "numeric", minute: "2-digit" })}</span>
+    </div>
+    <span class="transaction-amount">${transaction.type === "Deposit" ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+`;
       transactionsList.appendChild(row);
     });
 

@@ -540,6 +540,11 @@ input.error {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+.transaction-row.transfer .transaction-arrow,
+.transaction-row.transfer .transaction-type {
+  color: #1a3a5c;
+}
+
 .transaction-left {
   display: flex;
   flex-direction: column;
