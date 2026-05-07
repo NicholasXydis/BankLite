@@ -70,6 +70,7 @@ builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IValidator<CreateAccountDto>, CreateAccountValidator>();
 builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserValidator>();
@@ -77,6 +78,7 @@ builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>()
 builder.Services.AddScoped<IValidator<DepositWithdrawDto>, DepositWithdrawValidator>();
 builder.Services.AddScoped<IValidator<TransferDto>, TransferValidator>();
 builder.Services.AddScoped<IValidator<ExternalTransferDto>, ExternalTransferValidator>();
+builder.Services.AddScoped<IValidator<ChangePasswordDto>, ChangePasswordValidator>();
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
