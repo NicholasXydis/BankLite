@@ -190,10 +190,35 @@
           </div>
           <button id="create-account-btn">Create Account</button>
         </div>
+        <div class="chart-card" id="chart-card" style="display: none">
+          <div class="chart-header">
+            <div class="chart-stat">
+              <span class="chart-stat-label"
+                ><span class="chart-stat-dot" style="background: #059669"></span
+                >Deposits</span
+              >
+              <span class="chart-stat-amount" id="deposit-amount">$0</span>
+              <span class="chart-stat-percent" id="deposit-percent">0%</span>
+            </div>
+            <h2 class="section-title chart-title">Spending Overview</h2>
+            <div class="chart-stat chart-stat--right">
+              <span class="chart-stat-label"
+                ><span class="chart-stat-dot" style="background: #dc3545"></span
+                >Withdrawals</span
+              >
+              <span class="chart-stat-amount" id="withdrawal-amount">$0</span>
+              <span class="chart-stat-percent" id="withdrawal-percent">0%</span>
+            </div>
+          </div>
+          <div id="chart-canvas-wrapper">
+            <canvas id="spending-chart"></canvas>
+          </div>
+        </div>
       </main>
     </div>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/dashboard.js"></script>
 
     <div id="session-warning" style="display: none">

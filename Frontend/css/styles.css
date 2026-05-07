@@ -462,7 +462,6 @@ input.error {
 }
 
 .form-card {
-  margin-top: 1.5rem;
   background: #fff;
   border-radius: 16px;
   padding: 2.5rem;
@@ -822,7 +821,7 @@ input[type="number"] {
 }
 
 #create-account-section {
-  margin-top: 2.5rem;
+  margin-top: 0rem;
 }
 
 .modal-overlay {
@@ -954,6 +953,24 @@ input[type="number"] {
   transition: all 0.3s;
 }
 
+.chart-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding-top: 0.25rem;
+}
+
+.chart-title {
+  margin: 0;
+  margin-top: -3.5rem;
+}
+
+#chart-canvas-wrapper {
+  position: relative;
+  height: 220px;
+  margin-top: -2rem;
+}
+
 @media (max-width: 768px) {
   .hamburger-btn {
     display: flex;
@@ -964,7 +981,7 @@ input[type="number"] {
     left: -220px;
     top: 0;
     z-index: 1050;
-    transition: left 0.3s ease;
+    transition: none;
   }
 
   .sidebar.open {
@@ -995,6 +1012,10 @@ input[type="number"] {
   }
 
   .account-card {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .sidebar-nav a {
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -1039,6 +1060,44 @@ input[type="number"] {
     font-size: 0.75rem;
     height: 32px;
     padding: 0;
+  }
+
+  .chart-card {
+    padding: 1rem 0.75rem;
+  }
+
+  .chart-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .chart-title {
+    width: 100%;
+    order: -1;
+    margin-top: 0;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  .chart-header .chart-stat {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chart-header .chart-stat:last-of-type {
+    align-items: flex-end;
+  }
+
+  #chart-canvas-wrapper {
+    width: 100%;
+    order: 1;
+    margin-top: 0;
+    height: 180px;
   }
 }
 
@@ -1137,4 +1196,72 @@ input[type="number"] {
   color: #fff;
   border-color: transparent;
   box-shadow: 0 4px 12px rgba(26, 58, 92, 0.3);
+}
+
+.chart-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+  margin-bottom: 5rem;
+  margin-top: 1rem;
+}
+
+.chart-card .section-title {
+  color: #1a3a5c;
+  font-size: 1.2rem;
+}
+
+.chart-stats-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.chart-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 120px;
+}
+
+.chart-stat:first-child {
+  align-items: flex-start;
+  padding-left: 0.5rem;
+}
+
+.chart-stat:last-child {
+  align-items: flex-end;
+  padding-right: 0.5rem;
+}
+
+.chart-stat-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.chart-stat-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.chart-stat-amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0f2340;
+}
+
+.chart-stat-percent {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6b7280;
 }
