@@ -9,5 +9,7 @@ namespace BankLite.Domain.Interfaces
         Task<User?> GetByEmailAsync(string email);
         Task AddAsync(User user);
         Task<bool> ExistsAsync(string email);
+        Task UpdateAsync(User user);
+        Task DeleteAsync(User user);
     }
 }

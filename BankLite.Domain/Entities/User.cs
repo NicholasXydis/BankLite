@@ -10,6 +10,7 @@ namespace BankLite.Domain.Entities
         public required string Email { get; set; }
         public required string PasswordHash { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? LastLoginAt { get; set; }
         public ICollection<Account> Accounts { get; set; } = new List<Account>();
     }
 }
