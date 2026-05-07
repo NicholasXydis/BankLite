@@ -75,6 +75,9 @@ namespace BankLite.Application.Services
                 throw new InvalidOperationException("Invalid Credentials");
             }
 
+            user.LastLoginAt = DateTime.UtcNow;
+            await _userRepository.UpdateAsync(user);
+
             await _auditLogRepository.LogAsync(new AuditLog
             {
                 Action = "Login",
