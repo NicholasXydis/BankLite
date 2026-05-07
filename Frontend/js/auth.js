@@ -195,6 +195,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  document.querySelectorAll(".sidebar-nav a").forEach((link) => {
+    link.addEventListener("click", function () {
+      document.querySelector(".sidebar").classList.remove("open");
+    });
+  });
 });
 
 const togglePassword = document.getElementById("toggle-password");
