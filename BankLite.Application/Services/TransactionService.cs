@@ -121,7 +121,7 @@ namespace BankLite.Application.Services
                     AccountId = dto.FromAccountId,
                     Amount = dto.Amount,
                     Type = TransactionType.Withdrawal,
-                    Description = $"Transfer to account {toAccount.AccountNumber}"
+                    Description = $"Internal Transfer to account {toAccount.AccountNumber}"
                 };
 
                 var creditTransaction = new Transaction
@@ -129,7 +129,7 @@ namespace BankLite.Application.Services
                     AccountId = dto.ToAccountId,
                     Amount = dto.Amount,
                     Type = TransactionType.Deposit,
-                    Description = $"Transfer from account {fromAccount.AccountNumber}"
+                    Description = $"Internal Transfer from account {fromAccount.AccountNumber}"
                 };
 
                 await _transactionRepository.AddAsync(debitTransaction);
