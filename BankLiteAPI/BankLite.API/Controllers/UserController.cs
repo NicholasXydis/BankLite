@@ -1,5 +1,6 @@
 ﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,10 +13,12 @@ namespace BankLite.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IValidator<ChangePasswordDto> changePasswordValidator)
         {
             _userService = userService;
+            _changePasswordValidator = changePasswordValidator;
         }
 
         [HttpGet("profile")]
@@ -29,6 +32,10 @@ namespace BankLite.API.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
+            var validation = await _changePasswordValidator.ValidateAsync(dto);
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
+
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             await _userService.ChangePasswordAsync(userId, dto);
             return Ok(new { message = "Password changed successfully" });
