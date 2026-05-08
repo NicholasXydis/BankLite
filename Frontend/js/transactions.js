@@ -20,6 +20,7 @@ async function loadTransactions(accountId, page) {
     document.getElementById("no-filter-results").style.display = "none";
 
     if (result.items.length === 0) {
+      document.getElementById("export-csv-btn").style.display = "none";
       transactionsList.innerHTML = "";
       document.getElementById("no-filter-results").textContent =
         "No transactions found";
@@ -70,6 +71,7 @@ async function loadTransactions(accountId, page) {
       transactionsList.appendChild(row);
     });
 
+    document.getElementById("export-csv-btn").style.display = "flex";
     const totalPages = Math.ceil(result.totalCount / pageSize);
     pageInfo.textContent = `Page ${page} of ${totalPages}`;
     prevBtn.disabled = page <= 1;
@@ -99,7 +101,8 @@ async function loadAccounts() {
     }
     document.querySelector(".form-card").style.display = "block";
     document.querySelector(".pagination").style.display = "none";
-
+    document.getElementById("export-csv-btn").style.display = "none";
+    
     accountSelect.innerHTML = "";
     accounts.forEach((account) => {
       const option = document.createElement("option");
