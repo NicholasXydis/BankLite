@@ -238,3 +238,139 @@ if (toggleConfirmPassword) {
     }
   });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const settingsBtn = document.getElementById("settings-btn");
+  const settingsPanel = document.getElementById("settings-panel");
+  const settingsOverlay = document.getElementById("settings-overlay");
+  const settingsCloseBtn = document.getElementById("settings-close-btn");
+
+  function openSettings() {
+    settingsPanel.classList.add("open");
+    settingsOverlay.style.display = "block";
+    loadSettingsProfile();
+  }
+
+  function closeSettings() {
+    settingsPanel.classList.remove("open");
+    settingsOverlay.style.display = "none";
+  }
+
+  if (settingsBtn)
+    settingsBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      openSettings();
+    });
+
+  if (settingsCloseBtn)
+    settingsCloseBtn.addEventListener("click", closeSettings);
+  if (settingsOverlay) settingsOverlay.addEventListener("click", closeSettings);
+
+  async function loadSettingsProfile() {
+    const token = getToken();
+    if (!token) return;
+    try {
+      const data = await getUserProfile(token);
+      document.getElementById("settings-name").textContent = data.fullName;
+      document.getElementById("settings-email").textContent = data.email;
+      document.getElementById("settings-since").textContent = new Date(
+        data.createdAt,
+      ).toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+      document.getElementById("settings-last-login").textContent =
+        data.lastLoginAt
+          ? new Date(data.lastLoginAt).toLocaleDateString("en-CA", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "First login";
+    } catch (e) {
+      console.error("Failed to load profile", e);
+    }
+  }
+
+  const changePasswordBtn = document.getElementById("change-password-btn");
+  if (changePasswordBtn) {
+    changePasswordBtn.addEventListener("click", async function () {
+      const token = getToken();
+      const currentPassword = document.getElementById("current-password").value;
+      const newPassword = document.getElementById("new-password").value;
+      const successMsg = document.getElementById("change-password-success");
+      const errorMsg = document.getElementById("change-password-error");
+      successMsg.style.display = "none";
+      errorMsg.style.display = "none";
+      if (!currentPassword || !newPassword) {
+        errorMsg.textContent = "Please fill in both fields.";
+        errorMsg.style.display = "block";
+        return;
+      }
+      changePasswordBtn.disabled = true;
+      changePasswordBtn.classList.add("btn-loading");
+      try {
+        await changePassword(token, currentPassword, newPassword);
+        successMsg.textContent = "Password changed successfully!";
+        successMsg.style.display = "block";
+        document.getElementById("current-password").value = "";
+        document.getElementById("new-password").value = "";
+        setTimeout(() => (successMsg.style.display = "none"), 3000);
+      } catch (error) {
+        errorMsg.textContent = error.message;
+        errorMsg.style.display = "block";
+      } finally {
+        changePasswordBtn.disabled = false;
+        changePasswordBtn.classList.remove("btn-loading");
+      }
+    });
+  }
+
+  const deleteAccountBtn = document.getElementById("delete-account-btn");
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener("click", function () {
+      const modal = document.getElementById("logout-modal");
+      const modalTitle = document.querySelector(".modal-title");
+      const modalText = document.querySelector(".modal-text");
+      const modalConfirm = document.getElementById("modal-confirm-btn");
+      modalTitle.textContent = "Delete Account";
+      modalText.textContent =
+        "This will permanently delete your account and all data. This cannot be undone.";
+      modalConfirm.textContent = "Delete";
+      modal.style.display = "flex";
+      modalConfirm.onclick = async function () {
+        const token = getToken();
+        try {
+          await deleteAccount(token);
+          logout();
+          window.location.href = "index.html";
+        } catch (error) {
+          modal.style.display = "none";
+        }
+      };
+    });
+  }
+
+  const darkModeToggle = document.getElementById("dark-mode-toggle");
+  if (darkModeToggle) {
+    darkModeToggle.checked = localStorage.getItem("darkMode") === "true";
+    darkModeToggle.addEventListener("change", function () {
+      localStorage.setItem("darkMode", this.checked);
+      document.body.classList.toggle("dark-mode", this.checked);
+    });
+    if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark-mode");
+    }
+  }
+
+  const languageToggle = document.getElementById("language-toggle");
+  if (languageToggle) {
+    languageToggle.checked = localStorage.getItem("language") === "fr";
+    languageToggle.addEventListener("change", function () {
+      localStorage.setItem("language", this.checked ? "fr" : "en");
+    });
+  }
+});
