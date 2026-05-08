@@ -90,10 +90,14 @@ document
       );
       if (isFirstDeposit) {
         sessionStorage.setItem(`hasDeposited_${accountId}`, "true");
+        const sidebarWidth = window.innerWidth <= 768 ? 0 : 220;
+        const centerX =
+          (sidebarWidth + (window.innerWidth - sidebarWidth) / 2) /
+          window.innerWidth;
         confetti({
           particleCount: 150,
           spread: 100,
-          origin: { y: 0.6 },
+          origin: { x: centerX, y: 0.6 },
           colors: ["#1a3a5c", "#4f86c6", "#ffffff", "#FFD700", "#e2e8f0"],
         });
         setTimeout(
