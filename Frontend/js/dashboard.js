@@ -153,6 +153,7 @@ function countUp(element, target, duration = 1000) {
 loadDashboard();
 typeText("dashboard-title", "My Accounts");
 
+let spendingChartInstance = null;
 async function loadSpendingChart() {
   const token = requireAuth();
   if (!token) return;
@@ -182,7 +183,10 @@ async function loadSpendingChart() {
   }
   const hasData = totalDeposits > 0 || totalWithdrawals > 0;
   const ctx = document.getElementById("spending-chart").getContext("2d");
-  new Chart(ctx, {
+  if (spendingChartInstance) {
+    spendingChartInstance.destroy();
+  }
+  spendingChartInstance = new Chart(ctx, {
     type: "doughnut",
     data: {
       labels: ["Deposits", "Withdrawals"],
@@ -229,14 +233,18 @@ async function loadSpendingChart() {
             : 0;
           const text = `${net >= 0 ? "+" : ""}$${Math.abs(net).toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
           ctx.font = "700 1.2rem Inter, sans-serif";
-          ctx.fillStyle = "#0f2340";
+          ctx.fillStyle = document.body.classList.contains("dark-mode")
+            ? "#ffffff"
+            : "#0f2340";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           const centerX = width / 2;
           const centerY = height / 2 + 4;
           ctx.fillText(text, centerX, centerY - 10);
           ctx.font = "600 0.8rem Inter, sans-serif";
-          ctx.fillStyle = "#6b7280";
+          ctx.fillStyle = document.body.classList.contains("dark-mode")
+            ? "#8b949e"
+            : "#6b7280";
           ctx.fillText("Net Flow (30d)", centerX, centerY + 12);
           ctx.save();
         },

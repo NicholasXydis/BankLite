@@ -360,6 +360,9 @@ document.addEventListener("DOMContentLoaded", function () {
     darkModeToggle.addEventListener("change", function () {
       localStorage.setItem("darkMode", this.checked);
       document.body.classList.toggle("dark-mode", this.checked);
+      if (typeof loadSpendingChart === "function") {
+        loadSpendingChart();
+      }
     });
     if (localStorage.getItem("darkMode") === "true") {
       document.body.classList.add("dark-mode");
