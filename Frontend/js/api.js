@@ -13,6 +13,9 @@ async function login(email, password) {
   const data = await response.json();
 
   if (!response.ok) {
+    if (Array.isArray(data)) {
+      throw new Error(data.map((e) => e.errorMessage).join(", "));
+    }
     throw new Error(data.message || "Login failed");
   }
 
@@ -31,6 +34,9 @@ async function register(fullName, email, password) {
   const data = await response.json();
 
   if (!response.ok) {
+    if (Array.isArray(data)) {
+      throw new Error(data.map((e) => e.errorMessage).join(", "));
+    }
     throw new Error(data.message || "Registration failed");
   }
 

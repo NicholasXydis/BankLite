@@ -8,7 +8,7 @@ namespace BankLite.Application.Validators
         public RegisterUserValidator()
         {
             RuleFor(x => x.FullName).NotEmpty();
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
+            RuleFor(x => x.Email).NotEmpty().EmailAddress(FluentValidation.Validators.EmailValidationMode.AspNetCoreCompatible).WithMessage("Please enter a valid email address");
             RuleFor(x => x.Password).NotEmpty().MinimumLength(8);
         }
     }
