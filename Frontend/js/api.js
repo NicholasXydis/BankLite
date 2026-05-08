@@ -192,3 +192,44 @@ async function createAccount(token, accountType) {
 
   return data;
 }
+
+async function getUserProfile(token) {
+  const response = await fetch(API_URL + "/api/user/profile", {
+    method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || "Failed to load profile");
+  return data;
+}
+
+async function changePassword(token, currentPassword, newPassword) {
+  const response = await fetch(API_URL + "/api/user/change-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    if (Array.isArray(data)) {
+      throw new Error(data.map((e) => e.errorMessage).join(", "));
+    }
+    throw new Error(data.message || "Failed to change password");
+  }
+  return data;
+}
+
+async function deleteAccount(token) {
+  const response = await fetch(API_URL + "/api/user/delete-account", {
+    method: "DELETE",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to delete account");
+}
