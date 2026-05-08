@@ -177,8 +177,13 @@ async function loadSpendingChart() {
       endDate,
     );
     transactions.forEach((t) => {
-      if (t.type === "Deposit") totalDeposits += t.amount;
-      else if (t.type === "Withdrawal") totalWithdrawals += t.amount;
+      const isInternalTransfer =
+        t.description &&
+        t.description.toLowerCase().includes("internal transfer");
+      if (t.type === "Deposit" && !isInternalTransfer)
+        totalDeposits += t.amount;
+      else if (t.type === "Withdrawal" && !isInternalTransfer)
+        totalWithdrawals += t.amount;
     });
   }
   const hasData = totalDeposits > 0 || totalWithdrawals > 0;
