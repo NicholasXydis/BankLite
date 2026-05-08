@@ -511,13 +511,17 @@ input.error {
   font-weight: 500;
   color: #0f2340;
   background: #f1f5f9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230f2340' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  -webkit-appearance: none;
+  appearance: none;
   outline: none;
 }
 
 .form-group select:focus {
   border: 1.5px solid #1a3a5c;
   box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.15);
-  background: #ffffff;
 }
 
 .success-msg {
@@ -864,7 +868,7 @@ input[type="number"] {
 }
 
 .modal-cancel {
-  background: #f1f5f9;
+  background: #e2e8f0;
   color: #1a3a5c;
   width: 120px;
   box-shadow: none;
@@ -872,7 +876,7 @@ input[type="number"] {
 
 .modal-cancel:hover {
   background: #e2e8f0;
-  transform: none;
+  transform: translateY(-2px);
   box-shadow: none;
 }
 
@@ -986,6 +990,311 @@ input[type="number"] {
   flex-direction: column;
   gap: 1.5rem;
   box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode,
+body.dark-mode .dashboard-body,
+body.dark-mode .dashboard-layout,
+body.dark-mode .dashboard-main {
+  background: #0d1117;
+}
+
+body.dark-mode .sidebar {
+  background: linear-gradient(180deg, #0d1117 0%, #080d12 100%);
+  border-right: 1px solid #1e293b;
+}
+
+body.dark-mode .account-card {
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .account-card h2 {
+  color: #ffffff;
+}
+
+body.dark-mode .account-card p {
+  color: #8b949e;
+}
+
+body.dark-mode .account-card p:last-child {
+  color: #ffffff;
+}
+
+body.dark-mode .account-number {
+  color: #8b949e;
+}
+
+body.dark-mode .total-balance {
+  background: linear-gradient(135deg, #1a3a5c, #0f2340);
+}
+
+body.dark-mode .form-card {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+body.dark-mode .form-card--create {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+body.dark-mode .chart-card {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+body.dark-mode .section-title {
+  color: #ffffff;
+}
+
+body.dark-mode .dashboard-title {
+  color: #ffffff;
+}
+
+body.dark-mode #welcome-msg {
+  color: #ffffff;
+}
+
+body.dark-mode label {
+  color: #8b949e;
+}
+
+body.dark-mode input {
+  background: #0d1117;
+  border-color: #30363d;
+  color: #ffffff;
+}
+
+body.dark-mode input:focus {
+  background: #161b22;
+  border-color: #4f86c6;
+  box-shadow: 0 0 0 3px rgba(79, 134, 198, 0.15);
+}
+
+body.dark-mode input::placeholder {
+  color: #8b949e;
+}
+
+body.dark-mode select {
+  background: #0d1117;
+  border-color: #30363d;
+  color: #ffffff;
+}
+
+body.dark-mode select option {
+  background: #161b22;
+  color: #ffffff;
+}
+
+body.dark-mode .settings-panel {
+  background: #161b22;
+}
+
+body.dark-mode .settings-title {
+  color: #ffffff;
+}
+
+body.dark-mode .settings-section {
+  border-bottom-color: #30363d;
+}
+
+body.dark-mode .settings-label {
+  color: #8b949e;
+}
+
+body.dark-mode .settings-value {
+  color: #ffffff;
+}
+
+body.dark-mode .settings-close-btn {
+  background: #0d1117;
+}
+
+body.dark-mode .settings-close-btn svg {
+  stroke: #ffffff;
+}
+
+body.dark-mode .settings-link {
+  color: #4f86c6;
+}
+
+body.dark-mode .transaction-row {
+  border-bottom-color: #30363d;
+}
+
+body.dark-mode .transaction-row:hover {
+  background: #161b22;
+}
+
+body.dark-mode .transaction-type {
+  color: #ffffff;
+}
+
+body.dark-mode .transaction-date {
+  color: #8b949e;
+}
+
+body.dark-mode .transaction-date-header {
+  color: #8b949e;
+}
+
+body.dark-mode .transaction-amount {
+  color: #ffffff;
+}
+
+body.dark-mode .filter-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .filter-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: none;
+  box-shadow: none;
+}
+
+body.dark-mode .filter-btn.active {
+  background: linear-gradient(135deg, #1a3a5c 0%, #0f2340 100%);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(26, 58, 92, 0.5);
+}
+
+body.dark-mode .modal {
+  background: #161b22;
+}
+
+body.dark-mode .modal-title {
+  color: #ffffff;
+}
+
+body.dark-mode .modal-text {
+  color: #8b949e;
+}
+
+body.dark-mode .modal-cancel {
+  background: #0d1117;
+  color: #8b949e;
+}
+
+body.dark-mode .modal-cancel:hover {
+  background: #30363d;
+  transform: translateY(-2px);
+  box-shadow: none;
+}
+
+body.dark-mode p {
+  color: #8b949e;
+}
+
+body.dark-mode .chart-stat-amount {
+  color: #ffffff;
+}
+
+body.dark-mode .chart-stat-label {
+  color: #8b949e;
+}
+
+body.dark-mode .chart-stat-percent {
+  color: #8b949e;
+}
+
+body.dark-mode .chart-title {
+  color: #ffffff;
+}
+
+body.dark-mode .empty-state {
+  background: #161b22;
+  border-color: #30363d;
+}
+
+body.dark-mode .empty-state-title {
+  color: #ffffff;
+}
+
+body.dark-mode .empty-state-text {
+  color: #8b949e;
+}
+
+body.dark-mode #page-info {
+  color: #8b949e;
+}
+
+body.dark-mode .settings-overlay {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+body.dark-mode #session-warning {
+  background: #1a3a5c;
+  color: #ffffff;
+}
+
+body.dark-mode #session-stay-btn {
+  background: #ffffff;
+  color: #1a3a5c;
+}
+
+body.dark-mode .form-group select {
+  background-color: #0d1117;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  border-color: #30363d;
+  color: #ffffff;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 36px;
+}
+
+body.dark-mode #export-csv-btn {
+  color: #ffffff;
+}
+
+body.dark-mode #export-csv-btn svg {
+  stroke: #ffffff;
+}
+
+body.dark-mode .settings-section-title {
+  color: #ffffff;
+}
+
+body.dark-mode .form-group select:focus {
+  border-color: #4f86c6;
+  box-shadow: 0 0 0 3px rgba(79, 134, 198, 0.15);
+  outline: none;
+}
+
+body.dark-mode .copy-btn svg {
+  stroke: #8b949e;
+}
+
+body.dark-mode .copy-btn:hover {
+  background: #30363d;
+}
+
+body.dark-mode .toggle-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .toggle-btn.active {
+  background: linear-gradient(135deg, #1a3a5c 0%, #0f2340 100%);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+body.dark-mode .typing-cursor::after {
+  color: #ffffff;
+}
+
+body.dark-mode .transaction-row.deposit .transaction-type,
+body.dark-mode .transaction-row.withdrawal .transaction-type,
+body.dark-mode .transaction-row.transfer .transaction-type {
+  color: #ffffff;
 }
 
 @media (max-width: 768px) {
@@ -1173,7 +1482,7 @@ input[type="number"] {
   box-shadow: none;
   border: none;
   border-radius: 8px;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: 0;
