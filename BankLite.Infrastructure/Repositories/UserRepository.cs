@@ -45,8 +45,14 @@ namespace BankLite.Infrastructure.Repositories
 
         public async Task DeleteAsync(User user)
         {
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+
+            var tracked = await _context.Users.FindAsync(user.Id);
+            if (tracked != null)
+            {
+
+                _context.Users.Remove(tracked);
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }
