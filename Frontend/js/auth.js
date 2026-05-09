@@ -332,6 +332,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const deleteAccountBtn = document.getElementById("delete-account-btn");
   if (deleteAccountBtn) {
     deleteAccountBtn.addEventListener("click", function () {
+      closeSettings();
       const modal = document.getElementById("logout-modal");
       const modalTitle = document.querySelector(".modal-title");
       const modalText = document.querySelector(".modal-text");
