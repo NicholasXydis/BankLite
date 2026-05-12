@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BankLite | Privacy Policy</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="xfavicon.ico" type="image/x-icon" />
+  </head>
+  <body class="auth-page">
+    <main class="static-page-main">
+      <div class="static-page-card">
+        <div class="logo">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#1a3a5c"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="5" width="20" height="14" rx="3" />
+            <line x1="2" y1="10" x2="22" y2="10" />
+            <line x1="6" y1="15" x2="10" y2="15" />
+            <circle cx="17" cy="15" r="1.5" fill="#1a3a5c" />
+          </svg>
+        </div>
+        <h1>Privacy Policy</h1>
+        <p class="static-page-date">Last updated: May 2026</p>
+        <div class="static-page-content">
+          <h2>1. Information We Collect</h2>
+          <p>
+            BankLite collects your full name, email address and encrypted
+            password when you register. We also collect transaction data
+            including deposits, withdrawals and transfers you make within the
+            app.
+          </p>
+          <h2>2. How We Use Your Information</h2>
+          <p>
+            Your information is used solely to provide BankLite services such as
+            managing your accounts and processing transactions. We do not sell,
+            share or distribute your personal data to any third parties.
+          </p>
+          <h2>3. Data Security</h2>
+          <p>
+            All passwords are hashed using BCrypt. Authentication is handled via
+            JWT tokens. Your data is stored securely and never transmitted
+            without encryption.
+          </p>
+          <h2>4. Data Retention</h2>
+          <p>
+            Your data is retained as long as your account is active. You may
+            delete your account at any time from the Settings panel, which
+            permanently removes all your data.
+          </p>
+          <h2>5. Cookies</h2>
+          <p>
+            BankLite uses session storage for authentication tokens and local
+            storage for user preferences such as dark mode. No third party
+            cookies are used.
+          </p>
+        </div>
+        <div class="static-page-back">
+          <a href="javascript:history.back()" class="empty-state-btn"
+            >← Go Back</a
+          >
+        </div>
+      </div>
+    </main>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+  </body>
+</html>
