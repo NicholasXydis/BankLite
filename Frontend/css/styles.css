@@ -1297,6 +1297,91 @@ body.dark-mode .transaction-row.transfer .transaction-type {
   color: #ffffff;
 }
 
+body.dark-mode .static-page-card {
+  background: #161b22;
+  border-color: #30363d;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .static-page-content h2 {
+  color: #ffffff;
+}
+
+body.dark-mode .static-page-content p {
+  color: #8b949e;
+}
+
+body.dark-mode .static-page-date {
+  color: #8b949e;
+}
+
+body.dark-mode h1 {
+  color: #ffffff;
+}
+
+body.dark-mode .static-error-title {
+  color: #ffffff;
+}
+
+.static-page-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.static-page-card--small {
+  max-width: 400px;
+  text-align: center;
+}
+
+.static-page-main {
+  align-items: flex-start;
+  padding: 2rem 1rem;
+}
+
+.static-error-code {
+  font-size: 4rem;
+  margin: 0;
+  color: #1a3a5c;
+}
+
+.static-error-code--red {
+  color: #dc3545;
+}
+
+.static-error-title {
+  font-size: 1.3rem;
+  color: #0f2340;
+  margin: 0.5rem 0;
+}
+
+.static-page-date {
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.static-page-content {
+  text-align: left;
+  color: #374151;
+  line-height: 1.8;
+}
+
+.static-page-content h2 {
+  color: #0f2340;
+  font-size: 1.1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.static-page-back {
+  text-align: center;
+  margin-top: 2rem;
+}
+
 @media (max-width: 768px) {
   .hamburger-btn {
     display: flex;
