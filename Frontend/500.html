@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BankLite | Server Error</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="xfavicon.ico" type="image/x-icon" />
+  </head>
+  <body class="auth-page">
+    <main>
+      <div class="static-page-card static-page-card--small">
+        <div class="logo">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#1a3a5c"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="5" width="20" height="14" rx="3" />
+            <line x1="2" y1="10" x2="22" y2="10" />
+            <line x1="6" y1="15" x2="10" y2="15" />
+            <circle cx="17" cy="15" r="1.5" fill="#1a3a5c" />
+          </svg>
+        </div>
+        <h1 class="static-error-code static-error-code--red">500</h1>
+        <h2 class="static-error-title">Something Went Wrong</h2>
+        <p>
+          Something unexpected happened. Please try again or return to the
+          dashboard.
+        </p>
+        <div class="static-page-back">
+          <a href="dashboard.html" class="empty-state-btn">Go to Dashboard</a>
+        </div>
+      </div>
+    </main>
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+  </body>
+</html>
