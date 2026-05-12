@@ -1,6 +1,4 @@
-const API_URL =
-  "https://bankliteapi-accpeqhrcybqe9gy.canadacentral-01.azurewebsites.net";
-
+const API_URL = "https://localhost:7205";
 async function login(email, password) {
   const response = await fetch(API_URL + "/api/auth/login", {
     method: "POST",
