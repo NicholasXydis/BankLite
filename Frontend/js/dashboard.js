@@ -1,6 +1,7 @@
 async function loadDashboard() {
   const token = requireAuth();
   if (!token) return;
+  document.body.style.visibility = "visible";
 
   const userName = sessionStorage.getItem("fullName");
   if (userName) {
