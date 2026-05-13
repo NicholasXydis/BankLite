@@ -145,6 +145,40 @@ if (registerForm) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    `
+<div class="chatbot-overlay" id="chatbot-overlay"></div>
+<div class="chatbot-panel" id="chatbot-panel">
+  <div class="chatbot-header">
+    <div class="chatbot-header-left">
+      <div class="chatbot-avatar">A</div>
+      <div>
+        <div class="chatbot-name">Alfred</div>
+        <div class="chatbot-status">BankLite Assistant</div>
+      </div>
+    </div>
+    <button class="chatbot-close" id="chatbot-close">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <div class="chatbot-messages" id="chatbot-messages">
+    <div class="chatbot-message chatbot-message--alfred">
+      <div class="chatbot-bubble">Hi! I'm Alfred, your BankLite assistant. How can I help you today?</div>
+    </div>
+  </div>
+  <div class="chatbot-input-area">
+    <input type="text" class="chatbot-input" id="chatbot-input" placeholder="Ask Alfred anything..." maxlength="200" />
+    <button class="chatbot-send" id="chatbot-send">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+</div>`,
+  );
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function () {
@@ -201,45 +235,43 @@ document.addEventListener("DOMContentLoaded", function () {
       document.querySelector(".sidebar").classList.remove("open");
     });
   });
-});
 
-const togglePassword = document.getElementById("toggle-password");
-if (togglePassword) {
-  togglePassword.addEventListener("click", function () {
-    const passwordInput = document.getElementById("password");
-    const eyeIcon = document.getElementById("eye-icon");
-    if (passwordInput.type === "password") {
-      passwordInput.type = "text";
-      eyeIcon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
-      eyeIcon.setAttribute("stroke", "#1a3a5c");
-    } else {
-      passwordInput.type = "password";
-      eyeIcon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
-      eyeIcon.setAttribute("stroke", "#9ca3af");
-    }
-  });
-}
+  const togglePassword = document.getElementById("toggle-password");
+  if (togglePassword) {
+    togglePassword.addEventListener("click", function () {
+      const passwordInput = document.getElementById("password");
+      const eyeIcon = document.getElementById("eye-icon");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+        eyeIcon.setAttribute("stroke", "#1a3a5c");
+      } else {
+        passwordInput.type = "password";
+        eyeIcon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+        eyeIcon.setAttribute("stroke", "#9ca3af");
+      }
+    });
+  }
 
-const toggleConfirmPassword = document.getElementById(
-  "toggle-password-confirm",
-);
-if (toggleConfirmPassword) {
-  toggleConfirmPassword.addEventListener("click", function () {
-    const passwordInput = document.getElementById("confirmPassword");
-    const eyeIconConfirm = document.getElementById("eye-icon-confirm");
-    if (passwordInput.type === "password") {
-      passwordInput.type = "text";
-      eyeIconConfirm.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
-      eyeIconConfirm.setAttribute("stroke", "#1a3a5c");
-    } else {
-      passwordInput.type = "password";
-      eyeIconConfirm.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
-      eyeIconConfirm.setAttribute("stroke", "#9ca3af");
-    }
-  });
-}
+  const toggleConfirmPassword = document.getElementById(
+    "toggle-password-confirm",
+  );
+  if (toggleConfirmPassword) {
+    toggleConfirmPassword.addEventListener("click", function () {
+      const passwordInput = document.getElementById("confirmPassword");
+      const eyeIconConfirm = document.getElementById("eye-icon-confirm");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIconConfirm.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+        eyeIconConfirm.setAttribute("stroke", "#1a3a5c");
+      } else {
+        passwordInput.type = "password";
+        eyeIconConfirm.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+        eyeIconConfirm.setAttribute("stroke", "#9ca3af");
+      }
+    });
+  }
 
-document.addEventListener("DOMContentLoaded", function () {
   const settingsBtn = document.getElementById("settings-btn");
   const settingsPanel = document.getElementById("settings-panel");
   const settingsOverlay = document.getElementById("settings-overlay");
@@ -375,6 +407,84 @@ document.addEventListener("DOMContentLoaded", function () {
     languageToggle.checked = localStorage.getItem("language") === "fr";
     languageToggle.addEventListener("change", function () {
       localStorage.setItem("language", this.checked ? "fr" : "en");
+    });
+  }
+
+  const chatbotBtn = document.getElementById("chatbot-btn");
+  const chatbotPanel = document.getElementById("chatbot-panel");
+  const chatbotOverlay = document.getElementById("chatbot-overlay");
+  const chatbotClose = document.getElementById("chatbot-close");
+  const chatbotInput = document.getElementById("chatbot-input");
+  const chatbotSend = document.getElementById("chatbot-send");
+  const chatbotMessages = document.getElementById("chatbot-messages");
+
+  function openChatbot() {
+    chatbotPanel.classList.add("open");
+    chatbotOverlay.style.display = "block";
+    chatbotInput.focus();
+  }
+
+  function closeChatbot() {
+    chatbotPanel.classList.remove("open");
+    chatbotOverlay.style.display = "none";
+  }
+
+  function addMessage(text, isUser) {
+    const div = document.createElement("div");
+    div.className = `chatbot-message ${isUser ? "chatbot-message--user" : "chatbot-message--alfred"}`;
+    div.innerHTML = `<div class="chatbot-bubble">${text}</div>`;
+    chatbotMessages.appendChild(div);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  function addTyping() {
+    const div = document.createElement("div");
+    div.className = "chatbot-message chatbot-message--alfred chatbot-typing";
+    div.id = "chatbot-typing";
+    div.innerHTML = `<div class="chatbot-bubble">Alfred is typing...</div>`;
+    chatbotMessages.appendChild(div);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  function removeTyping() {
+    const typing = document.getElementById("chatbot-typing");
+    if (typing) typing.remove();
+  }
+
+  async function sendMessage() {
+    const token = getToken();
+    if (!token) return;
+    const message = chatbotInput.value.trim();
+    if (!message) return;
+
+    chatbotInput.value = "";
+    chatbotSend.disabled = true;
+    addMessage(message, true);
+    addTyping();
+
+    try {
+      const response = await sendChatMessage(token, message);
+      removeTyping();
+      addMessage(response, false);
+    } catch (error) {
+      removeTyping();
+      addMessage(
+        "Sorry, I couldn't process your request. Please try again.",
+        false,
+      );
+    } finally {
+      chatbotSend.disabled = false;
+      chatbotInput.focus();
+    }
+  }
+
+  if (chatbotBtn) chatbotBtn.addEventListener("click", openChatbot);
+  if (chatbotClose) chatbotClose.addEventListener("click", closeChatbot);
+  if (chatbotOverlay) chatbotOverlay.addEventListener("click", closeChatbot);
+  if (chatbotSend) chatbotSend.addEventListener("click", sendMessage);
+  if (chatbotInput) {
+    chatbotInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") sendMessage();
     });
   }
 });

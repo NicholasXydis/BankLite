@@ -238,3 +238,22 @@ async function deleteAccount(token) {
   });
   if (!response.ok) throw new Error("Failed to delete account");
 }
+
+async function sendChatMessage(token, message) {
+  const response = await fetch(`${API_URL}/api/chat/message`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ content: message }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to get response");
+  }
+
+  return data.response;
+}
