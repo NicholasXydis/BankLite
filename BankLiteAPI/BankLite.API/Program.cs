@@ -72,6 +72,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddHttpClient<IGroqService, GroqService>();
 builder.Services.AddScoped<IValidator<CreateAccountDto>, CreateAccountValidator>();
 builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserValidator>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
