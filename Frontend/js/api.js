@@ -34,7 +34,7 @@ async function register(fullName, email, password) {
   if (!response.ok) {
     if (Array.isArray(data)) {
       const uniqueErrors = [...new Set(data.map((e) => e.errorMessage))];
-      throw new Error(uniqueErrors.join(", "));
+      throw new Error(uniqueErrors.join(". "));
     }
     throw new Error(data.message || "Registration failed");
   }

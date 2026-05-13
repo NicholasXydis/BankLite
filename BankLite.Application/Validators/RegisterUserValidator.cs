@@ -8,7 +8,7 @@ namespace BankLite.Application.Validators
         public RegisterUserValidator()
         {
             RuleFor(x => x.FullName).NotEmpty();
-            RuleFor(x => x.Email).NotEmpty().EmailAddress().Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("Please enter a valid email address");
+            RuleFor(x => x.Email).NotEmpty().Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("Please enter a valid email address");
             RuleFor(x => x.Password).NotEmpty().MinimumLength(8);
         }
     }
