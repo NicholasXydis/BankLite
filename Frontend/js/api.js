@@ -1,6 +1,9 @@
 const API_URL = "https://localhost:7205";
 
 function handleServerError(response) {
+  if (response.status === 404) {
+    window.location.href = "404.html";
+  }
   if (response.status >= 500) {
     window.location.href = "500.html";
   }
