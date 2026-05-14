@@ -236,7 +236,8 @@ async function deleteAccount(token) {
       Authorization: "Bearer " + token,
     },
   });
-  if (!response.ok) throw new Error("Failed to delete account");
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || "Failed to delete account");
 }
 
 async function sendChatMessage(token, message) {
