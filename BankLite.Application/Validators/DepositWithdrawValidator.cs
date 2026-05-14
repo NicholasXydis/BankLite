@@ -7,7 +7,7 @@ namespace BankLite.Application.Validators
     {
         public DepositWithdrawValidator()
         {
-            RuleFor(x => x.Amount).GreaterThan(0);
+            RuleFor(x => x.Amount).GreaterThan(0).LessThanOrEqualTo(1000000);
             RuleFor(x => x.AccountId).NotEmpty();
         }
     }
