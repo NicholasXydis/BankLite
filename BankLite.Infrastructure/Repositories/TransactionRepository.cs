@@ -19,21 +19,24 @@ namespace BankLite.Infrastructure.Repositories
             await _context.Transactions.AddAsync(transaction);
         }
 
-        public async Task<IEnumerable<Transaction>> GetByAccountIdAsync(Guid accountId, int page, int pageSize)
+        public async Task<IEnumerable<Transaction>> GetByAccountIdAsync(Guid accountId, int page, int pageSize, string? type = null)
         {
-            return await _context.Transactions
-            .Where(t => t.AccountId == accountId)
-            .OrderByDescending(t => t.CreatedAt)
+            var query = _context.Transactions.Where(t => t.AccountId == accountId);
+            if (!string.IsNullOrEmpty(type) && Enum.TryParse<TransactionType>(type, true, out var transactionType))
+                query = query.Where(t => t.Type == transactionType);
+            return await query
+                        .OrderByDescending(t => t.CreatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
         }
 
-        public async Task<int> GetTotalCountAsync(Guid accountId)
+        public async Task<int> GetTotalCountAsync(Guid accountId, string? type = null)
         {
-            return await _context.Transactions
-            .Where(t => t.AccountId == accountId)
-            .CountAsync();
+            var query = _context.Transactions.Where(t => t.AccountId == accountId);
+            if (!string.IsNullOrEmpty(type) && Enum.TryParse<TransactionType>(type, true, out var transactionType))
+                query = query.Where(t => t.Type == transactionType);
+            return await query.CountAsync();
         }
 
         public async Task<IEnumerable<Transaction>> GetByAccountIdAndDateRangeAsync(Guid accountId, DateTime startDate, DateTime endDate)

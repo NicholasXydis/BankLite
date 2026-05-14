@@ -112,10 +112,10 @@ namespace BankLite.API.Controllers
         [HttpGet("{accountId}")]
         [ProducesResponseType(typeof(PagedResultDto<TransactionResponseDto>), 200)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> GetTransactions(Guid accountId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<IActionResult> GetTransactions(Guid accountId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? type = null)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var result = await _transactionService.GetTransactionsByAccountIdAsync(accountId, userId, page, pageSize);
+            var result = await _transactionService.GetTransactionsByAccountIdAsync(accountId, userId, page, pageSize, type);
 
             var response = new PagedResultDto<TransactionResponseDto>
             {

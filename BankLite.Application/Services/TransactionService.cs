@@ -201,7 +201,7 @@ namespace BankLite.Application.Services
             });
         }
 
-        public async Task<PagedResultDto<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize)
+        public async Task<PagedResultDto<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize, string? type = null)
         {
             var account = await _accountRepository.GetByIdAsync(accountId);
             if (account == null || account.UserId != userId)
@@ -210,8 +210,8 @@ namespace BankLite.Application.Services
                 throw new UnauthorizedAccessException("You do not have access to this account.");
             }
 
-            var transactions = await _transactionRepository.GetByAccountIdAsync(accountId, page, pageSize);
-            var totalCount = await _transactionRepository.GetTotalCountAsync(accountId);
+            var transactions = await _transactionRepository.GetByAccountIdAsync(accountId, page, pageSize, type);
+            var totalCount = await _transactionRepository.GetTotalCountAsync(accountId, type);
             return new PagedResultDto<Transaction>
             {
                 Items = transactions,
