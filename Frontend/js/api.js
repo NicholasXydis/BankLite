@@ -1,4 +1,11 @@
 const API_URL = "https://localhost:7205";
+
+function handleServerError(response) {
+  if (response.status >= 500) {
+    window.location.href = "500.html";
+  }
+}
+
 async function login(email, password) {
   const response = await fetch(API_URL + "/api/auth/login", {
     method: "POST",
@@ -10,6 +17,7 @@ async function login(email, password) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     if (Array.isArray(data)) {
       throw new Error(data.map((e) => e.errorMessage).join(", "));
@@ -31,6 +39,7 @@ async function register(fullName, email, password) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     if (Array.isArray(data)) {
       const uniqueErrors = [...new Set(data.map((e) => e.errorMessage))];
@@ -52,6 +61,7 @@ async function getAccounts(token) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to fetch accounts");
   }
@@ -70,6 +80,7 @@ async function deposit(token, accountId, amount) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to deposit funds");
   }
@@ -89,6 +100,7 @@ async function withdraw(token, accountId, amount) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to withdraw funds");
   }
@@ -108,6 +120,7 @@ async function transfer(token, fromAccountId, toAccountId, amount) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to transfer funds");
   }
@@ -127,6 +140,7 @@ async function transferExternal(token, fromAccountId, toAccountNumber, amount) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to transfer funds");
   }
@@ -155,6 +169,7 @@ async function getTransactions(
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to fetch transactions");
   }
@@ -180,6 +195,7 @@ async function getTransactionsByDateRange(
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to fetch transactions");
   }
@@ -199,6 +215,7 @@ async function createAccount(token, accountType) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to create account");
   }
@@ -228,6 +245,7 @@ async function changePassword(token, currentPassword, newPassword) {
     body: JSON.stringify({ currentPassword, newPassword }),
   });
   const data = await response.json();
+  handleServerError(response);
   if (!response.ok) {
     if (Array.isArray(data)) {
       throw new Error(data.map((e) => e.errorMessage).join(", "));
@@ -260,6 +278,7 @@ async function sendChatMessage(token, message) {
 
   const data = await response.json();
 
+  handleServerError(response);
   if (!response.ok) {
     throw new Error(data.message || "Failed to get response");
   }
