@@ -18,6 +18,8 @@ async function login(email, password) {
     body: JSON.stringify({ email, password }),
   });
 
+  if (response.status === 429)
+    throw new Error("Too many login attempts. Please wait a minute.");
   const data = await response.json();
 
   handleServerError(response);
