@@ -47,6 +47,7 @@ namespace BankLite.Application.Services
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
+                UserId = user.Id,
                 Action = "Register",
                 Details = $"User {user.Email} registered",
                 PerformedAt = DateTime.UtcNow,
@@ -80,6 +81,7 @@ namespace BankLite.Application.Services
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
+                UserId = user.Id,
                 Action = "Login",
                 Details = $"User {user.Email} logged in",
                 PerformedAt = DateTime.UtcNow,

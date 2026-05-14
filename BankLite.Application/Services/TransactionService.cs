@@ -49,6 +49,7 @@ namespace BankLite.Application.Services
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
+                UserId = userId,
                 Action = "Deposit",
                 Details = $"User {userId} deposited {dto.Amount} to account {dto.AccountId}",
                 PerformedAt = DateTime.UtcNow,
@@ -89,6 +90,7 @@ namespace BankLite.Application.Services
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
+                UserId = userId,
                 Action = "Withdrawal",
                 Details = $"User {userId} withdrew {dto.Amount} from account {dto.AccountId}",
                 PerformedAt = DateTime.UtcNow,
@@ -140,6 +142,7 @@ namespace BankLite.Application.Services
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
+                UserId = userId,
                 Action = "Transfer",
                 Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account {dto.ToAccountId}",
                 PerformedAt = DateTime.UtcNow,
@@ -191,6 +194,7 @@ namespace BankLite.Application.Services
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
+                UserId = userId,
                 Action = "ExternalTransfer",
                 Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account number {dto.ToAccountNumber}",
                 PerformedAt = DateTime.UtcNow,
