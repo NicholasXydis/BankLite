@@ -38,6 +38,10 @@ namespace BankLite.Infrastructure.Data
                 .WithOne(t => t.Account)
                 .HasForeignKey(t => t.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Account>()
+                .HasIndex(a => a.AccountNumber)
+                .IsUnique();
         }
     }
 }
