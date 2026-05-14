@@ -159,114 +159,116 @@ async function loadSpendingChart() {
   const token = requireAuth();
   if (!token) return;
 
-  const accounts = await getAccounts(token);
-  if (accounts.length === 0) return;
-  document.getElementById("chart-card").style.display = "block";
+  try {
+    const accounts = await getAccounts(token);
+    if (accounts.length === 0) return;
+    document.getElementById("chart-card").style.display = "block";
 
-  const endDate = new Date();
-  const startDate = new Date();
-  startDate.setDate(endDate.getDate() - 30);
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - 30);
 
-  let totalDeposits = 0;
-  let totalWithdrawals = 0;
+    let totalDeposits = 0;
+    let totalWithdrawals = 0;
 
-  for (const account of accounts) {
-    const transactions = await getTransactionsByDateRange(
-      token,
-      account.id,
-      startDate,
-      endDate,
-    );
-    transactions.forEach((t) => {
-      const isInternalTransfer =
-        t.description &&
-        t.description.toLowerCase().includes("internal transfer");
-      if (t.type === "Deposit" && !isInternalTransfer)
-        totalDeposits += t.amount;
-      else if (t.type === "Withdrawal" && !isInternalTransfer)
-        totalWithdrawals += t.amount;
-    });
-  }
-  const hasData = totalDeposits > 0 || totalWithdrawals > 0;
-  const ctx = document.getElementById("spending-chart").getContext("2d");
-  if (spendingChartInstance) {
-    spendingChartInstance.destroy();
-  }
-  spendingChartInstance = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: ["Deposits", "Withdrawals"],
-      datasets: [
-        {
-          data: hasData
-            ? [totalDeposits || 0.001, totalWithdrawals || 0.001]
-            : [1],
-          backgroundColor: hasData ? ["#059669", "#dc3545"] : ["#e2e8f0"],
-          borderWidth: 0,
-          borderRadius: 10,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      cutout: "75%",
-      animation: {
-        animateRotate: true,
+    for (const account of accounts) {
+      const transactions = await getTransactionsByDateRange(
+        token,
+        account.id,
+        startDate,
+        endDate,
+      );
+      transactions.forEach((t) => {
+        const isInternalTransfer =
+          t.description &&
+          t.description.toLowerCase().includes("internal transfer");
+        if (t.type === "Deposit" && !isInternalTransfer)
+          totalDeposits += t.amount;
+        else if (t.type === "Withdrawal" && !isInternalTransfer)
+          totalWithdrawals += t.amount;
+      });
+    }
+    const hasData = totalDeposits > 0 || totalWithdrawals > 0;
+    const ctx = document.getElementById("spending-chart").getContext("2d");
+    if (spendingChartInstance) {
+      spendingChartInstance.destroy();
+    }
+    spendingChartInstance = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Deposits", "Withdrawals"],
+        datasets: [
+          {
+            data: hasData
+              ? [totalDeposits || 0.001, totalWithdrawals || 0.001]
+              : [1],
+            backgroundColor: hasData ? ["#059669", "#dc3545"] : ["#e2e8f0"],
+            borderWidth: 0,
+            borderRadius: 10,
+          },
+        ],
       },
-      events: [],
-      plugins: {
-        legend: {
-          display: false,
-          labels: {
-            padding: 20,
-            usePointStyle: true,
-            pointStyle: "circle",
-            font: { size: 14, weight: "600", family: "Inter, sans-serif" },
-            color: "#6b7280",
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "75%",
+        animation: {
+          animateRotate: true,
+        },
+        events: [],
+        plugins: {
+          legend: {
+            display: false,
+            labels: {
+              padding: 20,
+              usePointStyle: true,
+              pointStyle: "circle",
+              font: { size: 14, weight: "600", family: "Inter, sans-serif" },
+              color: "#6b7280",
+            },
           },
         },
       },
-    },
-    plugins: [
-      {
-        id: "centerText",
-        beforeDraw(chart) {
-          const { width, height, ctx } = chart;
-          ctx.restore();
-          const net = hasData
-            ? chart.data.datasets[0].data[0] - chart.data.datasets[0].data[1]
-            : 0;
-          const text = `${net >= 0 ? "+" : ""}$${Math.abs(net).toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-          ctx.font = "700 1.2rem Inter, sans-serif";
-          ctx.fillStyle = document.body.classList.contains("dark-mode")
-            ? "#ffffff"
-            : "#0f2340";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
-          const centerX = width / 2;
-          const centerY = height / 2 + 4;
-          ctx.fillText(text, centerX, centerY - 10);
-          ctx.font = "600 0.8rem Inter, sans-serif";
-          ctx.fillStyle = document.body.classList.contains("dark-mode")
-            ? "#8b949e"
-            : "#6b7280";
-          ctx.fillText("Net Flow (30d)", centerX, centerY + 12);
-          ctx.save();
+      plugins: [
+        {
+          id: "centerText",
+          beforeDraw(chart) {
+            const { width, height, ctx } = chart;
+            ctx.restore();
+            const net = hasData
+              ? chart.data.datasets[0].data[0] - chart.data.datasets[0].data[1]
+              : 0;
+            const text = `${net >= 0 ? "+" : ""}$${Math.abs(net).toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+            ctx.font = "700 1.2rem Inter, sans-serif";
+            ctx.fillStyle = document.body.classList.contains("dark-mode")
+              ? "#ffffff"
+              : "#0f2340";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            const centerX = width / 2;
+            const centerY = height / 2 + 4;
+            ctx.fillText(text, centerX, centerY - 10);
+            ctx.font = "600 0.8rem Inter, sans-serif";
+            ctx.fillStyle = document.body.classList.contains("dark-mode")
+              ? "#8b949e"
+              : "#6b7280";
+            ctx.fillText("Net Flow (30d)", centerX, centerY + 12);
+            ctx.save();
+          },
         },
-      },
-    ],
-  });
+      ],
+    });
 
-  const total = totalDeposits + totalWithdrawals;
-  document.getElementById("deposit-amount").textContent =
-    `$${totalDeposits.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-  document.getElementById("deposit-percent").textContent =
-    total > 0 ? `${((totalDeposits / total) * 100).toFixed(1)}%` : "0%";
-  document.getElementById("withdrawal-amount").textContent =
-    `$${totalWithdrawals.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-  document.getElementById("withdrawal-percent").textContent =
-    total > 0 ? `${((totalWithdrawals / total) * 100).toFixed(1)}%` : "0%";
+    const total = totalDeposits + totalWithdrawals;
+    document.getElementById("deposit-amount").textContent =
+      `$${totalDeposits.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+    document.getElementById("deposit-percent").textContent =
+      total > 0 ? `${((totalDeposits / total) * 100).toFixed(1)}%` : "0%";
+    document.getElementById("withdrawal-amount").textContent =
+      `$${totalWithdrawals.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+    document.getElementById("withdrawal-percent").textContent =
+      total > 0 ? `${((totalWithdrawals / total) * 100).toFixed(1)}%` : "0%";
+  } catch (error) {}
 }
 
 loadSpendingChart();
