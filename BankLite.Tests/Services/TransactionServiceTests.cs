@@ -260,7 +260,7 @@ namespace BankLite.Tests.Services
             await Assert.ThrowsAsync<UnauthorizedAccessException>(
                 () => _transactionService.GetTransactionsByAccountIdAsync(account.Id, Guid.NewGuid(), 1, 10));
 
-            _mockTransactionRepo.Verify(r => r.GetByAccountIdAsync(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+            _mockTransactionRepo.Verify(r => r.GetByAccountIdAsync(It.IsAny<Guid>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
         }
 
         [Fact]
