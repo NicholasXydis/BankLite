@@ -134,9 +134,17 @@ async function transferExternal(token, fromAccountId, toAccountNumber, amount) {
   return data;
 }
 
-async function getTransactions(token, accountId, page = 1, pageSize = 10) {
+async function getTransactions(
+  token,
+  accountId,
+  page = 1,
+  pageSize = 10,
+  type = null,
+) {
+  const typeParam = type && type !== "all" ? `&type=${type}` : "";
   const response = await fetch(
-    API_URL + `/api/transaction/${accountId}?page=${page}&pageSize=${pageSize}`,
+    API_URL +
+      `/api/transaction/${accountId}?page=${page}&pageSize=${pageSize}${typeParam}`,
     {
       method: "GET",
       headers: {

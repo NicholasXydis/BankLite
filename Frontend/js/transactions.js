@@ -1,7 +1,8 @@
 let currentPage = 1;
 const pageSize = 10;
+let currentFilter = "all";
 
-async function loadTransactions(accountId, page) {
+async function loadTransactions(accountId, page, type = null) {
   const token = requireAuth();
   if (!token) return;
 
@@ -13,9 +14,18 @@ async function loadTransactions(accountId, page) {
 
   errorMsg.style.display = "none";
   transactionsList.innerHTML = "";
-
+  document.querySelector(".pagination").style.opacity = "0";
+  prevBtn.style.opacity = "0";
+  nextBtn.style.opacity = "0";
+  transactionsList.style.opacity = "0";
   try {
-    const result = await getTransactions(token, accountId, page, pageSize);
+    const result = await getTransactions(
+      token,
+      accountId,
+      page,
+      pageSize,
+      type,
+    );
     transactionsList.innerHTML = "";
     document.getElementById("no-filter-results").style.display = "none";
 
@@ -60,13 +70,20 @@ async function loadTransactions(accountId, page) {
         .toLowerCase()
         .includes("transfer");
       const displayType = isTransfer ? "Transfer" : transaction.type;
-      row.className = `transaction-row ${transaction.type.toLowerCase()}${isTransfer ? " transfer" : ""}`;
+      const isIncoming =
+        isTransfer && transaction.description.toLowerCase().includes("from");
+      const transferClass = isTransfer
+        ? isIncoming
+          ? "deposit"
+          : "withdrawal"
+        : "";
+      row.className = `transaction-row ${isTransfer ? transferClass : transaction.type.toLowerCase()}${isTransfer ? " transfer" : ""}`;
       row.innerHTML = `
     <div class="transaction-left">
     <span class="transaction-type">${displayType} ${isTransfer ? '<span class="transaction-arrow" style="display:inline-flex;vertical-align:middle;margin-left:2px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>' : transaction.type === "Deposit" ? '<span class="transaction-arrow">↑</span>' : '<span class="transaction-arrow">↓</span>'}</span>
     <span class="transaction-date">${txDate.toLocaleString("en-CA", { hour: "numeric", minute: "2-digit" })}</span>
     </div>
-    <span class="transaction-amount">${transaction.type === "Deposit" ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+    <span class="transaction-amount">${transaction.type === "Deposit" || isIncoming ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
 `;
       transactionsList.appendChild(row);
     });
@@ -78,6 +95,10 @@ async function loadTransactions(accountId, page) {
     nextBtn.disabled = page >= totalPages;
     currentPage = page;
     document.querySelector(".pagination").style.display = "flex";
+    document.querySelector(".pagination").style.opacity = "1";
+    prevBtn.style.opacity = "1";
+    nextBtn.style.opacity = "1";
+    transactionsList.style.opacity = "1";
   } catch (error) {
     transactionsList.innerHTML = "";
     document.querySelector(".pagination").style.display = "flex";
@@ -102,7 +123,7 @@ async function loadAccounts() {
     document.querySelector(".form-card").style.display = "block";
     document.querySelector(".pagination").style.display = "none";
     document.getElementById("export-csv-btn").style.display = "none";
-    
+
     accountSelect.innerHTML = "";
     accounts.forEach((account) => {
       const option = document.createElement("option");
@@ -136,6 +157,11 @@ document
   .addEventListener("change", async function () {
     currentPage = 1;
     document.querySelector(".pagination").style.display = "none";
+    currentFilter = "all";
+    document
+      .querySelectorAll(".filter-btn")
+      .forEach((b) => b.classList.remove("active"));
+    document.querySelector(".filter-btn").classList.add("active");
     await loadTransactions(this.value, 1);
   });
 
@@ -143,14 +169,22 @@ document
   .getElementById("prev-btn")
   .addEventListener("click", async function () {
     const accountId = document.getElementById("account-select").value;
-    await loadTransactions(accountId, currentPage - 1);
+    await loadTransactions(
+      accountId,
+      currentPage - 1,
+      currentFilter === "all" ? null : currentFilter,
+    );
   });
 
 document
   .getElementById("next-btn")
   .addEventListener("click", async function () {
     const accountId = document.getElementById("account-select").value;
-    await loadTransactions(accountId, currentPage + 1);
+    await loadTransactions(
+      accountId,
+      currentPage + 1,
+      currentFilter === "all" ? null : currentFilter,
+    );
   });
 
 document
@@ -193,8 +227,6 @@ document
     }
   });
 
-let currentFilter = "all";
-
 document.querySelectorAll(".filter-btn").forEach((btn) => {
   btn.addEventListener("click", function () {
     document
@@ -203,37 +235,13 @@ document.querySelectorAll(".filter-btn").forEach((btn) => {
     this.classList.add("active");
     currentFilter = this.dataset.filter;
 
-    const rows = document.querySelectorAll(".transaction-row");
-    const headers = document.querySelectorAll(".transaction-date-header");
-
-    rows.forEach((row) => {
-      if (currentFilter === "all") {
-        row.style.display = "flex";
-      } else {
-        row.style.display = row.classList.contains(currentFilter)
-          ? "flex"
-          : "none";
-      }
-    });
-
-    headers.forEach((header) => {
-      header.style.display = "block";
-    });
-    const visibleRows = document.querySelectorAll(
-      ".transaction-row:not([style*='display: none'])",
+    const accountId = document.getElementById("account-select").value;
+    currentPage = 1;
+    loadTransactions(
+      accountId,
+      1,
+      currentFilter === "all" ? null : currentFilter,
     );
-    const pagination = document.querySelector(".pagination");
-    const noFilterResults = document.getElementById("no-filter-results");
-
-    if (visibleRows.length === 0) {
-      noFilterResults.style.display = "block";
-      pagination.style.display = "none";
-      headers.forEach((header) => (header.style.display = "none"));
-    } else {
-      noFilterResults.style.display = "none";
-      pagination.style.display = "flex";
-      headers.forEach((header) => (header.style.display = "block"));
-    }
   });
 });
 
