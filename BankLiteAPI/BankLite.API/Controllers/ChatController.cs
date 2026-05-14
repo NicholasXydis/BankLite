@@ -1,6 +1,7 @@
 ﻿using BankLite.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BankLite.Application.DTOs;
 
 namespace BankLite.API.Controllers
 {
@@ -26,6 +27,4 @@ namespace BankLite.API.Controllers
             return Ok(new { response });
         }
     }
-
-    public record ChatMessageDto(string Content);
 }
