@@ -45,7 +45,8 @@ namespace BankLite.Application.Services
             request.Content = content;
 
             var response = await _httpClient.SendAsync(request);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+                throw new HttpRequestException($"Groq API request failed with status {response.StatusCode}");
 
             var responseJson = await response.Content.ReadAsStringAsync();
             var responseObj = JsonSerializer.Deserialize<JsonElement>(responseJson);
