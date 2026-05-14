@@ -20,5 +20,7 @@ namespace BankLite.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? LastLoginAt { get; set; }
         public ICollection<Account> Accounts { get; set; } = new List<Account>();
+        public int FailedLoginAttempts { get; set; } = 0;
+        public DateTime? LockoutEnd { get; set; }
     }
 }

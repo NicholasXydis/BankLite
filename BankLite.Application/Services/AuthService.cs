@@ -72,11 +72,27 @@ namespace BankLite.Application.Services
                 throw new InvalidOperationException("Invalid Credentials");
             }
 
+            if (user.LockoutEnd.HasValue && user.LockoutEnd > DateTime.UtcNow)
+            {
+                _logger.LogWarning("Login attempt on locked account: {Email}", dto.Email.ToLower());
+                throw new InvalidOperationException("Account is locked. Please try again later.");
+            }
+
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
-                _logger.LogWarning("Login failed - wrong password: {Email}", dto.Email.ToLower());
-                throw new InvalidOperationException("Invalid Credentials");
+                user.FailedLoginAttempts++;
+            if (user.FailedLoginAttempts >= 5)
+            {
+                user.LockoutEnd = DateTime.UtcNow.AddMinutes(15);
+                user.FailedLoginAttempts = 0;
+                _logger.LogWarning("Account locked due to failed attempts: {Email}", dto.Email.ToLower());
             }
+            await _userRepository.UpdateAsync(user);
+            throw new InvalidOperationException("Invalid Credentials");
+            }
+
+            user.FailedLoginAttempts = 0;
+            user.LockoutEnd = null;
 
             user.LastLoginAt = DateTime.UtcNow;
             await _userRepository.UpdateAsync(user);
