@@ -1,3 +1,5 @@
+let _sessionTimerInterval = null;
+
 function saveToken(token) {
   sessionStorage.setItem("authToken", token);
 }
@@ -28,7 +30,8 @@ function startSessionTimer() {
 
   const warningTime = 59.9 * 60 * 1000;
 
-  setInterval(function () {
+  if (_sessionTimerInterval) clearInterval(_sessionTimerInterval);
+  _sessionTimerInterval = setInterval(function () {
     const now = Date.now();
     const timeLeft = expiry - now;
 
