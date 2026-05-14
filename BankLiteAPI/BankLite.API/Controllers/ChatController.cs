@@ -18,6 +18,9 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("message")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessageDto message)
         {
             if (string.IsNullOrWhiteSpace(message.Content))

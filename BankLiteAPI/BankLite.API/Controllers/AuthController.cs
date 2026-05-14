@@ -21,8 +21,10 @@ namespace BankLite.API.Controllers
             _loginValidator = loginValidator;
         }
 
-        [EnableRateLimiting("fixed")]
         [HttpPost("register")]
+        [EnableRateLimiting("fixed")]
+        [ProducesResponseType(typeof(AuthResponseDto), 200)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
             var validation = await _registerValidator.ValidateAsync(dto);
@@ -33,8 +35,10 @@ namespace BankLite.API.Controllers
             return Ok(result);
         }
 
-        [EnableRateLimiting("login")]
         [HttpPost("login")]
+        [EnableRateLimiting("login")]
+        [ProducesResponseType(typeof(AuthResponseDto), 200)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Login([FromBody] LoginUserDto dto)
         {
             var validation = await _loginValidator.ValidateAsync(dto);

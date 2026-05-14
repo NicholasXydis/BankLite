@@ -22,6 +22,8 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet("profile")]
+        [ProducesResponseType(typeof(UserProfileDto), 200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetProfile()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -30,6 +32,9 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("change-password")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
             var validation = await _changePasswordValidator.ValidateAsync(dto);
@@ -42,6 +47,8 @@ namespace BankLite.API.Controllers
         }
 
         [HttpDelete("delete-account")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> DeleteAccount()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

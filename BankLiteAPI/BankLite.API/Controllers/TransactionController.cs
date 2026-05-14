@@ -30,6 +30,9 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("deposit")]
+        [ProducesResponseType(typeof(TransactionResponseDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Deposit([FromBody] DepositWithdrawDto dto)
         {
             var validation = await _depositWithdrawValidator.ValidateAsync(dto);
@@ -52,6 +55,9 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("withdraw")]
+        [ProducesResponseType(typeof(TransactionResponseDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Withdraw([FromBody] DepositWithdrawDto dto)
         {
             var validation = await _depositWithdrawValidator.ValidateAsync(dto);
@@ -73,6 +79,9 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("transfer")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> Transfer([FromBody] TransferDto dto)
         {
             var validation = await _transferValidator.ValidateAsync(dto);
@@ -85,6 +94,9 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("transferexternal")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> TransferExternal([FromBody] ExternalTransferDto dto)
         {
 
@@ -98,6 +110,8 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet("{accountId}")]
+        [ProducesResponseType(typeof(PagedResultDto<TransactionResponseDto>), 200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetTransactions(Guid accountId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -122,6 +136,8 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet("{accountId}/range")]
+        [ProducesResponseType(typeof(IEnumerable<TransactionResponseDto>), 200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetTransactionsByDateRange(Guid accountId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

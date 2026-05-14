@@ -23,7 +23,11 @@ namespace BankLite.API.Controllers
             _accountValidator = accountValidator;
         }
 
+
         [HttpPost("create")]
+        [ProducesResponseType(typeof(AccountResponseDto), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto dto)
         {
             var validation = await _accountValidator.ValidateAsync(dto);
@@ -53,6 +57,8 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<AccountResponseDto>), 200)]
+        [ProducesResponseType(401)]
         public async Task<IActionResult> GetAccounts()
         {
             var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
