@@ -5,10 +5,12 @@ namespace BankLite.API.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -19,15 +21,25 @@ namespace BankLite.API.Middleware
             }
             catch (Exception ex)
             {
+
+                _logger.LogError(ex, "Unhandled exception on {Method} {Path}: {Message}",
+                context.Request.Method, context.Request.Path, ex.Message);
+
                 context.Response.ContentType = "application/json";
-                var error = new { message = ex.Message };
 
                 context.Response.StatusCode = ex switch
                 {
                     InvalidOperationException => 400,
                     UnauthorizedAccessException => 401,
+                    KeyNotFoundException => 404,
+                    HttpRequestException => 502,
                     _ => 500
                 };
+
+                var message = context.Response.StatusCode >= 500
+                ? "An unexpected error occurred."
+                : ex.Message;
+                var error = new { message };
 
                 await context.Response.WriteAsync(JsonSerializer.Serialize(error));
             }
