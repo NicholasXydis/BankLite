@@ -364,6 +364,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const deleteAccountBtn = document.getElementById("delete-account-btn");
   if (deleteAccountBtn) {
     deleteAccountBtn.addEventListener("click", function () {
+      const token = getToken();
+      if (!token) return;
       closeSettings();
       const modal = document.getElementById("logout-modal");
       const modalTitle = document.querySelector(".modal-title");
@@ -375,7 +377,6 @@ document.addEventListener("DOMContentLoaded", function () {
       modalConfirm.textContent = "Delete";
       modal.style.display = "flex";
       modalConfirm.onclick = async function () {
-        const token = getToken();
         try {
           await deleteAccount(token);
           logout();

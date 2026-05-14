@@ -46,7 +46,11 @@ namespace BankLite.Infrastructure.Repositories
         public async Task DeleteAsync(User user)
         {
 
-            var tracked = await _context.Users.FindAsync(user.Id);
+            var tracked = await _context.Users
+                 .Include(u => u.Accounts)
+                 .ThenInclude(a => a.Transactions)
+                 .FirstOrDefaultAsync(u => u.Id == user.Id);
+
             if (tracked != null)
             {
 
