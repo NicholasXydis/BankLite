@@ -122,7 +122,7 @@ namespace BankLite.Application.Services
                 {
                     AccountId = dto.FromAccountId,
                     Amount = dto.Amount,
-                    Type = TransactionType.Withdrawal,
+                    Type = TransactionType.Transfer,
                     Description = $"Internal Transfer to account {toAccount.AccountNumber}"
                 };
 
@@ -130,7 +130,7 @@ namespace BankLite.Application.Services
                 {
                     AccountId = dto.ToAccountId,
                     Amount = dto.Amount,
-                    Type = TransactionType.Deposit,
+                    Type = TransactionType.Transfer,
                     Description = $"Internal Transfer from account {fromAccount.AccountNumber}"
                 };
 
@@ -174,7 +174,7 @@ namespace BankLite.Application.Services
                 {
                     AccountId = dto.FromAccountId,
                     Amount = dto.Amount,
-                    Type = TransactionType.Withdrawal,
+                    Type = TransactionType.Transfer,
                     Description = $"Transfer to account {toAccount.AccountNumber}"
                 };
 
@@ -182,7 +182,7 @@ namespace BankLite.Application.Services
                 {
                     AccountId = toAccount.Id,
                     Amount = dto.Amount,
-                    Type = TransactionType.Deposit,
+                    Type = TransactionType.Transfer,
                     Description = $"Transfer from account {fromAccount.AccountNumber}"
                 };
 
