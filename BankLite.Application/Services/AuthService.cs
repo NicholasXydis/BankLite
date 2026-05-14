@@ -34,6 +34,8 @@ namespace BankLite.Application.Services
                 throw new InvalidOperationException("Email already registered");
             }
 
+            dto.FullName = dto.FullName.Trim();
+
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
 
             var user = new User

@@ -7,7 +7,8 @@ namespace BankLite.Application.Validators
     {
         public RegisterUserValidator()
         {
-            RuleFor(x => x.FullName).NotEmpty().MaximumLength(50);
+            RuleFor(x => x.FullName).NotEmpty().MaximumLength(50)
+            .Must(x => x == x.Trim()).WithMessage("Full name cannot have leading or trailing spaces");
             RuleFor(x => x.Email).NotEmpty().Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("Please enter a valid email address").MaximumLength(256);
             RuleFor(x => x.Password).NotEmpty().MinimumLength(8).MaximumLength(100);
         }
