@@ -4,6 +4,7 @@ async function logout() {
   await logoutApi();
   sessionStorage.removeItem("expiresAt");
   sessionStorage.removeItem("fullName");
+  sessionStorage.removeItem("userId");
   sessionStorage.removeItem("cachedAccounts");
 }
 
@@ -72,6 +73,7 @@ if (loginForm) {
       const data = await login(email, password);
       sessionStorage.setItem("fullName", data.fullName);
       sessionStorage.setItem("expiresAt", data.expiresAt);
+      sessionStorage.setItem("userId", data.userId);
       window.location.href = "dashboard.html";
     } catch (error) {
       errorMsg.textContent = error.message;
@@ -123,6 +125,7 @@ if (registerForm) {
       const data = await register(fullName, email, password);
       sessionStorage.setItem("fullName", data.fullName);
       sessionStorage.setItem("expiresAt", data.expiresAt);
+      sessionStorage.setItem("userId", data.userId);
       window.location.href = "dashboard.html";
     } catch (error) {
       errorMsg.textContent = error.message;

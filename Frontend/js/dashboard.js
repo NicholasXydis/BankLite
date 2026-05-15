@@ -20,6 +20,7 @@ async function loadDashboard() {
     accounts.forEach((account) => {
       const card = document.createElement("div");
       card.className = "account-card";
+      card.dataset.accountId = account.id;
       card.addEventListener("click", function (e) {
         if (e.target.closest(".copy-btn")) return;
         window.location.href = `transactions.html?accountId=${account.id}`;
@@ -269,6 +270,38 @@ async function loadSpendingChart() {
 }
 
 loadSpendingChart();
+
+function connectSignalR() {
+  const connection = new signalR.HubConnectionBuilder()
+    .withUrl(`${API_URL}/hubs/bank?userId=${sessionStorage.getItem("userId")}`)
+    .withAutomaticReconnect()
+    .build();
+
+  connection.on("BalanceUpdated", (accountId, newBalance) => {
+    const cached = sessionStorage.getItem("cachedAccounts");
+    if (cached) {
+      const accounts = JSON.parse(cached);
+      const account = accounts.find((a) => a.id === accountId);
+      if (account) {
+        account.balance = newBalance;
+        sessionStorage.setItem("cachedAccounts", JSON.stringify(accounts));
+      }
+    }
+
+    const balanceEl = document.querySelector(
+      `[data-account-id="${accountId}"] .account-balance-amount`,
+    );
+    if (balanceEl) {
+      countUp(balanceEl, newBalance, 600);
+    }
+  });
+
+  connection
+    .start()
+    .catch((err) => console.error("SignalR connection failed:", err));
+}
+
+connectSignalR();
 
 document
   .getElementById("accounts-container")
