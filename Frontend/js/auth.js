@@ -1,27 +1,14 @@
 let _sessionTimerInterval = null;
 
-function saveToken(token) {
-  sessionStorage.setItem("authToken", token);
-}
-
-function getToken() {
-  return sessionStorage.getItem("authToken");
-}
-
-function isLoggedIn() {
-  const token = getToken();
-  return !!token;
-}
-
 function logout() {
-  sessionStorage.removeItem("authToken");
+  sessionStorage.removeItem("expiresAt");
+  sessionStorage.removeItem("fullName");
 }
 
 function getTokenExpiry() {
-  const token = getToken();
-  if (!token) return null;
-  const payload = JSON.parse(atob(token.split(".")[1]));
-  return payload.exp * 1000;
+  const expiry = sessionStorage.getItem("expiresAt");
+  if (!expiry) return null;
+  return new Date(expiry).getTime();
 }
 
 function startSessionTimer() {
@@ -55,12 +42,9 @@ function startSessionTimer() {
 }
 
 function requireAuth() {
-  const token = getToken();
-  if (!token) {
+  if (!sessionStorage.getItem("expiresAt")) {
     window.location.href = "index.html";
-    return;
   }
-  return token;
 }
 
 const loginForm = document.getElementById("login-form");
@@ -84,8 +68,8 @@ if (loginForm) {
     }
     try {
       const data = await login(email, password);
-      saveToken(data.token);
       sessionStorage.setItem("fullName", data.fullName);
+      sessionStorage.setItem("expiresAt", data.expiresAt);
       window.location.href = "dashboard.html";
     } catch (error) {
       errorMsg.textContent = error.message;
@@ -135,8 +119,8 @@ if (registerForm) {
     }
     try {
       const data = await register(fullName, email, password);
-      saveToken(data.token);
       sessionStorage.setItem("fullName", data.fullName);
+      sessionStorage.setItem("expiresAt", data.expiresAt);
       window.location.href = "dashboard.html";
     } catch (error) {
       errorMsg.textContent = error.message;
@@ -207,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (getToken()) startSessionTimer();
+  if (sessionStorage.getItem("expiresAt")) startSessionTimer();
 
   const stayBtn = document.getElementById("session-stay-btn");
   if (stayBtn) {
@@ -302,10 +286,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (settingsOverlay) settingsOverlay.addEventListener("click", closeSettings);
 
   async function loadSettingsProfile() {
-    const token = getToken();
-    if (!token) return;
     try {
-      const data = await getUserProfile(token);
+      const data = await getUserProfile();
       document.getElementById("settings-name").textContent = data.fullName;
       document.getElementById("settings-email").textContent = data.email;
       document.getElementById("settings-since").textContent = new Date(
@@ -325,15 +307,12 @@ document.addEventListener("DOMContentLoaded", function () {
               minute: "2-digit",
             })
           : "First login";
-    } catch (e) {
-      console.error("Failed to load profile", e);
-    }
+    } catch (e) {}
   }
 
   const changePasswordBtn = document.getElementById("change-password-btn");
   if (changePasswordBtn) {
     changePasswordBtn.addEventListener("click", async function () {
-      const token = getToken();
       const currentPassword = document.getElementById("current-password").value;
       const newPassword = document.getElementById("new-password").value;
       const successMsg = document.getElementById("change-password-success");
@@ -348,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function () {
       changePasswordBtn.disabled = true;
       changePasswordBtn.classList.add("btn-loading");
       try {
-        await changePassword(token, currentPassword, newPassword);
+        await changePassword(currentPassword, newPassword);
         successMsg.textContent = "Password changed successfully!";
         successMsg.style.display = "block";
         document.getElementById("current-password").value = "";
@@ -367,8 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const deleteAccountBtn = document.getElementById("delete-account-btn");
   if (deleteAccountBtn) {
     deleteAccountBtn.addEventListener("click", function () {
-      const token = getToken();
-      if (!token) return;
+      if (!sessionStorage.getItem("expiresAt")) return;
       closeSettings();
       const modal = document.getElementById("logout-modal");
       const modalTitle = document.querySelector(".modal-title");
@@ -381,7 +359,7 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.style.display = "flex";
       modalConfirm.onclick = async function () {
         try {
-          await deleteAccount(token);
+          await deleteAccount();
           logout();
           window.location.href = "index.html";
         } catch (error) {
@@ -456,8 +434,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   async function sendMessage() {
-    const token = getToken();
-    if (!token) return;
+    if (!sessionStorage.getItem("expiresAt")) return;
     const message = chatbotInput.value.trim();
     if (!message) return;
 
@@ -467,7 +444,7 @@ document.addEventListener("DOMContentLoaded", function () {
     addTyping();
 
     try {
-      const response = await sendChatMessage(token, message);
+      const response = await sendChatMessage(message);
       removeTyping();
       addMessage(response, false);
     } catch (error) {

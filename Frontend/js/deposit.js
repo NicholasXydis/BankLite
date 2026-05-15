@@ -1,6 +1,5 @@
 async function loadDeposit() {
-  const token = requireAuth();
-  if (!token) return;
+  requireAuth();
 
   const accountSelect = document.getElementById("account-select");
   const errorMsg = document.getElementById("error-msg");
@@ -8,7 +7,7 @@ async function loadDeposit() {
   let accounts = [];
 
   try {
-    accounts = await getAccounts(token);
+    accounts = await getAccounts();
     if (accounts.length === 0) {
       document.getElementById("empty-state").style.display = "block";
       document.querySelector(".form-card").style.display = "none";
@@ -34,8 +33,7 @@ async function loadDeposit() {
 document
   .getElementById("deposit-btn")
   .addEventListener("click", async function () {
-    const token = requireAuth();
-    if (!token) return;
+    requireAuth();
 
     const errorMsg = document.getElementById("error-msg");
     const successMsg = document.getElementById("success-msg");
@@ -70,7 +68,7 @@ document
     btn.classList.add("btn-loading");
 
     try {
-      await deposit(token, accountId, amount);
+      await deposit(accountId, amount);
       successMsg.textContent = `Successfully deposited $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
 

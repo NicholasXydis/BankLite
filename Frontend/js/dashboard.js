@@ -1,6 +1,5 @@
 async function loadDashboard() {
-  const token = requireAuth();
-  if (!token) return;
+  requireAuth();
   document.body.style.visibility = "visible";
 
   const userName = sessionStorage.getItem("fullName");
@@ -15,7 +14,7 @@ async function loadDashboard() {
   const accountsContainer = document.getElementById("accounts-container");
 
   try {
-    const accounts = await getAccounts(token);
+    const accounts = await getAccounts();
     accountsContainer.innerHTML = "";
 
     accounts.forEach((account) => {
@@ -91,8 +90,7 @@ async function loadDashboard() {
 document
   .getElementById("create-account-btn")
   .addEventListener("click", async function () {
-    const token = requireAuth();
-    if (!token) return;
+    requireAuth();
 
     const accountType = parseInt(
       document.getElementById("account-type-select").value,
@@ -108,7 +106,7 @@ document
     btn.classList.add("btn-loading");
 
     try {
-      await createAccount(token, accountType);
+      await createAccount(accountType);
       successMsg.textContent = "Account created successfully!";
       successMsg.style.display = "block";
       await loadDashboard();
@@ -156,11 +154,10 @@ typeText("dashboard-title", "My Accounts");
 
 let spendingChartInstance = null;
 async function loadSpendingChart() {
-  const token = requireAuth();
-  if (!token) return;
+  requireAuth();
 
   try {
-    const accounts = await getAccounts(token);
+    const accounts = await getAccounts();
     if (accounts.length === 0) return;
     document.getElementById("chart-card").style.display = "block";
 
@@ -173,7 +170,6 @@ async function loadSpendingChart() {
 
     for (const account of accounts) {
       const transactions = await getTransactionsByDateRange(
-        token,
         account.id,
         startDate,
         endDate,

@@ -58,7 +58,7 @@ async function register(fullName, email, password) {
   return data;
 }
 
-async function getAccounts(token) {
+async function getAccounts() {
   const response = await fetch(API_URL + "/api/account", {
     method: "GET",
     credentials: "include",
@@ -73,7 +73,7 @@ async function getAccounts(token) {
   return data;
 }
 
-async function deposit(token, accountId, amount) {
+async function deposit(accountId, amount) {
   const response = await fetch(API_URL + "/api/transaction/deposit", {
     method: "POST",
     credentials: "include",
@@ -93,7 +93,7 @@ async function deposit(token, accountId, amount) {
   return data;
 }
 
-async function withdraw(token, accountId, amount) {
+async function withdraw(accountId, amount) {
   const response = await fetch(API_URL + "/api/transaction/withdraw", {
     method: "POST",
     credentials: "include",
@@ -113,7 +113,7 @@ async function withdraw(token, accountId, amount) {
   return data;
 }
 
-async function transfer(token, fromAccountId, toAccountId, amount) {
+async function transfer(fromAccountId, toAccountId, amount) {
   const response = await fetch(API_URL + "/api/transaction/transfer", {
     method: "POST",
     credentials: "include",
@@ -133,7 +133,7 @@ async function transfer(token, fromAccountId, toAccountId, amount) {
   return data;
 }
 
-async function transferExternal(token, fromAccountId, toAccountNumber, amount) {
+async function transferExternal(fromAccountId, toAccountNumber, amount) {
   const response = await fetch(API_URL + "/api/transaction/transferexternal", {
     method: "POST",
     credentials: "include",
@@ -154,7 +154,6 @@ async function transferExternal(token, fromAccountId, toAccountNumber, amount) {
 }
 
 async function getTransactions(
-  token,
   accountId,
   page = 1,
   pageSize = 10,
@@ -180,12 +179,7 @@ async function getTransactions(
   return data;
 }
 
-async function getTransactionsByDateRange(
-  token,
-  accountId,
-  startDate,
-  endDate,
-) {
+async function getTransactionsByDateRange(accountId, startDate, endDate) {
   const response = await fetch(
     `${API_URL}/api/transaction/${accountId}/range?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`,
     {
@@ -204,7 +198,7 @@ async function getTransactionsByDateRange(
   return data;
 }
 
-async function createAccount(token, accountType) {
+async function createAccount(accountType) {
   const response = await fetch(API_URL + "/api/account/create", {
     method: "POST",
     credentials: "include",
@@ -224,7 +218,7 @@ async function createAccount(token, accountType) {
   return data;
 }
 
-async function getUserProfile(token) {
+async function getUserProfile() {
   const response = await fetch(API_URL + "/api/user/profile", {
     method: "GET",
     credentials: "include",
@@ -234,7 +228,7 @@ async function getUserProfile(token) {
   return data;
 }
 
-async function changePassword(token, currentPassword, newPassword) {
+async function changePassword(currentPassword, newPassword) {
   const response = await fetch(API_URL + "/api/user/change-password", {
     method: "POST",
     credentials: "include",
@@ -254,7 +248,7 @@ async function changePassword(token, currentPassword, newPassword) {
   return data;
 }
 
-async function deleteAccount(token) {
+async function deleteAccount() {
   const response = await fetch(API_URL + "/api/user/delete-account", {
     method: "DELETE",
     credentials: "include",
@@ -263,7 +257,7 @@ async function deleteAccount(token) {
   if (!response.ok) throw new Error(data.message || "Failed to delete account");
 }
 
-async function sendChatMessage(token, message) {
+async function sendChatMessage(message) {
   const response = await fetch(`${API_URL}/api/chat/message`, {
     method: "POST",
     credentials: "include",

@@ -3,8 +3,7 @@ const pageSize = 10;
 let currentFilter = "all";
 
 async function loadTransactions(accountId, page, type = null) {
-  const token = requireAuth();
-  if (!token) return;
+  requireAuth();
 
   const errorMsg = document.getElementById("error-msg");
   const transactionsList = document.getElementById("transactions-list");
@@ -19,13 +18,7 @@ async function loadTransactions(accountId, page, type = null) {
   nextBtn.style.opacity = "0";
   transactionsList.style.opacity = "0";
   try {
-    const result = await getTransactions(
-      token,
-      accountId,
-      page,
-      pageSize,
-      type,
-    );
+    const result = await getTransactions(accountId, page, pageSize, type);
     transactionsList.innerHTML = "";
     document.getElementById("no-filter-results").style.display = "none";
 
@@ -107,13 +100,12 @@ async function loadTransactions(accountId, page, type = null) {
   }
 }
 async function loadAccounts() {
-  const token = requireAuth();
-  if (!token) return;
+  requireAuth();
 
   const accountSelect = document.getElementById("account-select");
 
   try {
-    const accounts = await getAccounts(token);
+    const accounts = await getAccounts();
 
     if (accounts.length === 0) {
       document.getElementById("empty-state").style.display = "block";
@@ -190,14 +182,13 @@ document
 document
   .getElementById("export-csv-btn")
   .addEventListener("click", async function () {
-    const token = requireAuth();
-    if (!token) return;
+    requireAuth();
 
     const accountId = document.getElementById("account-select").value;
     if (!accountId) return;
 
     try {
-      const result = await getTransactions(token, accountId, 1, 10000);
+      const result = await getTransactions(accountId, 1, 10000);
       const rows = [["Date", "Type", "Amount", "Description"]];
 
       result.items.forEach((t) => {

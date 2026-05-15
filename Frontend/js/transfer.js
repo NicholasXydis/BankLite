@@ -1,6 +1,5 @@
 async function loadTransfer() {
-  const token = requireAuth();
-  if (!token) return;
+  requireAuth();
 
   const accountSelect = document.getElementById("account-select");
   const toAccountSelect = document.getElementById("to-account-select");
@@ -9,7 +8,7 @@ async function loadTransfer() {
   let accounts = [];
 
   try {
-    accounts = await getAccounts(token);
+    accounts = await getAccounts();
     if (accounts.length === 0) {
       document.getElementById("empty-state").style.display = "block";
       document.querySelector(".form-card").style.display = "none";
@@ -41,8 +40,7 @@ async function loadTransfer() {
 document
   .getElementById("transfer-btn")
   .addEventListener("click", async function () {
-    const token = requireAuth();
-    if (!token) return;
+    requireAuth();
 
     const errorMsg = document.getElementById("error-msg");
     const successMsg = document.getElementById("success-msg");
@@ -99,14 +97,9 @@ document
 
     try {
       if (isExternal) {
-        await transferExternal(
-          token,
-          accountId,
-          toAccountNumber.trim(),
-          amount,
-        );
+        await transferExternal(accountId, toAccountNumber.trim(), amount);
       } else {
-        await transfer(token, accountId, toAccountId, amount);
+        await transfer(accountId, toAccountId, amount);
       }
       successMsg.textContent = `Successfully transferred $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
