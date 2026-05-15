@@ -1,19 +1,20 @@
+using BankLite.API.Middleware;
+using BankLite.Application.DTOs;
+using BankLite.Application.Interfaces;
+using BankLite.Application.Services;
+using BankLite.Application.Validators;
+using BankLite.Domain.Interfaces;
 using BankLite.Infrastructure.Data;
 using BankLite.Infrastructure.Repositories;
-using BankLite.Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using BankLite.Application.Services;
-using BankLite.Application.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using BankLite.API.Middleware;
-using Microsoft.AspNetCore.RateLimiting;
-using System.Threading.RateLimiting;
+using BankLiteAPI.Hubs;
 using FluentValidation;
-using BankLite.Application.Validators;
-using BankLite.Application.DTOs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, config) =>
@@ -87,6 +88,8 @@ builder.Services.AddScoped<IValidator<TransferDto>, TransferValidator>();
 builder.Services.AddScoped<IValidator<ExternalTransferDto>, ExternalTransferValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordDto>, ChangePasswordValidator>();
 builder.Services.AddResponseCompression();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<IBalanceNotifier, SignalRBalanceNotifier>();
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -190,6 +193,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHealthChecks("/health");
+
+app.MapHub<BankHub>("/hubs/bank");
 
 app.Lifetime.ApplicationStopping.Register(() =>
     Log.Information("Application is shutting down..."));
