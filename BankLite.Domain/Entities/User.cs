@@ -22,5 +22,6 @@ namespace BankLite.Domain.Entities
         public ICollection<Account> Accounts { get; set; } = new List<Account>();
         public int FailedLoginAttempts { get; set; } = 0;
         public DateTime? LockoutEnd { get; set; }
+        public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

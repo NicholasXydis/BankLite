@@ -29,7 +29,8 @@ namespace BankLite.Tests.Services
             jwtSection.Setup(x => x["ExpiryMinutes"]).Returns("60");
             _mockConfig.Setup(x => x.GetSection("JwtSettings")).Returns(jwtSection.Object);
 
-            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>());
+            var mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
+            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), mockRefreshTokenRepo.Object);
         }
 
         [Fact]
@@ -53,7 +54,7 @@ namespace BankLite.Tests.Services
                 Password = "Password123"
             };
 
-            var (token, response) = await _authService.LoginAsync(dto);
+            var (token, refreshToken, response) = await _authService.LoginAsync(dto);
             Assert.NotEmpty(token);
             Assert.Equal(existingUser.Id, response.UserId);
         }
@@ -72,7 +73,7 @@ namespace BankLite.Tests.Services
                 Password = "Password123"
             };
 
-            var (token, response) = await _authService.RegisterAsync(dto);
+            var (token, refreshToken, response) = await _authService.RegisterAsync(dto);
             Assert.NotEmpty(token);
         }
 

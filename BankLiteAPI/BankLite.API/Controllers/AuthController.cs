@@ -31,13 +31,21 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var (token, result) = await _authService.RegisterAsync(dto);
+            var (token, refreshToken, result) = await _authService.RegisterAsync(dto);
             Response.Cookies.Append("accessToken", token, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
                 Expires = DateTimeOffset.UtcNow.AddMinutes(60)
+            });
+            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(1),
+                Path = "/api/auth/refresh"
             });
             return Ok(result);
         }
@@ -52,7 +60,7 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var (token, result) = await _authService.LoginAsync(dto);
+            var (token, refreshToken, result) = await _authService.LoginAsync(dto);
             Response.Cookies.Append("accessToken", token, new CookieOptions
             {
                 HttpOnly = true,
@@ -60,14 +68,55 @@ namespace BankLite.API.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTimeOffset.UtcNow.AddMinutes(60)
             });
+            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(1),
+                Path = "/api/auth/refresh"
+            });
+            return Ok(result);
+        }
+
+        [HttpPost("refresh")]
+        [ProducesResponseType(typeof(AuthResponseDto), 200)]
+        [ProducesResponseType(401)]
+        public async Task<IActionResult> Refresh()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+                return Unauthorized(new { message = "No refresh token provided." });
+
+            var (token, newRefreshToken, result) = await _authService.RefreshAsync(refreshToken);
+            Response.Cookies.Append("accessToken", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(60)
+            });
+            Response.Cookies.Append("refreshToken", newRefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddDays(1),
+                Path = "/api/auth/refresh"
+            });
             return Ok(result);
         }
 
         [HttpPost("logout")]
         [ProducesResponseType(200)]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
+            var refreshToken = Request.Cookies["refreshToken"];
+            if (!string.IsNullOrEmpty(refreshToken))
+                await _authService.RevokeRefreshTokenAsync(refreshToken);
+
             Response.Cookies.Delete("accessToken");
+            Response.Cookies.Delete("refreshToken");
             return Ok();
         }
     }

@@ -16,17 +16,19 @@ namespace BankLite.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
         private readonly IAuditLogRepository _auditLogRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly ILogger<AuthService> _logger;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration, IAuditLogRepository auditLogRepository, ILogger<AuthService> logger)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration, IAuditLogRepository auditLogRepository, ILogger<AuthService> logger, IRefreshTokenRepository refreshTokenRepository)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _auditLogRepository = auditLogRepository;
             _logger = logger;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
-        public async Task<(string Token, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
+        public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
         {
             if (await _userRepository.ExistsAsync(dto.Email.ToLower()))
             {
@@ -56,14 +58,15 @@ namespace BankLite.Application.Services
             });
 
             var token = GenerateToken(user);
-            return (token, new AuthResponseDto
+            var refreshToken = await GenerateRefreshTokenAsync(user.Id);
+            return (token, refreshToken, new AuthResponseDto
             {
                 UserId = user.Id,
                 FullName = user.FullName,
                 ExpiresAt = DateTime.UtcNow.AddMinutes(60),
             });
         }
-        public async Task<(string Token, AuthResponseDto Response)> LoginAsync(LoginUserDto dto)
+        public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> LoginAsync(LoginUserDto dto)
         {
             var user = await _userRepository.GetByEmailAsync(dto.Email.ToLower());
             if (user == null)
@@ -108,7 +111,8 @@ namespace BankLite.Application.Services
             _logger.LogInformation("User logged in successfully: {Email}", user.Email);
 
             var token = GenerateToken(user);
-            return (token, new AuthResponseDto
+            var refreshToken = await GenerateRefreshTokenAsync(user.Id);
+            return (token, refreshToken, new AuthResponseDto
             {
                 UserId = user.Id,
                 FullName = user.FullName,
@@ -136,6 +140,44 @@ namespace BankLite.Application.Services
                 );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RefreshAsync(string refreshToken)
+        {
+            var existing = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            if (existing == null || existing.IsRevoked || existing.ExpiresAt < DateTime.UtcNow)
+                throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+
+            await _refreshTokenRepository.RevokeAsync(existing);
+
+            var token = GenerateToken(existing.User);
+            var newRefreshToken = await GenerateRefreshTokenAsync(existing.UserId);
+            return (token, newRefreshToken, new AuthResponseDto
+            {
+                UserId = existing.User.Id,
+                FullName = existing.User.FullName,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(60)
+            });
+        }
+
+        public async Task RevokeRefreshTokenAsync(string refreshToken)
+        {
+            var existing = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            if (existing != null && !existing.IsRevoked)
+                await _refreshTokenRepository.RevokeAsync(existing);
+        }
+
+        private async Task<string> GenerateRefreshTokenAsync(Guid userId)
+        {
+            var token = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64));
+            var refreshToken = new BankLite.Domain.Entities.RefreshToken
+            {
+                UserId = userId,
+                Token = token,
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
+            };
+            await _refreshTokenRepository.AddAsync(refreshToken);
+            return token;
         }
 
     }
