@@ -298,3 +298,28 @@ async function refreshToken() {
   const data = await response.json();
   return data;
 }
+
+async function forgotPassword(email) {
+  const response = await fetch(API_URL + "/api/auth/forgot-password", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  const data = await response.json();
+  if (!response.ok)
+    throw new Error(data.message || "Failed to send reset email");
+  return data;
+}
+
+async function resetPassword(token, newPassword) {
+  const response = await fetch(API_URL + "/api/auth/reset-password", {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, newPassword }),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || "Failed to reset password");
+  return data;
+}

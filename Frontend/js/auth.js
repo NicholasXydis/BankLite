@@ -208,6 +208,60 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  const forgotLink = document.getElementById("forgot-password-link");
+  const forgotModal = document.getElementById("forgot-modal");
+  const forgotCancelBtn = document.getElementById("forgot-cancel-btn");
+  const forgotSubmitBtn = document.getElementById("forgot-submit-btn");
+
+  if (forgotLink) {
+    forgotLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      forgotModal.style.display = "flex";
+    });
+  }
+
+  if (forgotCancelBtn) {
+    forgotCancelBtn.addEventListener("click", function () {
+      forgotModal.style.display = "none";
+      document.getElementById("forgot-email").value = "";
+      document.getElementById("forgot-error").style.display = "none";
+      document.getElementById("forgot-success").style.display = "none";
+    });
+  }
+
+  if (forgotSubmitBtn) {
+    forgotSubmitBtn.addEventListener("click", async function () {
+      const email = document.getElementById("forgot-email").value.trim();
+      const errorEl = document.getElementById("forgot-error");
+      const successEl = document.getElementById("forgot-success");
+      errorEl.style.display = "none";
+      successEl.style.display = "none";
+
+      if (!email) {
+        errorEl.textContent = "Please enter your email.";
+        errorEl.style.display = "block";
+        return;
+      }
+
+      forgotSubmitBtn.disabled = true;
+      forgotSubmitBtn.classList.add("btn-loading");
+
+      try {
+        await forgotPassword(email);
+        successEl.textContent =
+          "If that email exists, a reset link has been sent.";
+        successEl.style.display = "block";
+        document.getElementById("forgot-email").value = "";
+      } catch (error) {
+        errorEl.textContent = error.message;
+        errorEl.style.display = "block";
+      } finally {
+        forgotSubmitBtn.disabled = false;
+        forgotSubmitBtn.classList.remove("btn-loading");
+      }
+    });
+  }
   const hamburgerBtn = document.getElementById("hamburger-btn");
   if (hamburgerBtn) {
     hamburgerBtn.addEventListener("click", function () {
