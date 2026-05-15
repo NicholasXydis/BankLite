@@ -31,8 +31,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var result = await _authService.RegisterAsync(dto);
-            Response.Cookies.Append("accessToken", result.Token, new CookieOptions
+            var (token, result) = await _authService.RegisterAsync(dto);
+            Response.Cookies.Append("accessToken", token, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,
@@ -52,8 +52,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var result = await _authService.LoginAsync(dto);
-            Response.Cookies.Append("accessToken", result.Token, new CookieOptions
+            var (token, result) = await _authService.LoginAsync(dto);
+            Response.Cookies.Append("accessToken", token, new CookieOptions
             {
                 HttpOnly = true,
                 Secure = true,

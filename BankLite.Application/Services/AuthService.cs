@@ -26,7 +26,7 @@ namespace BankLite.Application.Services
             _logger = logger;
         }
 
-        public async Task<AuthResponseDto> RegisterAsync(RegisterUserDto dto)
+        public async Task<(string Token, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
         {
             if (await _userRepository.ExistsAsync(dto.Email.ToLower()))
             {
@@ -56,14 +56,14 @@ namespace BankLite.Application.Services
             });
 
             var token = GenerateToken(user);
-            return new AuthResponseDto
+            return (token, new AuthResponseDto
             {
-                Token = token,
                 UserId = user.Id,
-                FullName = user.FullName
-            };
+                FullName = user.FullName,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(60),
+            });
         }
-        public async Task<AuthResponseDto> LoginAsync(LoginUserDto dto)
+        public async Task<(string Token, AuthResponseDto Response)> LoginAsync(LoginUserDto dto)
         {
             var user = await _userRepository.GetByEmailAsync(dto.Email.ToLower());
             if (user == null)
@@ -81,14 +81,14 @@ namespace BankLite.Application.Services
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
                 user.FailedLoginAttempts++;
-            if (user.FailedLoginAttempts >= 5)
-            {
-                user.LockoutEnd = DateTime.UtcNow.AddMinutes(15);
-                user.FailedLoginAttempts = 0;
-                _logger.LogWarning("Account locked due to failed attempts: {Email}", dto.Email.ToLower());
-            }
-            await _userRepository.UpdateAsync(user);
-            throw new InvalidOperationException("Invalid Credentials");
+                if (user.FailedLoginAttempts >= 5)
+                {
+                    user.LockoutEnd = DateTime.UtcNow.AddMinutes(15);
+                    user.FailedLoginAttempts = 0;
+                    _logger.LogWarning("Account locked due to failed attempts: {Email}", dto.Email.ToLower());
+                }
+                await _userRepository.UpdateAsync(user);
+                throw new InvalidOperationException("Invalid Credentials");
             }
 
             user.FailedLoginAttempts = 0;
@@ -108,12 +108,12 @@ namespace BankLite.Application.Services
             _logger.LogInformation("User logged in successfully: {Email}", user.Email);
 
             var token = GenerateToken(user);
-            return new AuthResponseDto
+            return (token, new AuthResponseDto
             {
-                Token = token,
                 UserId = user.Id,
-                FullName = user.FullName
-            };
+                FullName = user.FullName,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(60)
+            });
         }
 
         private string GenerateToken(User user)
