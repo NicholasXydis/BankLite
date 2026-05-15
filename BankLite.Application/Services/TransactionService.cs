@@ -13,14 +13,16 @@ namespace BankLite.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAuditLogRepository _auditLogRepository;
         private readonly ILogger<TransactionService> _logger;
+        private readonly IBalanceNotifier _balanceNotifier;
 
-        public TransactionService(IAccountRepository accountRepository, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IAuditLogRepository auditLogRepository, ILogger<TransactionService> logger)
+        public TransactionService(IAccountRepository accountRepository, ITransactionRepository transactionRepository, IUnitOfWork unitOfWork, IAuditLogRepository auditLogRepository, ILogger<TransactionService> logger, IBalanceNotifier balanceNotifier)
         {
             _accountRepository = accountRepository;
             _transactionRepository = transactionRepository;
             _unitOfWork = unitOfWork;
             _auditLogRepository = auditLogRepository;
             _logger = logger;
+            _balanceNotifier = balanceNotifier;
         }
 
         public async Task<Transaction> DepositAsync(DepositWithdrawDto dto, Guid userId, string? idempotencyKey = null)
@@ -53,6 +55,7 @@ namespace BankLite.Application.Services
             await _transactionRepository.AddAsync(transaction);
             await _accountRepository.UpdateAsync(account);
             await _unitOfWork.SaveAsync();
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), account.Id, account.Balance);
             _logger.LogInformation("Deposit of {Amount} to account {AccountId} by user {UserId}", dto.Amount, dto.AccountId, userId);
 
             await _auditLogRepository.LogAsync(new AuditLog
@@ -102,6 +105,7 @@ namespace BankLite.Application.Services
             await _transactionRepository.AddAsync(transaction);
             await _accountRepository.UpdateAsync(account);
             await _unitOfWork.SaveAsync();
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), account.Id, account.Balance);
             _logger.LogInformation("Withdrawal of {Amount} from account {AccountId} by user {UserId}", dto.Amount, dto.AccountId, userId);
 
             await _auditLogRepository.LogAsync(new AuditLog
@@ -161,6 +165,9 @@ namespace BankLite.Application.Services
                 await _transactionRepository.AddAsync(creditTransaction);
             });
 
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), fromAccount.Id, fromAccount.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), toAccount.Id, toAccount.Balance);
+
             _logger.LogInformation("Transfer of {Amount} from account {FromAccountId} to account {ToAccountId} by user {UserId}", dto.Amount, dto.FromAccountId, dto.ToAccountId, userId);
 
             await _auditLogRepository.LogAsync(new AuditLog
@@ -219,6 +226,9 @@ namespace BankLite.Application.Services
                 await _transactionRepository.AddAsync(debitTransaction);
                 await _transactionRepository.AddAsync(creditTransaction);
             });
+
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), fromAccount.Id, fromAccount.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(toAccount.UserId.ToString(), toAccount.Id, toAccount.Balance);
 
             _logger.LogInformation("External transfer of {Amount} from account {FromAccountId} to account number {ToAccountNumber} by user {UserId}", dto.Amount, dto.FromAccountId, dto.ToAccountNumber, userId);
 

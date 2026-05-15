@@ -15,6 +15,7 @@ namespace BankLite.Tests.Services
         private readonly Mock<ITransactionRepository> _mockTransactionRepo;
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IAuditLogRepository> _mockAuditLogRepo;
+        private readonly Mock<IBalanceNotifier> _mockBalanceNotifier;
         private readonly TransactionService _transactionService;
 
         public TransactionServiceTests()
@@ -23,8 +24,9 @@ namespace BankLite.Tests.Services
             _mockTransactionRepo = new Mock<ITransactionRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockAuditLogRepo = new Mock<IAuditLogRepository>();
+            _mockBalanceNotifier = new Mock<IBalanceNotifier>();
 
-            _transactionService = new TransactionService(_mockAccountRepo.Object, _mockTransactionRepo.Object, _mockUnitOfWork.Object, _mockAuditLogRepo.Object, new NullLogger<TransactionService>());
+            _transactionService = new TransactionService(_mockAccountRepo.Object, _mockTransactionRepo.Object, _mockUnitOfWork.Object, _mockAuditLogRepo.Object, new NullLogger<TransactionService>(), _mockBalanceNotifier.Object);
 
             _mockUnitOfWork
                 .Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
