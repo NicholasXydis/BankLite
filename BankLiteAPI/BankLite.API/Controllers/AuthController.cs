@@ -62,5 +62,13 @@ namespace BankLite.API.Controllers
             });
             return Ok(result);
         }
+
+        [HttpPost("logout")]
+        [ProducesResponseType(200)]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("accessToken");
+            return Ok();
+        }
     }
 }

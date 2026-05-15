@@ -276,3 +276,10 @@ async function sendChatMessage(message) {
 
   return data.response;
 }
+
+async function logoutApi() {
+  await fetch(API_URL + "/api/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+}

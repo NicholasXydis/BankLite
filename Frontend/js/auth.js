@@ -1,6 +1,7 @@
 let _sessionTimerInterval = null;
 
-function logout() {
+async function logout() {
+  await logoutApi();
   sessionStorage.removeItem("expiresAt");
   sessionStorage.removeItem("fullName");
 }
@@ -18,12 +19,12 @@ function startSessionTimer() {
   const warningTime = 59.9 * 60 * 1000;
 
   if (_sessionTimerInterval) clearInterval(_sessionTimerInterval);
-  _sessionTimerInterval = setInterval(function () {
+  _sessionTimerInterval = setInterval(async function () {
     const now = Date.now();
     const timeLeft = expiry - now;
 
     if (timeLeft <= 0) {
-      logout();
+      await logout();
       window.location.href = "index.html";
       return;
     }
@@ -185,8 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const modalConfirm = document.getElementById("modal-confirm-btn");
   if (modalConfirm) {
-    modalConfirm.addEventListener("click", function () {
-      logout();
+    modalConfirm.addEventListener("click", async function () {
+      await logout();
       window.location.href = "index.html";
     });
   }
@@ -360,7 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
       modalConfirm.onclick = async function () {
         try {
           await deleteAccount();
-          logout();
+          await logout();
           window.location.href = "index.html";
         } catch (error) {
           modal.style.display = "none";
