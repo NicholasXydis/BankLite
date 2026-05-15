@@ -22,7 +22,7 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("register")]
-        [EnableRateLimiting("fixed")]
+        [EnableRateLimiting("register")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)

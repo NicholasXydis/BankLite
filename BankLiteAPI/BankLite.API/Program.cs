@@ -139,6 +139,14 @@ builder.Services.AddRateLimiter(options =>
         config.QueueLimit = 0;
     });
 
+    options.AddFixedWindowLimiter("register", config =>
+    {
+        config.PermitLimit = 3;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        config.QueueLimit = 0;
+    });
+
     options.RejectionStatusCode = 429;
 });
 
