@@ -75,7 +75,10 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddHttpClient<IGroqService, GroqService>();
+builder.Services.AddHttpClient<IGroqService, GroqService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 builder.Services.AddScoped<IValidator<CreateAccountDto>, CreateAccountValidator>();
 builder.Services.AddScoped<IValidator<LoginUserDto>, LoginUserValidator>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
@@ -83,6 +86,7 @@ builder.Services.AddScoped<IValidator<DepositWithdrawDto>, DepositWithdrawValida
 builder.Services.AddScoped<IValidator<TransferDto>, TransferValidator>();
 builder.Services.AddScoped<IValidator<ExternalTransferDto>, ExternalTransferValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordDto>, ChangePasswordValidator>();
+builder.Services.AddResponseCompression();
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -171,6 +175,8 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseMiddleware<SecurityHeadersMiddleware>();
 
+app.UseResponseCompression();
+
 app.UseHttpsRedirection();
 
 app.UseCors("AllowFrontend");
@@ -184,5 +190,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHealthChecks("/health");
+
+app.Lifetime.ApplicationStopping.Register(() =>
+    Log.Information("Application is shutting down..."));
 
 app.Run();

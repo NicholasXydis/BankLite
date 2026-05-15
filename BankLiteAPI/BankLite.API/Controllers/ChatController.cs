@@ -25,6 +25,8 @@ namespace BankLite.API.Controllers
         {
             if (string.IsNullOrWhiteSpace(message.Content))
                 return BadRequest(new { message = "Message cannot be empty" });
+            if (message.Content.Length > 200)
+                return BadRequest(new { message = "Message cannot exceed 200 characters" });
 
             var response = await _groqService.GetChatResponseAsync(message.Content);
             return Ok(new { response });
