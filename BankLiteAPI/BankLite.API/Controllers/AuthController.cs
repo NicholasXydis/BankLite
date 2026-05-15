@@ -107,6 +107,24 @@ namespace BankLite.API.Controllers
             return Ok(result);
         }
 
+        [HttpPost("forgot-password")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            var resetBaseUrl = "http://127.0.0.1:5500/reset-password.html";
+            await _authService.ForgotPasswordAsync(dto.Email, resetBaseUrl);
+            return Ok(new { message = "If that email exists, a reset link has been sent." });
+        }
+
+        [HttpPost("reset-password")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            await _authService.ResetPasswordAsync(dto.Token, dto.NewPassword);
+            return Ok(new { message = "Password reset successfully." });
+        }
+
         [HttpPost("logout")]
         [ProducesResponseType(200)]
         public async Task<IActionResult> Logout()
