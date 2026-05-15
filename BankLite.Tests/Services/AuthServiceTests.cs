@@ -53,11 +53,9 @@ namespace BankLite.Tests.Services
                 Password = "Password123"
             };
 
-            var result = await _authService.LoginAsync(dto);
-
-            Assert.NotNull(result);
-            Assert.NotEmpty(result.Token);
-            Assert.Equal(existingUser.Id, result.UserId);
+            var (token, response) = await _authService.LoginAsync(dto);
+            Assert.NotEmpty(token);
+            Assert.Equal(existingUser.Id, response.UserId);
         }
 
         [Fact]
@@ -74,10 +72,8 @@ namespace BankLite.Tests.Services
                 Password = "Password123"
             };
 
-            var result = await _authService.RegisterAsync(dto);
-
-            Assert.NotNull(result);
-            Assert.NotEmpty(result.Token);
+            var (token, response) = await _authService.RegisterAsync(dto);
+            Assert.NotEmpty(token);
         }
 
         [Fact]
