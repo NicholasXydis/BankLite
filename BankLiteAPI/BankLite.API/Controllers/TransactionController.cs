@@ -1,9 +1,7 @@
 ﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
-using BankLite.Application.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
