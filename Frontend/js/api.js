@@ -44,6 +44,9 @@ async function register(fullName, email, password) {
     body: JSON.stringify({ fullName, email, password }),
   });
 
+  if (response.status === 429)
+    throw new Error("Too many registration attempts. Please wait a minute.");
+
   const data = await response.json();
 
   handleServerError(response);
