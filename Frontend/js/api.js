@@ -62,9 +62,6 @@ async function getAccounts(token) {
   const response = await fetch(API_URL + "/api/account", {
     method: "GET",
     credentials: "include",
-    headers: {
-      Authorization: "Bearer " + token,
-    },
   });
 
   const data = await response.json();
@@ -82,7 +79,6 @@ async function deposit(token, accountId, amount) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ accountId, amount }),
   });
@@ -103,7 +99,6 @@ async function withdraw(token, accountId, amount) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ accountId, amount }),
   });
@@ -124,7 +119,6 @@ async function transfer(token, fromAccountId, toAccountId, amount) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ fromAccountId, toAccountId, amount }),
   });
@@ -145,7 +139,6 @@ async function transferExternal(token, fromAccountId, toAccountNumber, amount) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ fromAccountId, toAccountNumber, amount }),
   });
@@ -174,9 +167,6 @@ async function getTransactions(
     {
       method: "GET",
       credentials: "include",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
     },
   );
 
@@ -201,9 +191,6 @@ async function getTransactionsByDateRange(
     {
       method: "GET",
       credentials: "include",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
     },
   );
 
@@ -223,7 +210,6 @@ async function createAccount(token, accountType) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ type: accountType }),
   });
@@ -242,9 +228,6 @@ async function getUserProfile(token) {
   const response = await fetch(API_URL + "/api/user/profile", {
     method: "GET",
     credentials: "include",
-    headers: {
-      Authorization: "Bearer " + token,
-    },
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.message || "Failed to load profile");
@@ -257,7 +240,6 @@ async function changePassword(token, currentPassword, newPassword) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ currentPassword, newPassword }),
   });
@@ -276,9 +258,6 @@ async function deleteAccount(token) {
   const response = await fetch(API_URL + "/api/user/delete-account", {
     method: "DELETE",
     credentials: "include",
-    headers: {
-      Authorization: "Bearer " + token,
-    },
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.message || "Failed to delete account");
@@ -290,7 +269,6 @@ async function sendChatMessage(token, message) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ content: message }),
   });
