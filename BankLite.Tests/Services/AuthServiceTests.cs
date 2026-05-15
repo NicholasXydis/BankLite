@@ -1,4 +1,5 @@
 ﻿using BankLite.Application.DTOs;
+using BankLite.Application.Interfaces;
 using BankLite.Application.Services;
 using BankLite.Domain.Entities;
 using BankLite.Domain.Interfaces;
@@ -30,7 +31,9 @@ namespace BankLite.Tests.Services
             _mockConfig.Setup(x => x.GetSection("JwtSettings")).Returns(jwtSection.Object);
 
             var mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
-            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), mockRefreshTokenRepo.Object);
+            var mockPasswordResetRepo = new Mock<IPasswordResetRepository>();
+            var mockEmailService = new Mock<IEmailService>();
+            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), mockRefreshTokenRepo.Object, mockPasswordResetRepo.Object, mockEmailService.Object);
         }
 
         [Fact]
