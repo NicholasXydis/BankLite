@@ -108,7 +108,8 @@ builder.Services.AddCors(options =>
             builder.Configuration["AllowedOrigins:Frontend"] ?? "http://localhost:3000"
             )
                .AllowAnyHeader()
-               .AllowAnyMethod();
+               .AllowAnyMethod()
+               .AllowCredentials();
     });
 });
 

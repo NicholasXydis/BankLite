@@ -32,6 +32,13 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var result = await _authService.RegisterAsync(dto);
+            Response.Cookies.Append("accessToken", result.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(60)
+            });
             return Ok(result);
         }
 
@@ -46,6 +53,13 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var result = await _authService.LoginAsync(dto);
+            Response.Cookies.Append("accessToken", result.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(60)
+            });
             return Ok(result);
         }
     }
