@@ -286,6 +286,19 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
+        public async Task WithdrawAsync_ShouldNotCheckIdempotency_WhenKeyIsNull()
+        {
+            var userId = Guid.NewGuid();
+            var account = new Account { Id = Guid.NewGuid(), UserId = userId, Balance = 1000, AccountNumber = "ACC001", Type = AccountType.Chequing };
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(account.Id)).ReturnsAsync(account);
+            var dto = new DepositWithdrawDto { AccountId = account.Id, Amount = 250 };
+
+            await _transactionService.WithdrawAsync(dto, userId);
+
+            _mockTransactionRepo.Verify(r => r.GetByIdempotencyKeyAsync(It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
         public async Task TransferAsync_ShouldMoveMoney_BetweenAccounts()
         {
             var userId = Guid.NewGuid();
@@ -414,6 +427,16 @@ namespace BankLite.Tests.Services
             _mockTransactionRepo.Verify(r => r.AddAsync(It.IsAny<Transaction>()), Times.Never);
             _mockAccountRepo.Verify(r => r.UpdateAsync(It.IsAny<Account>()), Times.Never);
             _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task TransferAsync_ShouldThrow_WhenFromAccountNotFound()
+        {
+            _mockAccountRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((Account?)null);
+            var dto = new TransferDto { FromAccountId = Guid.NewGuid(), ToAccountId = Guid.NewGuid(), Amount = 500 };
+
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(
+                () => _transactionService.TransferAsync(dto, Guid.NewGuid()));
         }
 
         [Fact]
