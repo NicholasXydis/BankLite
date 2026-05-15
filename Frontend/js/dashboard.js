@@ -109,6 +109,7 @@ document
       await createAccount(accountType);
       successMsg.textContent = "Account created successfully!";
       successMsg.style.display = "block";
+      await getAccounts(true);
       await loadDashboard();
       await loadSpendingChart();
     } catch (error) {

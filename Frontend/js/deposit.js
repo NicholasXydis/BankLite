@@ -80,6 +80,7 @@ document
       selectEl.classList.add("flash-green");
       setTimeout(() => selectEl.classList.remove("flash-green"), 1000);
       const selectedId = accountId;
+      await getAccounts(true);
       await loadDeposit();
       document.getElementById("account-select").value = selectedId;
 

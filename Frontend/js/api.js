@@ -61,7 +61,11 @@ async function register(fullName, email, password) {
   return data;
 }
 
-async function getAccounts() {
+async function getAccounts(forceRefresh = false) {
+  if (!forceRefresh) {
+    const cached = sessionStorage.getItem("cachedAccounts");
+    if (cached) return JSON.parse(cached);
+  }
   const response = await fetch(API_URL + "/api/account", {
     method: "GET",
     credentials: "include",
@@ -73,6 +77,7 @@ async function getAccounts() {
   if (!response.ok) {
     throw new Error(data.message || "Failed to fetch accounts");
   }
+  sessionStorage.setItem("cachedAccounts", JSON.stringify(data));
   return data;
 }
 

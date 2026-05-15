@@ -77,6 +77,7 @@ document
       selectEl.classList.add("flash-red");
       setTimeout(() => selectEl.classList.remove("flash-red"), 1000);
       const selectedId = accountId;
+      await getAccounts(true);
       await loadWithdraw();
       document.getElementById("account-select").value = selectedId;
       document.getElementById("amount").value = "";

@@ -122,6 +122,7 @@ document
       }
       const selectedId = accountId;
       const selectedToId = toAccountId;
+      await getAccounts(true);
       await loadTransfer();
       document.getElementById("account-select").value = selectedId;
       document.getElementById("to-account-select").value = selectedToId;

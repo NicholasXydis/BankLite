@@ -4,6 +4,7 @@ async function logout() {
   await logoutApi();
   sessionStorage.removeItem("expiresAt");
   sessionStorage.removeItem("fullName");
+  sessionStorage.removeItem("cachedAccounts");
 }
 
 function getTokenExpiry() {
