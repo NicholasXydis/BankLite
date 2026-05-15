@@ -18,14 +18,18 @@ namespace BankLite.Application.Services
         private readonly IAuditLogRepository _auditLogRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         private readonly ILogger<AuthService> _logger;
+        private readonly IPasswordResetRepository _passwordResetRepository;
+        private readonly IEmailService _emailService;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration, IAuditLogRepository auditLogRepository, ILogger<AuthService> logger, IRefreshTokenRepository refreshTokenRepository)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration, IAuditLogRepository auditLogRepository, ILogger<AuthService> logger, IRefreshTokenRepository refreshTokenRepository, IPasswordResetRepository passwordResetRepository, IEmailService emailService)
         {
             _userRepository = userRepository;
             _configuration = configuration;
             _auditLogRepository = auditLogRepository;
             _logger = logger;
             _refreshTokenRepository = refreshTokenRepository;
+            _passwordResetRepository = passwordResetRepository;
+            _emailService = emailService;
         }
 
         public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
@@ -178,6 +182,42 @@ namespace BankLite.Application.Services
             };
             await _refreshTokenRepository.AddAsync(refreshToken);
             return token;
+        }
+
+        public async Task ForgotPasswordAsync(string email, string resetBaseUrl)
+        {
+            var user = await _userRepository.GetByEmailAsync(email.ToLower());
+            if (user == null) return; 
+
+            var token = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64));
+            var resetToken = new BankLite.Domain.Entities.PasswordResetToken
+            {
+                UserId = user.Id,
+                Token = token,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(15)
+            };
+
+            await _passwordResetRepository.AddAsync(resetToken);
+
+            var resetLink = $"{resetBaseUrl}?token={Uri.EscapeDataString(token)}";
+            await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+
+            _logger.LogInformation("Password reset email sent to {Email}", user.Email);
+        }
+
+        public async Task ResetPasswordAsync(string token, string newPassword)
+        {
+            var resetToken = await _passwordResetRepository.GetByTokenAsync(token);
+            if (resetToken == null || resetToken.IsUsed || resetToken.ExpiresAt < DateTime.UtcNow)
+                throw new InvalidOperationException("Invalid or expired reset token.");
+
+            resetToken.IsUsed = true;
+            await _passwordResetRepository.UpdateAsync(resetToken);
+
+            resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _userRepository.UpdateAsync(resetToken.User);
+
+            _logger.LogInformation("Password reset successful for user {UserId}", resetToken.UserId);
         }
 
     }
