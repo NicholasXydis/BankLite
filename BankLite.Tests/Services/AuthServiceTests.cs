@@ -15,6 +15,9 @@ namespace BankLite.Tests.Services
         private readonly Mock<IUserRepository> _mockUserRepo;
         private readonly Mock<IAuditLogRepository> _mockAuditRepo;
         private readonly Mock<IConfiguration> _mockConfig;
+        private readonly Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
+        private readonly Mock<IPasswordResetRepository> _mockPasswordResetRepo;
+        private readonly Mock<IEmailService> _mockEmailService;
         private readonly AuthService _authService;
 
         public AuthServiceTests()
@@ -30,10 +33,10 @@ namespace BankLite.Tests.Services
             jwtSection.Setup(x => x["ExpiryMinutes"]).Returns("60");
             _mockConfig.Setup(x => x.GetSection("JwtSettings")).Returns(jwtSection.Object);
 
-            var mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
-            var mockPasswordResetRepo = new Mock<IPasswordResetRepository>();
-            var mockEmailService = new Mock<IEmailService>();
-            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), mockRefreshTokenRepo.Object, mockPasswordResetRepo.Object, mockEmailService.Object);
+            _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
+            _mockPasswordResetRepo = new Mock<IPasswordResetRepository>();
+            _mockEmailService = new Mock<IEmailService>();
+            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), _mockRefreshTokenRepo.Object, _mockPasswordResetRepo.Object, _mockEmailService.Object);
         }
 
         [Fact]
@@ -63,47 +66,155 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task RegisterAsync_ShouldReturnToken_OnSuccess()
+        public async Task LoginAsync_ShouldReturnRefreshToken_OnSuccess()
         {
-            _mockUserRepo
-                .Setup(r => r.ExistsAsync(It.IsAny<string>()))
-                .ReturnsAsync(false);
-
-            var dto = new RegisterUserDto
+            var existingUser = new User
             {
-                FullName = "New User",
-                Email = "new@banklite.com",
-                Password = "Password123"
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
             };
 
-            var (token, refreshToken, response) = await _authService.RegisterAsync(dto);
-            Assert.NotEmpty(token);
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            var (token, refreshToken, response) = await _authService.LoginAsync(dto);
+
+            Assert.NotEmpty(refreshToken);
         }
 
         [Fact]
-        public async Task RegisterAsync_ShouldThrow_WhenEmailAlreadyExists()
+        public async Task LoginAsync_ShouldReturnCorrectUserId_OnSuccess()
         {
-            _mockUserRepo
-                .Setup(r => r.ExistsAsync(It.IsAny<string>()))
-                .ReturnsAsync(true);
-
-            var dto = new RegisterUserDto
+            var existingUser = new User
             {
-                FullName = "New User",
+                Id = Guid.NewGuid(),
                 Email = "test@banklite.com",
-                Password = "Password123"
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
             };
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _authService.RegisterAsync(dto));
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            var (token, refreshToken, response) = await _authService.LoginAsync(dto);
+
+            Assert.Equal(existingUser.Id, response.UserId);
+            Assert.Equal(existingUser.FullName, response.FullName);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldReturnFutureExpiresAt_OnSuccess()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            var (token, refreshToken, response) = await _authService.LoginAsync(dto);
+
+            Assert.True(response.ExpiresAt > DateTime.UtcNow);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldUpdateLastLoginAt_OnSuccess()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            await _authService.LoginAsync(dto);
+
+            Assert.NotNull(existingUser.LastLoginAt);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldResetFailedAttempts_OnSuccess()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123"),
+                FailedLoginAttempts = 3
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            await _authService.LoginAsync(dto);
+
+            Assert.Equal(0, existingUser.FailedLoginAttempts);
+            Assert.Null(existingUser.LockoutEnd);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldCallUpdateAsync_OnSuccess()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            await _authService.LoginAsync(dto);
+
+            _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldNotBeLocked_WhenLockoutExpired()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123"),
+                LockoutEnd = DateTime.UtcNow.AddMinutes(-1)
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            var (token, refreshToken, response) = await _authService.LoginAsync(dto);
+
+            Assert.NotEmpty(token);
         }
 
         [Fact]
         public async Task LoginAsync_ShouldThrow_WhenUserNotFound()
         {
             _mockUserRepo
-            .Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync((User?)null);
+                .Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync((User?)null);
 
             var dto = new LoginUserDto
             {
@@ -127,8 +238,8 @@ namespace BankLite.Tests.Services
             };
 
             _mockUserRepo
-            .Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
-            .ReturnsAsync(existingUser);
+                .Setup(r => r.GetByEmailAsync(It.IsAny<string>()))
+                .ReturnsAsync(existingUser);
 
             var dto = new LoginUserDto
             {
@@ -138,6 +249,491 @@ namespace BankLite.Tests.Services
 
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _authService.LoginAsync(dto));
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldThrow_WhenAccountLocked()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123"),
+                LockoutEnd = DateTime.UtcNow.AddMinutes(10)
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _authService.LoginAsync(dto));
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldIncrementFailedAttempts_WhenPasswordIsWrong()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123"),
+                FailedLoginAttempts = 0
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "WrongPassword" };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _authService.LoginAsync(dto));
+
+            Assert.Equal(1, existingUser.FailedLoginAttempts);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldLockAccount_AfterFiveFailedAttempts()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123"),
+                FailedLoginAttempts = 4
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "WrongPassword" };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _authService.LoginAsync(dto));
+
+            Assert.NotNull(existingUser.LockoutEnd);
+            Assert.Equal(0, existingUser.FailedLoginAttempts);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldCallUpdateAsync_WhenPasswordIsWrong()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "WrongPassword" };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _authService.LoginAsync(dto));
+
+            _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task LoginAsync_ShouldNotCallUpdateAsync_WhenUserNotFound()
+        {
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync((User?)null);
+
+            var dto = new LoginUserDto { Email = "test@banklite.com", Password = "Password123" };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _authService.LoginAsync(dto));
+
+            _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldReturnToken_OnSuccess()
+        {
+            _mockUserRepo
+                .Setup(r => r.ExistsAsync(It.IsAny<string>()))
+                .ReturnsAsync(false);
+
+            var dto = new RegisterUserDto
+            {
+                FullName = "New User",
+                Email = "new@banklite.com",
+                Password = "Password123"
+            };
+
+            var (token, refreshToken, response) = await _authService.RegisterAsync(dto);
+            Assert.NotEmpty(token);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldReturnRefreshToken_OnSuccess()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            var dto = new RegisterUserDto { FullName = "New User", Email = "new@banklite.com", Password = "Password123" };
+
+            var (token, refreshToken, response) = await _authService.RegisterAsync(dto);
+
+            Assert.NotEmpty(refreshToken);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldReturnCorrectFullName_OnSuccess()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            var dto = new RegisterUserDto { FullName = "New User", Email = "new@banklite.com", Password = "Password123" };
+
+            var (token, refreshToken, response) = await _authService.RegisterAsync(dto);
+
+            Assert.Equal("New User", response.FullName);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldReturnFutureExpiresAt_OnSuccess()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            var dto = new RegisterUserDto { FullName = "New User", Email = "new@banklite.com", Password = "Password123" };
+
+            var (token, refreshToken, response) = await _authService.RegisterAsync(dto);
+
+            Assert.True(response.ExpiresAt > DateTime.UtcNow);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldLowercaseEmail()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            User? savedUser = null;
+            _mockUserRepo.Setup(r => r.AddAsync(It.IsAny<User>()))
+                .Callback<User>(u => savedUser = u);
+
+            var dto = new RegisterUserDto { FullName = "New User", Email = "NEW@BANKLITE.COM", Password = "Password123" };
+
+            await _authService.RegisterAsync(dto);
+
+            Assert.NotNull(savedUser);
+            Assert.Equal("new@banklite.com", savedUser!.Email);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldTrimFullName()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            User? savedUser = null;
+            _mockUserRepo.Setup(r => r.AddAsync(It.IsAny<User>()))
+                .Callback<User>(u => savedUser = u);
+
+            var dto = new RegisterUserDto { FullName = "  New User  ", Email = "new@banklite.com", Password = "Password123" };
+
+            await _authService.RegisterAsync(dto);
+
+            Assert.NotNull(savedUser);
+            Assert.Equal("New User", savedUser!.FullName);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldHashPassword()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            User? savedUser = null;
+            _mockUserRepo.Setup(r => r.AddAsync(It.IsAny<User>()))
+                .Callback<User>(u => savedUser = u);
+
+            var dto = new RegisterUserDto { FullName = "New User", Email = "new@banklite.com", Password = "Password123" };
+
+            await _authService.RegisterAsync(dto);
+
+            Assert.NotNull(savedUser);
+            Assert.NotEqual("Password123", savedUser!.PasswordHash);
+            Assert.True(BCrypt.Net.BCrypt.Verify("Password123", savedUser.PasswordHash));
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldCallAddAsync_OnSuccess()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
+
+            var dto = new RegisterUserDto { FullName = "New User", Email = "new@banklite.com", Password = "Password123" };
+
+            await _authService.RegisterAsync(dto);
+
+            _mockUserRepo.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldThrow_WhenEmailAlreadyExists()
+        {
+            _mockUserRepo
+                .Setup(r => r.ExistsAsync(It.IsAny<string>()))
+                .ReturnsAsync(true);
+
+            var dto = new RegisterUserDto
+            {
+                FullName = "New User",
+                Email = "test@banklite.com",
+                Password = "Password123"
+            };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _authService.RegisterAsync(dto));
+        }
+
+        [Fact]
+        public async Task RegisterAsync_ShouldNotCallAddAsync_WhenEmailExists()
+        {
+            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
+
+            var dto = new RegisterUserDto { FullName = "New User", Email = "test@banklite.com", Password = "Password123" };
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _authService.RegisterAsync(dto));
+
+            _mockUserRepo.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordAsync_ShouldSilentlyFail_WhenUserNotFound()
+        {
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync((User?)null);
+
+            var exception = await Record.ExceptionAsync(
+                () => _authService.ForgotPasswordAsync("notexist@banklite.com", "http://localhost/reset"));
+
+            Assert.Null(exception);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordAsync_ShouldSendEmail_WhenUserExists()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            await _authService.ForgotPasswordAsync("test@banklite.com", "http://localhost/reset");
+
+            _mockEmailService.Verify(e => e.SendPasswordResetEmailAsync(existingUser.Email, It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordAsync_ShouldSaveResetToken_WhenUserExists()
+        {
+            var existingUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password123")
+            };
+
+            _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
+
+            await _authService.ForgotPasswordAsync("test@banklite.com", "http://localhost/reset");
+
+            _mockPasswordResetRepo.Verify(r => r.AddAsync(It.IsAny<PasswordResetToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_ShouldResetPassword_OnSuccess()
+        {
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
+            };
+
+            var resetToken = new PasswordResetToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = "valid-token",
+                ExpiresAt = DateTime.UtcNow.AddMinutes(15),
+                IsUsed = false,
+                User = user
+            };
+
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("valid-token")).ReturnsAsync(resetToken);
+
+            await _authService.ResetPasswordAsync("valid-token", "NewPassword123");
+
+            Assert.True(BCrypt.Net.BCrypt.Verify("NewPassword123", user.PasswordHash));
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_ShouldMarkTokenAsUsed_OnSuccess()
+        {
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
+            };
+
+            var resetToken = new PasswordResetToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = "valid-token",
+                ExpiresAt = DateTime.UtcNow.AddMinutes(15),
+                IsUsed = false,
+                User = user
+            };
+
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("valid-token")).ReturnsAsync(resetToken);
+
+            await _authService.ResetPasswordAsync("valid-token", "NewPassword123");
+
+            Assert.True(resetToken.IsUsed);
+            _mockPasswordResetRepo.Verify(r => r.UpdateAsync(resetToken), Times.Once);
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_ShouldHashNewPassword()
+        {
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
+            };
+
+            var resetToken = new PasswordResetToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = "valid-token",
+                ExpiresAt = DateTime.UtcNow.AddMinutes(15),
+                IsUsed = false,
+                User = user
+            };
+
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("valid-token")).ReturnsAsync(resetToken);
+
+            await _authService.ResetPasswordAsync("valid-token", "NewPassword123");
+
+            Assert.NotEqual("NewPassword123", user.PasswordHash);
+            Assert.True(BCrypt.Net.BCrypt.Verify("NewPassword123", user.PasswordHash));
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_ShouldThrow_WhenTokenNotFound()
+        {
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync(It.IsAny<string>())).ReturnsAsync((PasswordResetToken?)null);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _authService.ResetPasswordAsync("invalid-token", "NewPassword123"));
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_ShouldThrow_WhenTokenExpired()
+        {
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
+            };
+
+            var resetToken = new PasswordResetToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = "expired-token",
+                ExpiresAt = DateTime.UtcNow.AddMinutes(-1),
+                IsUsed = false,
+                User = user
+            };
+
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("expired-token")).ReturnsAsync(resetToken);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _authService.ResetPasswordAsync("expired-token", "NewPassword123"));
+        }
+
+        [Fact]
+        public async Task ResetPasswordAsync_ShouldThrow_WhenTokenAlreadyUsed()
+        {
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                Email = "test@banklite.com",
+                FullName = "Test User",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
+            };
+
+            var resetToken = new PasswordResetToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = "used-token",
+                ExpiresAt = DateTime.UtcNow.AddMinutes(15),
+                IsUsed = true,
+                User = user
+            };
+
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("used-token")).ReturnsAsync(resetToken);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(
+                () => _authService.ResetPasswordAsync("used-token", "NewPassword123"));
+        }
+
+        [Fact]
+        public async Task RevokeRefreshTokenAsync_ShouldRevoke_WhenTokenExists()
+        {
+            var refreshToken = new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                Token = "valid-refresh-token",
+                IsRevoked = false,
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
+            };
+
+            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync("valid-refresh-token")).ReturnsAsync(refreshToken);
+
+            await _authService.RevokeRefreshTokenAsync("valid-refresh-token");
+
+            _mockRefreshTokenRepo.Verify(r => r.RevokeAsync(refreshToken), Times.Once);
+        }
+
+        [Fact]
+        public async Task RevokeRefreshTokenAsync_ShouldSilentlyFail_WhenTokenNotFound()
+        {
+            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync(It.IsAny<string>())).ReturnsAsync((RefreshToken?)null);
+
+            var exception = await Record.ExceptionAsync(
+                () => _authService.RevokeRefreshTokenAsync("nonexistent-token"));
+
+            Assert.Null(exception);
+        }
+
+        [Fact]
+        public async Task RevokeRefreshTokenAsync_ShouldNotRevoke_WhenTokenAlreadyRevoked()
+        {
+            var refreshToken = new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                Token = "already-revoked-token",
+                IsRevoked = true,
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
+            };
+
+            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync("already-revoked-token")).ReturnsAsync(refreshToken);
+
+            await _authService.RevokeRefreshTokenAsync("already-revoked-token");
+
+            _mockRefreshTokenRepo.Verify(r => r.RevokeAsync(It.IsAny<RefreshToken>()), Times.Never);
         }
     }
 }
