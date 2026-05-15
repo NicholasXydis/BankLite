@@ -13,6 +13,7 @@ namespace BankLite.Infrastructure.Data
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +44,12 @@ namespace BankLite.Infrastructure.Data
                 .HasMany(u => u.RefreshTokens)
                 .WithOne(rt => rt.User)
                 .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.PasswordResetTokens)
+                .WithOne(p => p.User)
+                .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Account>()
