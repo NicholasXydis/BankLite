@@ -196,8 +196,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const stayBtn = document.getElementById("session-stay-btn");
   if (stayBtn) {
-    stayBtn.addEventListener("click", function () {
-      document.getElementById("session-warning").style.display = "none";
+    stayBtn.addEventListener("click", async function () {
+      const data = await refreshToken();
+      if (data) {
+        sessionStorage.setItem("expiresAt", data.expiresAt);
+        document.getElementById("session-warning").style.display = "none";
+        startSessionTimer();
+      } else {
+        await logout();
+        window.location.href = "index.html";
+      }
     });
   }
   const hamburgerBtn = document.getElementById("hamburger-btn");

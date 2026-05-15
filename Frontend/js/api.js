@@ -286,3 +286,15 @@ async function logoutApi() {
     credentials: "include",
   });
 }
+
+async function refreshToken() {
+  const response = await fetch(API_URL + "/api/auth/refresh", {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (!response.ok) return null;
+
+  const data = await response.json();
+  return data;
+}
