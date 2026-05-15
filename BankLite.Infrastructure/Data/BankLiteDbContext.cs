@@ -16,12 +16,17 @@ namespace BankLite.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Account>()
-            .Property(a => a.Balance)
-            .HasPrecision(18, 2);
+                .Property(a => a.Balance)
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<Transaction>()
-            .Property(t => t.Amount)
-            .HasPrecision(18, 2);
+                .Property(t => t.Amount)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Transaction>()
+                .HasIndex(t => t.IdempotencyKey)
+                .IsUnique()
+                .HasFilter("[IdempotencyKey] IS NOT NULL");
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)

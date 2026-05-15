@@ -40,7 +40,8 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var result = await _transactionService.DepositAsync(dto, userId);
+            var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
+            var result = await _transactionService.DepositAsync(dto, userId, idempotencyKey);
             var response = new TransactionResponseDto
             {
                 Id = result.Id,
@@ -65,7 +66,8 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var result = await _transactionService.WithdrawAsync(dto, userId);
+            var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
+            var result = await _transactionService.WithdrawAsync(dto, userId, idempotencyKey);
             var response = new TransactionResponseDto
             {
                 Id = result.Id,
@@ -89,7 +91,8 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            await _transactionService.TransferAsync(dto, userId);
+            var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
+            await _transactionService.TransferAsync(dto, userId, idempotencyKey);
             return Ok(new { message = "Transfer successful", amount = dto.Amount });
         }
 
@@ -105,7 +108,8 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            await _transactionService.TransferExternalAsync(dto, userId);
+            var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
+            await _transactionService.TransferExternalAsync(dto, userId, idempotencyKey);
             return Ok(new { message = "Transfer successful", amount = dto.Amount });
         }
 

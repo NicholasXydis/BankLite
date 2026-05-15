@@ -16,6 +16,9 @@ namespace BankLite.Domain.Entities
         [MaxLength(500)]
         public string Description { get; set; } = string.Empty;
 
+        [MaxLength(64)]
+        public string? IdempotencyKey { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

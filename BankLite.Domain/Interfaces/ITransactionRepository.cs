@@ -8,5 +8,6 @@ namespace BankLite.Domain.Interfaces
         Task<int> GetTotalCountAsync(Guid accountId, string? type = null);
         Task AddAsync(Transaction transaction);
         Task<IEnumerable<Transaction>> GetByAccountIdAndDateRangeAsync(Guid accountId, DateTime startDate, DateTime endDate);
+        Task<Transaction?> GetByIdempotencyKeyAsync(string key);
     }
 }

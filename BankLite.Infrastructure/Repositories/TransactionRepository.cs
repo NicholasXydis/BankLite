@@ -46,5 +46,11 @@ namespace BankLite.Infrastructure.Repositories
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
         }
+
+        public async Task<Transaction?> GetByIdempotencyKeyAsync(string key)
+        {
+            return await _context.Transactions
+                .FirstOrDefaultAsync(t => t.IdempotencyKey == key);
+        }
     }
 }

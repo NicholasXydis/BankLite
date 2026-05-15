@@ -23,8 +23,15 @@ namespace BankLite.Application.Services
             _logger = logger;
         }
 
-        public async Task<Transaction> DepositAsync(DepositWithdrawDto dto, Guid userId)
+        public async Task<Transaction> DepositAsync(DepositWithdrawDto dto, Guid userId, string? idempotencyKey = null)
         {
+
+            if (!string.IsNullOrEmpty(idempotencyKey))
+            {
+                var existing = await _transactionRepository.GetByIdempotencyKeyAsync(idempotencyKey);
+                if (existing != null) return existing;
+            }
+
             var account = await _accountRepository.GetByIdAsync(dto.AccountId);
             if (account == null || account.UserId != userId)
             {
@@ -39,7 +46,8 @@ namespace BankLite.Application.Services
                 AccountId = dto.AccountId,
                 Amount = dto.Amount,
                 Type = TransactionType.Deposit,
-                Description = $"Deposit of ${dto.Amount:F2}"
+                Description = $"Deposit of ${dto.Amount:F2}",
+                IdempotencyKey = idempotencyKey
             };
 
             await _transactionRepository.AddAsync(transaction);
@@ -58,8 +66,15 @@ namespace BankLite.Application.Services
             return transaction;
         }
 
-        public async Task<Transaction> WithdrawAsync(DepositWithdrawDto dto, Guid userId)
+        public async Task<Transaction> WithdrawAsync(DepositWithdrawDto dto, Guid userId, string? idempotencyKey = null)
         {
+
+            if (!string.IsNullOrEmpty(idempotencyKey))
+            {
+                var existing = await _transactionRepository.GetByIdempotencyKeyAsync(idempotencyKey);
+                if (existing != null) return existing;
+            }
+
             var account = await _accountRepository.GetByIdAsync(dto.AccountId);
             if (account == null || account.UserId != userId)
             {
@@ -80,7 +95,8 @@ namespace BankLite.Application.Services
                 AccountId = dto.AccountId,
                 Amount = dto.Amount,
                 Type = TransactionType.Withdrawal,
-                Description = $"Withdrawal of ${dto.Amount:F2}"
+                Description = $"Withdrawal of ${dto.Amount:F2}",
+                IdempotencyKey = idempotencyKey
             };
 
             await _transactionRepository.AddAsync(transaction);
@@ -99,8 +115,15 @@ namespace BankLite.Application.Services
             return transaction;
         }
 
-        public async Task TransferAsync(TransferDto dto, Guid userId)
+        public async Task TransferAsync(TransferDto dto, Guid userId, string? idempotencyKey = null)
         {
+
+            if (!string.IsNullOrEmpty(idempotencyKey))
+            {
+                var existing = await _transactionRepository.GetByIdempotencyKeyAsync(idempotencyKey);
+                if (existing != null) return;
+            }
+
             var fromAccount = await _accountRepository.GetByIdAsync(dto.FromAccountId);
             var toAccount = await _accountRepository.GetByIdAsync(dto.ToAccountId);
             if (fromAccount == null || fromAccount.UserId != userId)
@@ -149,8 +172,15 @@ namespace BankLite.Application.Services
             });
         }
 
-        public async Task TransferExternalAsync(ExternalTransferDto dto, Guid userId)
+        public async Task TransferExternalAsync(ExternalTransferDto dto, Guid userId, string? idempotencyKey = null)
         {
+
+            if (!string.IsNullOrEmpty(idempotencyKey))
+            {
+                var existing = await _transactionRepository.GetByIdempotencyKeyAsync(idempotencyKey);
+                if (existing != null) return;
+            }
+
             var fromAccount = await _accountRepository.GetByIdAsync(dto.FromAccountId);
             if (fromAccount == null || fromAccount.UserId != userId)
             {
