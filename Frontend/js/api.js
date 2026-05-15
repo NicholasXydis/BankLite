@@ -12,6 +12,7 @@ function handleServerError(response) {
 async function login(email, password) {
   const response = await fetch(API_URL + "/api/auth/login", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -36,6 +37,7 @@ async function login(email, password) {
 async function register(fullName, email, password) {
   const response = await fetch(API_URL + "/api/auth/register", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -59,6 +61,7 @@ async function register(fullName, email, password) {
 async function getAccounts(token) {
   const response = await fetch(API_URL + "/api/account", {
     method: "GET",
+    credentials: "include",
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -76,6 +79,7 @@ async function getAccounts(token) {
 async function deposit(token, accountId, amount) {
   const response = await fetch(API_URL + "/api/transaction/deposit", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -96,6 +100,7 @@ async function deposit(token, accountId, amount) {
 async function withdraw(token, accountId, amount) {
   const response = await fetch(API_URL + "/api/transaction/withdraw", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -116,6 +121,7 @@ async function withdraw(token, accountId, amount) {
 async function transfer(token, fromAccountId, toAccountId, amount) {
   const response = await fetch(API_URL + "/api/transaction/transfer", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -136,6 +142,7 @@ async function transfer(token, fromAccountId, toAccountId, amount) {
 async function transferExternal(token, fromAccountId, toAccountNumber, amount) {
   const response = await fetch(API_URL + "/api/transaction/transferexternal", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -166,6 +173,7 @@ async function getTransactions(
       `/api/transaction/${accountId}?page=${page}&pageSize=${pageSize}${typeParam}`,
     {
       method: "GET",
+      credentials: "include",
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -192,6 +200,7 @@ async function getTransactionsByDateRange(
     `${API_URL}/api/transaction/${accountId}/range?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`,
     {
       method: "GET",
+      credentials: "include",
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -211,6 +220,7 @@ async function getTransactionsByDateRange(
 async function createAccount(token, accountType) {
   const response = await fetch(API_URL + "/api/account/create", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -231,6 +241,7 @@ async function createAccount(token, accountType) {
 async function getUserProfile(token) {
   const response = await fetch(API_URL + "/api/user/profile", {
     method: "GET",
+    credentials: "include",
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -243,6 +254,7 @@ async function getUserProfile(token) {
 async function changePassword(token, currentPassword, newPassword) {
   const response = await fetch(API_URL + "/api/user/change-password", {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,
@@ -263,6 +275,7 @@ async function changePassword(token, currentPassword, newPassword) {
 async function deleteAccount(token) {
   const response = await fetch(API_URL + "/api/user/delete-account", {
     method: "DELETE",
+    credentials: "include",
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -274,6 +287,7 @@ async function deleteAccount(token) {
 async function sendChatMessage(token, message) {
   const response = await fetch(`${API_URL}/api/chat/message`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
