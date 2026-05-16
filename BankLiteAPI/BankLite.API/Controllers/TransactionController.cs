@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
 {
@@ -12,6 +13,7 @@ namespace BankLite.API.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    [Tags("Transactions")]
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
@@ -28,9 +30,11 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("deposit")]
+        [SwaggerOperation(Summary = "Deposit funds", Description = "Deposits funds into the specified account. Supports idempotency via Idempotency-Key header.")]
         [ProducesResponseType(typeof(TransactionResponseDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Deposit([FromBody] DepositWithdrawDto dto)
         {
             var validation = await _depositWithdrawValidator.ValidateAsync(dto);
@@ -54,9 +58,11 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("withdraw")]
+        [SwaggerOperation(Summary = "Withdraw funds", Description = "Withdraws funds from the specified account. Supports idempotency via Idempotency-Key header.")]
         [ProducesResponseType(typeof(TransactionResponseDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Withdraw([FromBody] DepositWithdrawDto dto)
         {
             var validation = await _depositWithdrawValidator.ValidateAsync(dto);
@@ -79,9 +85,11 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("transfer")]
+        [SwaggerOperation(Summary = "Internal transfer", Description = "Transfers funds between two accounts belonging to the authenticated user. Supports idempotency via Idempotency-Key header.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Transfer([FromBody] TransferDto dto)
         {
             var validation = await _transferValidator.ValidateAsync(dto);
@@ -95,9 +103,11 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("transferexternal")]
+        [SwaggerOperation(Summary = "External transfer", Description = "Transfers funds to another user's account by account number. Supports idempotency via Idempotency-Key header.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> TransferExternal([FromBody] ExternalTransferDto dto)
         {
 
@@ -112,8 +122,10 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet("{accountId}")]
+        [SwaggerOperation(Summary = "Get transactions", Description = "Returns paginated transactions for the specified account. Optionally filter by type.")]
         [ProducesResponseType(typeof(PagedResultDto<TransactionResponseDto>), 200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetTransactions(Guid accountId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? type = null)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -138,8 +150,10 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet("{accountId}/range")]
+        [SwaggerOperation(Summary = "Get transactions by date range", Description = "Returns all transactions for the specified account within a date range.")]
         [ProducesResponseType(typeof(IEnumerable<TransactionResponseDto>), 200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetTransactionsByDateRange(Guid accountId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

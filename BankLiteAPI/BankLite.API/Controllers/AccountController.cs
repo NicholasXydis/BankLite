@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
 {
@@ -12,6 +13,7 @@ namespace BankLite.API.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    [Tags("Accounts")]
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
@@ -25,9 +27,11 @@ namespace BankLite.API.Controllers
 
 
         [HttpPost("create")]
+        [SwaggerOperation(Summary = "Create account", Description = "Creates a new chequing or savings account for the authenticated user.")]
         [ProducesResponseType(typeof(AccountResponseDto), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto dto)
         {
             var validation = await _accountValidator.ValidateAsync(dto);
@@ -57,8 +61,10 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Get accounts", Description = "Returns all accounts belonging to the authenticated user.")]
         [ProducesResponseType(typeof(IEnumerable<AccountResponseDto>), 200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetAccounts()
         {
             var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);

@@ -1,13 +1,16 @@
 ﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Tags("Auth")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -23,8 +26,10 @@ namespace BankLite.API.Controllers
 
         [HttpPost("register")]
         [EnableRateLimiting("register")]
+        [SwaggerOperation(Summary = "Register a new user", Description = "Creates a new user account and returns a JWT access token via HttpOnly cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
             var validation = await _registerValidator.ValidateAsync(dto);
@@ -52,8 +57,10 @@ namespace BankLite.API.Controllers
 
         [HttpPost("login")]
         [EnableRateLimiting("login")]
+        [SwaggerOperation(Summary = "Login", Description = "Authenticates a user and returns a JWT access token via HttpOnly cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Login([FromBody] LoginUserDto dto)
         {
             var validation = await _loginValidator.ValidateAsync(dto);
@@ -80,8 +87,10 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("refresh")]
+        [SwaggerOperation(Summary = "Refresh access token", Description = "Issues a new JWT access token using the HttpOnly refresh token cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Refresh()
         {
             var refreshToken = Request.Cookies["refreshToken"];
@@ -108,7 +117,9 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("forgot-password")]
+        [SwaggerOperation(Summary = "Request password reset", Description = "Sends a password reset email if the provided email exists in the system.")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
             var resetBaseUrl = "http://127.0.0.1:5500/reset-password.html";
@@ -117,8 +128,10 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("reset-password")]
+        [SwaggerOperation(Summary = "Reset password", Description = "Resets the user's password using a valid reset token.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
             await _authService.ResetPasswordAsync(dto.Token, dto.NewPassword);
@@ -126,7 +139,11 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("logout")]
+        [Authorize]
+        [SwaggerOperation(Summary = "Logout", Description = "Revokes the refresh token and clears all auth cookies.")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Logout()
         {
             var refreshToken = Request.Cookies["refreshToken"];

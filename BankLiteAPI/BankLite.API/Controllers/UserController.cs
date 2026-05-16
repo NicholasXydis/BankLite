@@ -4,12 +4,14 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
+    [Tags("User")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -22,8 +24,10 @@ namespace BankLite.API.Controllers
         }
 
         [HttpGet("profile")]
+        [SwaggerOperation(Summary = "Get profile", Description = "Returns the authenticated user's profile information.")]
         [ProducesResponseType(typeof(UserProfileDto), 200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetProfile()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -32,9 +36,11 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("change-password")]
+        [SwaggerOperation(Summary = "Change password", Description = "Changes the authenticated user's password.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
             var validation = await _changePasswordValidator.ValidateAsync(dto);
@@ -47,8 +53,10 @@ namespace BankLite.API.Controllers
         }
 
         [HttpDelete("delete-account")]
+        [SwaggerOperation(Summary = "Delete account", Description = "Permanently deletes the authenticated user's account and all associated data.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteAccount()
         {
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
