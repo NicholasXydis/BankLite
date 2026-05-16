@@ -12,9 +12,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 using System.Threading.RateLimiting;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, config) =>
@@ -28,30 +30,46 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Name = "Authorization",
-        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Enter your JWT token here"
+        Title = "BankLite API",
+        Version = "v1",
+        Description = "A clean architecture banking API with JWT authentication via HttpOnly cookies. Rate limited: 30 req/min global, 5 req/min login, 3 req/min register.",
+        Contact = new OpenApiContact
+        {
+            Name = "Nick",
+            Url = new Uri("https://github.com/NicholasXydis")
+        }
     });
 
-    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
-{
+    c.AddSecurityDefinition("cookieAuth", new OpenApiSecurityScheme
     {
-        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+        Name = "accessToken",
+        Type = SecuritySchemeType.ApiKey,
+        In = ParameterLocation.Cookie,
+        Description = "JWT access token stored in HttpOnly cookie. Login or register to authenticate."
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+            new OpenApiSecurityScheme
             {
-                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
-                Id = "Bearer"
-            }
-        },
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "cookieAuth"
+                }
+            },
             new string[] { }
-    }
-});
+        }
+    });
+
+    c.EnableAnnotations();
+
+    var xmlFile = $"{typeof(AccountResponseDto).Assembly.GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 
 builder.Services.AddDbContext<BankLiteDbContext>(options =>
@@ -162,11 +180,15 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BankLite API v1");
+    c.RoutePrefix = "swagger";
+});
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-
     using (var scope = app.Services.CreateScope())
     {
         var context = scope.ServiceProvider.GetRequiredService<BankLiteDbContext>();
