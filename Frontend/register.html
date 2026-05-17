@@ -47,7 +47,7 @@
           </svg>
         </div>
         <h1>BankLite</h1>
-        <p>Create your account</p>
+        <p data-i18n="register_subtitle">Create your account</p>
         <div
           id="error-msg"
           class="error-msg"
@@ -55,7 +55,7 @@
           aria-live="polite"
         ></div>
 
-        <label for="fullName">Full Name</label>
+        <label for="fullName" data-i18n="register_fullname">Full Name</label>
         <div class="input-wrap">
           <svg
             aria-hidden="true"
@@ -79,12 +79,14 @@
             name="fullName"
             id="fullName"
             placeholder="Full Name"
+            data-i18n="placeholder_fullname"
+            data-i18n-attr="placeholder"
             required
             autocomplete="name"
           />
         </div>
 
-        <label for="email">Email</label>
+        <label for="email" data-i18n="register_email">Email</label>
 
         <div class="input-wrap">
           <svg
@@ -111,12 +113,14 @@
             name="email"
             id="email"
             placeholder="you@example.com"
+            data-i18n="placeholder_email"
+            data-i18n-attr="placeholder"
             required
             autocomplete="email"
           />
         </div>
 
-        <label for="password">Password</label>
+        <label for="password" data-i18n="register_password">Password</label>
 
         <div class="input-wrap">
           <svg
@@ -169,7 +173,9 @@
           </button>
         </div>
 
-        <label for="confirmPassword">Confirm Password</label>
+        <label for="confirmPassword" data-i18n="register_confirm_password"
+          >Confirm Password</label
+        >
         <div class="input-wrap">
           <svg
             aria-hidden="true"
@@ -221,13 +227,20 @@
           </button>
         </div>
 
-        <button type="submit" id="register-btn">Register</button>
+        <button type="submit" id="register-btn" data-i18n="register_btn">
+          Register
+        </button>
         <p class="auth-footer">
-          <span class="muted">Already have an account?</span>
-          <a class="link-accent" href="index.html">Sign in</a>
+          <span class="muted" data-i18n="register_have_account"
+            >Already have an account?</span
+          >
+          <a class="link-accent" href="index.html" data-i18n="register_signin"
+            >Sign in</a
+          >
         </p>
       </form>
     </main>
+    <script src="js/i18n.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
   </body>

@@ -47,14 +47,14 @@
           </svg>
         </div>
         <h1>BankLite</h1>
-        <p>Sign in to your account</p>
+        <p data-i18n="login_subtitle">Sign in to your account</p>
         <div
           id="error-msg"
           class="error-msg"
           role="alert"
           aria-live="polite"
         ></div>
-        <label for="email">Email</label>
+        <label for="email" data-i18n="login_email">Email</label>
 
         <div class="input-wrap">
           <svg
@@ -81,12 +81,14 @@
             name="email"
             id="email"
             placeholder="you@example.com"
+            data-i18n="placeholder_email"
+            data-i18n-attr="placeholder"
             required
             autocomplete="email"
           />
         </div>
 
-        <label for="password">Password</label>
+        <label for="password" data-i18n="login_password">Password</label>
 
         <div class="input-wrap">
           <svg
@@ -145,16 +147,24 @@
             class="link-accent"
             style="font-size: 0.8rem"
             id="forgot-password-link"
+            data-i18n="login_forgot"
             >Forgot password?</a
           >
         </div>
-        <button type="submit" id="login-btn">Sign in</button>
+        <button type="submit" id="login-btn" data-i18n="login_btn">
+          Sign in
+        </button>
         <p class="auth-footer">
-          <span class="muted">Don't have an account?</span>
-          <a class="link-accent" href="register.html">Register</a>
+          <span class="muted" data-i18n="login_no_account"
+            >Don't have an account?</span
+          >
+          <a class="link-accent" href="register.html" data-i18n="login_register"
+            >Register</a
+          >
         </p>
       </form>
     </main>
+    <script src="js/i18n.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 
@@ -164,8 +174,8 @@
       style="display: none; padding-left: 0"
     >
       <div class="modal">
-        <h3 class="modal-title">Reset Password</h3>
-        <p class="modal-text">
+        <h3 class="modal-title" data-i18n="forgot_title">Reset Password</h3>
+        <p class="modal-text" data-i18n="forgot_text">
           Enter your email, we'll send you a reset link. Valid for 15 minutes.
         </p>
         <div
@@ -187,15 +197,26 @@
             id="forgot-email"
             class="no-icon-input"
             placeholder="you@example.com"
+            data-i18n="placeholder_email"
+            data-i18n-attr="placeholder"
             autocomplete="email"
             style="width: 100%; text-align: left"
           />
         </div>
         <div class="modal-actions" style="display: flex; gap: 1rem">
-          <button id="forgot-cancel-btn" class="modal-cancel" style="flex: 1">
+          <button
+            id="forgot-cancel-btn"
+            class="modal-cancel"
+            style="flex: 1"
+            data-i18n="forgot_cancel"
+          >
             Cancel
           </button>
-          <button id="forgot-submit-btn" style="flex: 1">
+          <button
+            id="forgot-submit-btn"
+            style="flex: 1"
+            data-i18n="forgot_submit"
+          >
             Send Reset Link
           </button>
         </div>
