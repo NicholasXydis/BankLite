@@ -145,7 +145,7 @@ a {
   font-weight: 500;
 }
 
-a span {
+form a span {
   color: #1a3a5c;
   font-weight: 700;
 }
@@ -2074,4 +2074,3 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 .chatbot-send:hover {
   opacity: 0.9;
 }
-
