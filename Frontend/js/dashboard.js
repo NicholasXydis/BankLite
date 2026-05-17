@@ -6,7 +6,7 @@ async function loadDashboard() {
   if (userName) {
     const firstName = userName.split(" ")[0];
     document.getElementById("welcome-msg").textContent =
-      `Welcome back, ${firstName}!`;
+      `${t("dashboard_welcome")} ${firstName}!`;
     document.getElementById("welcome-msg").style.display = "block";
   }
 
@@ -34,7 +34,7 @@ async function loadDashboard() {
           : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M4 7v5c0 1.657 3.582 3 8 3s8-1.343 8-3V7"/><path d="M4 12v5c0 1.657 3.582 3 8 3s8-1.343 8-3v-5"/></svg>`
       }
         </div>
-        <h2>${account.type}</h2>
+        <h2>${account.type === "Chequing" ? t("dashboard_chequing") : t("dashboard_savings")}</h2>
         </div>
         <div class="account-number-row">
         <p class="account-number">${account.accountNumber}</p>
@@ -62,10 +62,9 @@ async function loadDashboard() {
       const totalEl = document.createElement("div");
       totalEl.className = "total-balance";
       totalEl.innerHTML = `
-        <p>Total Balance</p>
+        <p>${t("dashboard_total_balance")}</p>
         <h2 id="total-balance-amount">$0.00</h2>
       `;
-
       accountsContainer.insertBefore(totalEl, accountsContainer.firstChild);
       countUp(
         document.getElementById("total-balance-amount"),
@@ -108,7 +107,7 @@ document
 
     try {
       await createAccount(accountType);
-      successMsg.textContent = "Account created successfully!";
+      successMsg.textContent = t("success_account_created");
       successMsg.style.display = "block";
       await getAccounts(true);
       await loadDashboard();
@@ -152,7 +151,7 @@ function countUp(element, target, duration = 1000) {
 }
 
 loadDashboard();
-typeText("dashboard-title", "My Accounts");
+typeText("dashboard-title", t("dashboard_title"));
 
 let spendingChartInstance = null;
 async function loadSpendingChart() {
@@ -176,14 +175,14 @@ async function loadSpendingChart() {
         startDate,
         endDate,
       );
-      transactions.forEach((t) => {
+      transactions.forEach((tx) => {
         const isInternalTransfer =
-          t.description &&
-          t.description.toLowerCase().includes("internal transfer");
-        if (t.type === "Deposit" && !isInternalTransfer)
-          totalDeposits += t.amount;
-        else if (t.type === "Withdrawal" && !isInternalTransfer)
-          totalWithdrawals += t.amount;
+          tx.description &&
+          tx.description.toLowerCase().includes("internal transfer");
+        if (tx.type === "Deposit" && !isInternalTransfer)
+          totalDeposits += tx.amount;
+        else if (tx.type === "Withdrawal" && !isInternalTransfer)
+          totalWithdrawals += tx.amount;
       });
     }
     const hasData = totalDeposits > 0 || totalWithdrawals > 0;
@@ -194,7 +193,7 @@ async function loadSpendingChart() {
     spendingChartInstance = new Chart(ctx, {
       type: "doughnut",
       data: {
-        labels: ["Deposits", "Withdrawals"],
+        labels: [t("dashboard_deposits"), t("dashboard_withdrawals")],
         datasets: [
           {
             data: hasData
@@ -250,7 +249,7 @@ async function loadSpendingChart() {
             ctx.fillStyle = document.body.classList.contains("dark-mode")
               ? "#8b949e"
               : "#6b7280";
-            ctx.fillText("Net Flow (30d)", centerX, centerY + 12);
+            ctx.fillText(t("dashboard_net_flow"), centerX, centerY + 12);
             ctx.save();
           },
         },
@@ -296,9 +295,7 @@ function connectSignalR() {
     }
   });
 
-  connection
-    .start()
-    .catch((err) => console.error("SignalR connection failed:", err));
+  connection.start().catch(() => {});
 }
 
 connectSignalR();

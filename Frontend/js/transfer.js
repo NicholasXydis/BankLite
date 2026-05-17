@@ -20,7 +20,7 @@ async function loadTransfer() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      option.textContent = `${account.type === "Chequing" ? t("dashboard_chequing") : t("dashboard_savings")} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       accountSelect.appendChild(option);
     });
 
@@ -28,7 +28,7 @@ async function loadTransfer() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      option.textContent = `${account.type === "Chequing" ? t("dashboard_chequing") : t("dashboard_savings")} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       toAccountSelect.appendChild(option);
     });
   } catch (error) {
@@ -56,37 +56,37 @@ document
     successMsg.style.display = "none";
 
     if (!accountId) {
-      errorMsg.textContent = "Please select an account.";
+      errorMsg.textContent = t("error_select_account");
       errorMsg.style.display = "block";
       return;
     }
 
     if (isExternal && !toAccountNumber.trim()) {
-      errorMsg.textContent = "Please enter a recipient account number.";
+      errorMsg.textContent = t("error_enter_recipient");
       errorMsg.style.display = "block";
       return;
     }
 
     if (!isExternal && !toAccountId) {
-      errorMsg.textContent = "Please select a destination account.";
+      errorMsg.textContent = t("error_select_destination");
       errorMsg.style.display = "block";
       return;
     }
 
     if (!amount || amount <= 0) {
-      errorMsg.textContent = "Please enter a valid amount.";
+      errorMsg.textContent = t("error_valid_amount");
       errorMsg.style.display = "block";
       return;
     }
 
     if (amount > 1000000) {
-      errorMsg.textContent = "Maximum transfer amount is $1,000,000.";
+      errorMsg.textContent = t("error_max_transfer");
       errorMsg.style.display = "block";
       return;
     }
 
     if (!isExternal && toAccountId === accountId) {
-      errorMsg.textContent = "Cannot transfer to same account";
+      errorMsg.textContent = t("error_same_account");
       errorMsg.style.display = "block";
       return;
     }
@@ -101,7 +101,7 @@ document
       } else {
         await transfer(accountId, toAccountId, amount);
       }
-      successMsg.textContent = `Successfully transferred $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
+      successMsg.textContent = `${t("success_transferred")} $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
       setTimeout(() => {
         successMsg.style.display = "none";
@@ -128,7 +128,7 @@ document
       document.getElementById("to-account-select").value = selectedToId;
     } catch (error) {
       errorMsg.textContent = error.message.includes("entity")
-        ? "An error occurred. Please try again."
+        ? t("error_occurred")
         : error.message;
       errorMsg.style.display = "block";
     } finally {

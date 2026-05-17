@@ -19,14 +19,13 @@ async function loadDeposit() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      option.textContent = `${account.type === "Chequing" ? t("dashboard_chequing") : t("dashboard_savings")} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       accountSelect.appendChild(option);
     });
   } catch (error) {
     errorMsg.textContent = error.message.includes("entity")
-      ? "An error occurred. Please try again."
+      ? t("error_occurred")
       : error.message;
-    errorMsg.style.display = "block";
   }
 }
 
@@ -46,19 +45,19 @@ document
     successMsg.style.display = "none";
 
     if (!accountId) {
-      errorMsg.textContent = "Please select an account.";
+      errorMsg.textContent = t("error_select_account");
       errorMsg.style.display = "block";
       return;
     }
 
     if (!amount || amount <= 0) {
-      errorMsg.textContent = "Please enter a valid amount.";
+      errorMsg.textContent = t("error_valid_amount");
       errorMsg.style.display = "block";
       return;
     }
 
     if (amount > 1000000) {
-      errorMsg.textContent = "Maximum deposit amount is $1,000,000.";
+      errorMsg.textContent = t("error_max_deposit");
       errorMsg.style.display = "block";
       return;
     }
@@ -69,7 +68,7 @@ document
 
     try {
       await deposit(accountId, amount);
-      successMsg.textContent = `Successfully deposited $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
+      successMsg.textContent = `${t("success_deposited")} $${amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}!`;
       successMsg.style.display = "block";
 
       setTimeout(() => {

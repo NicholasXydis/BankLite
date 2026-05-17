@@ -25,8 +25,9 @@ async function loadTransactions(accountId, page, type = null) {
     if (result.items.length === 0) {
       document.getElementById("export-csv-btn").style.display = "none";
       transactionsList.innerHTML = "";
-      document.getElementById("no-filter-results").textContent =
-        "No transactions found";
+      document.getElementById("no-filter-results").textContent = t(
+        "label_no_transactions",
+      );
       document.getElementById("no-filter-results").style.display = "block";
       pageInfo.textContent = "";
       prevBtn.disabled = true;
@@ -43,13 +44,21 @@ async function loadTransactions(accountId, page, type = null) {
       yesterday.setDate(today.getDate() - 1);
       const isToday = txDate.toDateString() === today.toDateString();
       const isYesterday = txDate.toDateString() === yesterday.toDateString();
-      const dateStr = txDate.toLocaleDateString("en-CA", {
-        weekday: "long",
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      });
-      const label = isToday ? "Today" : isYesterday ? "Yesterday" : dateStr;
+      const lang = localStorage.getItem("language") || "en";
+      const dateStr = txDate.toLocaleDateString(
+        lang === "fr" ? "fr-CA" : "en-CA",
+        {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        },
+      );
+      const label = isToday
+        ? t("label_today")
+        : isYesterday
+          ? t("label_yesterday")
+          : dateStr;
 
       if (label !== lastDate) {
         lastDate = label;
@@ -62,7 +71,11 @@ async function loadTransactions(accountId, page, type = null) {
       const isTransfer = transaction.description
         .toLowerCase()
         .includes("transfer");
-      const displayType = isTransfer ? "Transfer" : transaction.type;
+      const displayType = isTransfer
+        ? t("nav_transfer")
+        : transaction.type === "Deposit"
+          ? t("nav_deposit")
+          : t("nav_withdraw");
       const isIncoming =
         isTransfer && transaction.description.toLowerCase().includes("from");
       const transferClass = isTransfer
@@ -74,7 +87,7 @@ async function loadTransactions(accountId, page, type = null) {
       row.innerHTML = `
     <div class="transaction-left">
     <span class="transaction-type">${displayType} ${isTransfer ? '<span class="transaction-arrow" style="display:inline-flex;vertical-align:middle;margin-left:2px"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>' : transaction.type === "Deposit" ? '<span class="transaction-arrow">↑</span>' : '<span class="transaction-arrow">↓</span>'}</span>
-    <span class="transaction-date">${txDate.toLocaleString("en-CA", { hour: "numeric", minute: "2-digit" })}</span>
+    <span class="transaction-date">${txDate.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA", { hour: "numeric", minute: "2-digit" })}</span>
     </div>
     <span class="transaction-amount">${transaction.type === "Deposit" || isIncoming ? "+" : "-"}$${transaction.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
 `;
@@ -83,7 +96,7 @@ async function loadTransactions(accountId, page, type = null) {
 
     document.getElementById("export-csv-btn").style.display = "flex";
     const totalPages = Math.ceil(result.totalCount / pageSize);
-    pageInfo.textContent = `Page ${page} of ${totalPages}`;
+    pageInfo.textContent = `${t("page_of")} ${page} ${t("page_of_total")} ${totalPages}`;
     prevBtn.disabled = page <= 1;
     nextBtn.disabled = page >= totalPages;
     currentPage = page;
@@ -120,7 +133,7 @@ async function loadAccounts() {
     accounts.forEach((account) => {
       const option = document.createElement("option");
       option.value = account.id;
-      option.textContent = `${account.type} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      option.textContent = `${account.type === "Chequing" ? t("dashboard_chequing") : t("dashboard_savings")} | $${account.balance.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       accountSelect.appendChild(option);
     });
 
@@ -191,16 +204,16 @@ document
       const result = await getTransactions(accountId, 1, 10000);
       const rows = [["Date", "Type", "Amount", "Description"]];
 
-      result.items.forEach((t) => {
-        const date = new Date(t.createdAt + "Z").toLocaleString("en-CA", {
+      result.items.forEach((tx) => {
+        const date = new Date(tx.createdAt + "Z").toLocaleString("en-CA", {
           month: "short",
           day: "numeric",
           year: "numeric",
           hour: "numeric",
           minute: "2-digit",
         });
-        const amount = `${t.type === "Deposit" ? "+" : "-"}$${t.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        rows.push([date, t.type, amount, t.description]);
+        const amount = `${tx.type === "Deposit" ? "+" : "-"}$${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        rows.push([date, tx.type, amount, tx.description]);
       });
 
       const csv = rows
@@ -213,9 +226,7 @@ document
       a.download = "transactions.csv";
       a.click();
       URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error("Export failed:", error);
-    }
+    } catch (error) {}
   });
 
 document.querySelectorAll(".filter-btn").forEach((btn) => {

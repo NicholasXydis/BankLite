@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const successMsg = document.getElementById("success-msg");
 
   if (!token) {
-    errorMsg.textContent = "Invalid or missing reset token.";
+    errorMsg.textContent = t("error_invalid_token");
     errorMsg.style.display = "block";
     document.getElementById("reset-btn").disabled = true;
     return;
@@ -23,19 +23,19 @@ document.addEventListener("DOMContentLoaded", function () {
       successMsg.style.display = "none";
 
       if (!newPassword || !confirmPassword) {
-        errorMsg.textContent = "Please fill in both fields.";
+        errorMsg.textContent = t("error_fill_both_fields");
         errorMsg.style.display = "block";
         return;
       }
 
       if (newPassword.length < 8) {
-        errorMsg.textContent = "Password must be at least 8 characters.";
+        errorMsg.textContent = t("error_min_8_chars");
         errorMsg.style.display = "block";
         return;
       }
 
       if (newPassword !== confirmPassword) {
-        errorMsg.textContent = "Passwords do not match.";
+        errorMsg.textContent = t("error_passwords_no_match");
         errorMsg.style.display = "block";
         return;
       }
@@ -45,8 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       try {
         await resetPassword(token, newPassword);
-        successMsg.textContent =
-          "Password reset successfully! Redirecting to login...";
+        successMsg.textContent = t("success_password_reset");
         successMsg.style.display = "block";
         setTimeout(() => (window.location.href = "index.html"), 2000);
       } catch (error) {

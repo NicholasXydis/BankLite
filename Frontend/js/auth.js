@@ -38,7 +38,7 @@ function startSessionTimer() {
       const countdown = document.getElementById("session-countdown");
       if (warning && countdown) {
         warning.style.display = "flex";
-        countdown.textContent = `Your session expires in ${minutes}:${seconds.toString().padStart(2, "0")}`;
+        countdown.textContent = `${t("session_expires")} ${minutes}:${seconds.toString().padStart(2, "0")}`;
       }
     }
   }, 1000);
@@ -63,7 +63,7 @@ if (loginForm) {
     button.classList.add("btn-loading");
 
     if (!email || !password) {
-      errorMsg.textContent = "Please enter both email and password.";
+      errorMsg.textContent = t("error_email_password");
       errorMsg.style.display = "block";
       button.disabled = false;
       button.classList.remove("btn-loading");
@@ -99,7 +99,7 @@ if (registerForm) {
     button.classList.add("btn-loading");
 
     if (!fullName || !email || !password || !confirmPassword) {
-      errorMsg.textContent = "Please fill in all fields.";
+      errorMsg.textContent = t("error_fill_all_fields");
       errorMsg.style.display = "block";
       button.disabled = false;
       button.classList.remove("btn-loading");
@@ -107,7 +107,7 @@ if (registerForm) {
     }
 
     if (!/^[a-zA-Z\s]+$/.test(fullName.trim())) {
-      errorMsg.textContent = "Full name can only contain letters and spaces.";
+      errorMsg.textContent = t("error_fullname_letters");
       errorMsg.style.display = "block";
       button.disabled = false;
       button.classList.remove("btn-loading");
@@ -115,7 +115,7 @@ if (registerForm) {
     }
 
     if (password !== confirmPassword) {
-      errorMsg.textContent = "Passwords do not match.";
+      errorMsg.textContent = t("error_passwords_no_match");
       errorMsg.style.display = "block";
       button.disabled = false;
       button.classList.remove("btn-loading");
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <div class="chatbot-avatar">A</div>
       <div>
         <div class="chatbot-name">Alfred</div>
-        <div class="chatbot-status">BankLite Assistant</div>
+        <div class="chatbot-status" id="chatbot-status-text">BankLite Assistant</div>
       </div>
     </div>
     <button class="chatbot-close" id="chatbot-close">
@@ -158,11 +158,11 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
   <div class="chatbot-messages" id="chatbot-messages">
     <div class="chatbot-message chatbot-message--alfred">
-      <div class="chatbot-bubble">Hi! I'm Alfred, your BankLite assistant. How can I help you today?</div>
+     <div class="chatbot-bubble">${t("chatbot_greeting")}</div>
     </div>
   </div>
   <div class="chatbot-input-area">
-    <input type="text" class="chatbot-input" id="chatbot-input" placeholder="Ask Alfred anything..." maxlength="200" />
+   <input type="text" class="chatbot-input" id="chatbot-input" placeholder="${t("chatbot_placeholder")}" maxlength="200" />
     <button class="chatbot-send" id="chatbot-send">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
@@ -171,6 +171,8 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 </div>`,
   );
+  document.getElementById("chatbot-status-text").textContent =
+    t("chatbot_status");
   const logoutBtn = document.getElementById("logout-btn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", function () {
@@ -243,7 +245,7 @@ document.addEventListener("DOMContentLoaded", function () {
       successEl.style.display = "none";
 
       if (!email) {
-        errorEl.textContent = "Please enter your email.";
+        errorEl.textContent = t("error_enter_email");
         errorEl.style.display = "block";
         return;
       }
@@ -253,8 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       try {
         await forgotPassword(email);
-        successEl.textContent =
-          "If that email exists, a reset link has been sent.";
+        successEl.textContent = t("success_reset_link");
         successEl.style.display = "block";
         document.getElementById("forgot-email").value = "";
       } catch (error) {
@@ -357,23 +358,25 @@ document.addEventListener("DOMContentLoaded", function () {
       const data = await getUserProfile();
       document.getElementById("settings-name").textContent = data.fullName;
       document.getElementById("settings-email").textContent = data.email;
+      const locale =
+        localStorage.getItem("language") === "fr" ? "fr-CA" : "en-CA";
       document.getElementById("settings-since").textContent = new Date(
         data.createdAt,
-      ).toLocaleDateString("en-CA", {
+      ).toLocaleDateString(locale, {
         year: "numeric",
         month: "long",
         day: "numeric",
       });
       document.getElementById("settings-last-login").textContent =
         data.lastLoginAt
-          ? new Date(data.lastLoginAt).toLocaleDateString("en-CA", {
+          ? new Date(data.lastLoginAt).toLocaleDateString(locale, {
               year: "numeric",
               month: "long",
               day: "numeric",
               hour: "2-digit",
               minute: "2-digit",
             })
-          : "First login";
+          : t("first_login");
     } catch (e) {}
   }
 
@@ -387,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function () {
       successMsg.style.display = "none";
       errorMsg.style.display = "none";
       if (!currentPassword || !newPassword) {
-        errorMsg.textContent = "Please fill in both fields.";
+        errorMsg.textContent = t("error_fill_both_fields");
         errorMsg.style.display = "block";
         return;
       }
@@ -395,7 +398,7 @@ document.addEventListener("DOMContentLoaded", function () {
       changePasswordBtn.classList.add("btn-loading");
       try {
         await changePassword(currentPassword, newPassword);
-        successMsg.textContent = "Password changed successfully!";
+        successMsg.textContent = t("success_password_changed");
         successMsg.style.display = "block";
         document.getElementById("current-password").value = "";
         document.getElementById("new-password").value = "";
@@ -419,10 +422,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const modalTitle = document.querySelector(".modal-title");
       const modalText = document.querySelector(".modal-text");
       const modalConfirm = document.getElementById("modal-confirm-btn");
-      modalTitle.textContent = "Delete Account";
-      modalText.textContent =
-        "This will permanently delete your account and all data. This cannot be undone.";
-      modalConfirm.textContent = "Delete";
+      modalTitle.textContent = t("delete_title");
+      modalText.textContent = t("delete_account_text");
+      modalConfirm.textContent = t("delete_confirm");
       modal.style.display = "flex";
       modalConfirm.onclick = async function () {
         try {
@@ -455,7 +457,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (languageToggle) {
     languageToggle.checked = localStorage.getItem("language") === "fr";
     languageToggle.addEventListener("change", function () {
-      localStorage.setItem("language", this.checked ? "fr" : "en");
+      window.location.reload();
+      setLanguage(this.checked ? "fr" : "en");
     });
   }
 
@@ -490,7 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const div = document.createElement("div");
     div.className = "chatbot-message chatbot-message--alfred chatbot-typing";
     div.id = "chatbot-typing";
-    div.innerHTML = `<div class="chatbot-bubble">Alfred is typing...</div>`;
+    div.innerHTML = `<div class="chatbot-bubble">${t("chatbot_typing")}</div>`;
     chatbotMessages.appendChild(div);
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
   }
@@ -516,10 +519,7 @@ document.addEventListener("DOMContentLoaded", function () {
       addMessage(response, false);
     } catch (error) {
       removeTyping();
-      addMessage(
-        "Sorry, I couldn't process your request. Please try again.",
-        false,
-      );
+      addMessage(t("chatbot_error"), false);
     } finally {
       chatbotSend.disabled = false;
       chatbotInput.focus();
