@@ -33,13 +33,23 @@
           </svg>
         </div>
         <h1 class="static-error-code">404</h1>
-        <h2 class="static-error-title">Page Not Found</h2>
-        <p>The page you're looking for doesn't exist or has been moved.</p>
+        <h2 class="static-error-title" data-i18n="not_found_title">
+          Page Not Found
+        </h2>
+        <p data-i18n="not_found_text">
+          The page you're looking for doesn't exist or has been moved.
+        </p>
         <div class="static-page-back">
-          <a href="dashboard.html" class="empty-state-btn">Go to Dashboard</a>
+          <a
+            href="dashboard.html"
+            class="empty-state-btn"
+            data-i18n="not_found_btn"
+            >Go to Dashboard</a
+          >
         </div>
       </div>
     </main>
+    <script src="js/i18n.js"></script>
     <script>
       if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark-mode");

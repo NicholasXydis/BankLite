@@ -33,16 +33,24 @@
           </svg>
         </div>
         <h1 class="static-error-code static-error-code--red">500</h1>
-        <h2 class="static-error-title">Something Went Wrong</h2>
-        <p>
+        <h2 class="static-error-title" data-i18n="server_error_title">
+          Something Went Wrong
+        </h2>
+        <p data-i18n="server_error_text">
           Something unexpected happened. Please try again or return to the
           dashboard.
         </p>
         <div class="static-page-back">
-          <a href="dashboard.html" class="empty-state-btn">Go to Dashboard</a>
+          <a
+            href="dashboard.html"
+            class="empty-state-btn"
+            data-i18n="go_to_dashboard"
+            >Go to Dashboard</a
+          >
         </div>
       </div>
     </main>
+    <script src="js/i18n.js"></script>
     <script>
       if (localStorage.getItem("darkMode") === "true") {
         document.body.classList.add("dark-mode");
