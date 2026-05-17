@@ -68,7 +68,7 @@
               <rect x="3" y="14" width="7" height="7" />
               <rect x="14" y="14" width="7" height="7" />
             </svg>
-            Dashboard
+            <span data-i18n="nav_dashboard">Dashboard</span>
           </a>
           <a href="deposit.html">
             <svg
@@ -85,7 +85,7 @@
               <line x1="12" y1="19" x2="12" y2="5" />
               <polyline points="5 12 12 5 19 12" />
             </svg>
-            Deposit
+            <span data-i18n="nav_deposit">Deposit</span>
           </a>
           <a href="withdraw.html">
             <svg
@@ -102,7 +102,7 @@
               <line x1="12" y1="5" x2="12" y2="19" />
               <polyline points="19 12 12 19 5 12" />
             </svg>
-            Withdraw
+            <span data-i18n="nav_withdraw">Withdraw</span>
           </a>
           <a href="transfer.html">
             <svg
@@ -121,7 +121,7 @@
               <polyline points="7 23 3 19 7 15" />
               <path d="M21 13v2a4 4 0 0 1-4 4H3" />
             </svg>
-            Transfer
+            <span data-i18n="nav_transfer">Transfer</span>
           </a>
           <a href="transactions.html" class="active">
             <svg
@@ -142,7 +142,7 @@
               <line x1="3" y1="12" x2="3.01" y2="12" />
               <line x1="3" y1="18" x2="3.01" y2="18" />
             </svg>
-            Transactions
+            <span data-i18n="nav_transactions">Transactions</span>
           </a>
           <a href="#" id="settings-btn">
             <svg
@@ -161,7 +161,7 @@
                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
               />
             </svg>
-            Settings
+            <span data-i18n="nav_settings">Settings</span>
           </a>
           <a href="#" id="chatbot-btn">
             <svg
@@ -179,10 +179,10 @@
                 d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
               />
             </svg>
-            AI Chat
+            <span data-i18n="nav_chat">AI Chat</span>
           </a>
         </nav>
-        <button id="logout-btn">Logout</button>
+        <button id="logout-btn" data-i18n="nav_logout">Logout</button>
       </aside>
       <main class="dashboard-main">
         <div
@@ -193,7 +193,13 @@
             margin-bottom: 1.5rem;
           "
         >
-          <h1 class="dashboard-title" style="margin-bottom: 0">Transactions</h1>
+          <h1
+            class="dashboard-title"
+            style="margin-bottom: 0"
+            data-i18n="transactions_title"
+          >
+            Transactions
+          </h1>
           <button id="export-csv-btn" title="Export CSV">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -231,9 +237,15 @@
               <circle cx="17" cy="15" r="1.5" fill="#1a3a5c" />
             </svg>
           </div>
-          <h3 class="empty-state-title">Your financial journey starts here</h3>
-          <p class="empty-state-text">Create your first account</p>
-          <a href="dashboard.html" class="empty-state-btn">Create Account</a>
+          <h3 class="empty-state-title" data-i18n="empty_title">
+            Your financial journey starts here
+          </h3>
+          <p class="empty-state-text" data-i18n="empty_text">
+            Create your first account
+          </p>
+          <a href="dashboard.html" class="empty-state-btn" data-i18n="empty_btn"
+            >Create Account</a
+          >
         </div>
         <div class="form-card" style="display: none">
           <div
@@ -249,18 +261,42 @@
             aria-live="polite"
           ></div>
           <div class="form-group">
-            <label for="account-select">Select Account</label>
+            <label for="account-select" data-i18n="transactions_select_account"
+              >Select Account</label
+            >
             <select id="account-select">
               <option value="">Loading accounts...</option>
             </select>
           </div>
           <div class="transaction-filters">
-            <button class="filter-btn active" data-filter="all">All</button>
-            <button class="filter-btn" data-filter="deposit">Deposits</button>
-            <button class="filter-btn" data-filter="withdrawal">
+            <button
+              class="filter-btn active"
+              data-filter="all"
+              data-i18n="transactions_all"
+            >
+              All
+            </button>
+            <button
+              class="filter-btn"
+              data-filter="deposit"
+              data-i18n="transactions_deposits"
+            >
+              Deposits
+            </button>
+            <button
+              class="filter-btn"
+              data-filter="withdrawal"
+              data-i18n="transactions_withdrawals"
+            >
               Withdrawals
             </button>
-            <button class="filter-btn" data-filter="transfer">Transfers</button>
+            <button
+              class="filter-btn"
+              data-filter="transfer"
+              data-i18n="transactions_transfers"
+            >
+              Transfers
+            </button>
           </div>
           <p
             id="no-filter-results"
@@ -271,29 +307,48 @@
           </p>
           <div id="transactions-list"></div>
           <div class="pagination">
-            <button id="prev-btn">Previous</button>
+            <button id="prev-btn" data-i18n="transactions_prev">
+              Previous
+            </button>
             <span id="page-info"></span>
-            <button id="next-btn">Next</button>
+            <button id="next-btn" data-i18n="transactions_next">Next</button>
           </div>
         </div>
       </main>
     </div>
+    <script src="js/i18n.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/transactions.js"></script>
 
     <div id="session-warning" style="display: none">
       <span id="session-countdown"></span>
-      <button id="session-stay-btn">Stay Logged In</button>
+      <button id="session-stay-btn" data-i18n="session_stay">
+        Stay Logged In
+      </button>
     </div>
 
     <div id="logout-modal" class="modal-overlay" style="display: none">
       <div class="modal">
-        <h3 class="modal-title">Log Out</h3>
-        <p class="modal-text">Are you sure you want to log out?</p>
+        <h3 class="modal-title" data-i18n="logout_title">Log Out</h3>
+        <p class="modal-text" data-i18n="logout_confirm_text">
+          Are you sure you want to log out?
+        </p>
         <div class="modal-actions">
-          <button id="modal-cancel-btn" class="modal-cancel">Cancel</button>
-          <button id="modal-confirm-btn" class="modal-confirm">Log Out</button>
+          <button
+            id="modal-cancel-btn"
+            class="modal-cancel"
+            data-i18n="logout_cancel"
+          >
+            Cancel
+          </button>
+          <button
+            id="modal-confirm-btn"
+            class="modal-confirm"
+            data-i18n="logout_confirm"
+          >
+            Log Out
+          </button>
         </div>
       </div>
     </div>
@@ -304,7 +359,7 @@
     ></div>
     <div id="settings-panel" class="settings-panel">
       <div class="settings-header">
-        <h2 class="settings-title">Settings</h2>
+        <h2 class="settings-title" data-i18n="settings_title">Settings</h2>
         <button id="settings-close-btn" class="settings-close-btn">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -323,26 +378,32 @@
         </button>
       </div>
       <div class="settings-section">
-        <h3 class="settings-section-title">Profile</h3>
+        <h3 class="settings-section-title" data-i18n="settings_profile">
+          Profile
+        </h3>
         <div class="settings-info-row">
-          <span class="settings-label">Name</span
+          <span class="settings-label" data-i18n="settings_name">Name</span
           ><span class="settings-value" id="settings-name">—</span>
         </div>
         <div class="settings-info-row">
-          <span class="settings-label">Email</span
+          <span class="settings-label" data-i18n="settings_email">Email</span
           ><span class="settings-value" id="settings-email">—</span>
         </div>
         <div class="settings-info-row">
-          <span class="settings-label">Member Since</span
+          <span class="settings-label" data-i18n="settings_member_since"
+            >Member Since</span
           ><span class="settings-value" id="settings-since">—</span>
         </div>
         <div class="settings-info-row">
-          <span class="settings-label">Last Login</span
+          <span class="settings-label" data-i18n="settings_last_login"
+            >Last Login</span
           ><span class="settings-value" id="settings-last-login">—</span>
         </div>
       </div>
       <div class="settings-section">
-        <h3 class="settings-section-title">Security</h3>
+        <h3 class="settings-section-title" data-i18n="settings_security">
+          Security
+        </h3>
         <div
           id="change-password-success"
           class="success-msg"
@@ -356,31 +417,45 @@
           aria-live="polite"
         ></div>
         <div class="form-group">
-          <label for="current-password">Current Password</label>
+          <label for="current-password" data-i18n="settings_current_password"
+            >Current Password</label
+          >
           <input
             type="password"
             id="current-password"
             class="no-icon-input"
             placeholder="Current Password"
+            data-i18n="placeholder_current_password"
+            data-i18n-attr="placeholder"
             autocomplete="current-password"
           />
         </div>
         <div class="form-group">
-          <label for="new-password">New Password</label>
+          <label for="new-password" data-i18n="settings_new_password"
+            >New Password</label
+          >
           <input
             type="password"
             id="new-password"
             class="no-icon-input"
             placeholder="Min 8 Characters"
+            data-i18n="placeholder_min_8"
+            data-i18n-attr="placeholder"
             autocomplete="new-password"
           />
         </div>
-        <button id="change-password-btn">Change Password</button>
+        <button id="change-password-btn" data-i18n="settings_change_password">
+          Change Password
+        </button>
       </div>
       <div class="settings-section">
-        <h3 class="settings-section-title">Preferences</h3>
+        <h3 class="settings-section-title" data-i18n="settings_preferences">
+          Preferences
+        </h3>
         <div class="settings-toggle-row">
-          <span class="settings-label">Dark Mode</span>
+          <span class="settings-label" data-i18n="settings_dark_mode"
+            >Dark Mode</span
+          >
           <label class="toggle-switch"
             ><input type="checkbox" id="dark-mode-toggle" /><span
               class="toggle-slider"
@@ -388,7 +463,9 @@
           ></label>
         </div>
         <div class="settings-toggle-row">
-          <span class="settings-label">Français</span>
+          <span class="settings-label" data-i18n="settings_language"
+            >Français</span
+          >
           <label class="toggle-switch"
             ><input type="checkbox" id="language-toggle" /><span
               class="toggle-slider"
@@ -397,18 +474,32 @@
         </div>
       </div>
       <div class="settings-section">
-        <h3 class="settings-section-title">Legal</h3>
-        <a href="privacy.html" class="settings-link">Privacy Policy</a>
-        <a href="terms.html" class="settings-link">Terms of Service</a>
+        <h3 class="settings-section-title" data-i18n="settings_legal">Legal</h3>
+        <a
+          href="privacy.html"
+          class="settings-link"
+          data-i18n="settings_privacy"
+          >Privacy Policy</a
+        >
+        <a href="terms.html" class="settings-link" data-i18n="settings_terms"
+          >Terms of Service</a
+        >
       </div>
       <div class="settings-section settings-danger">
-        <h3 class="settings-section-title settings-danger-title">
+        <h3
+          class="settings-section-title settings-danger-title"
+          data-i18n="settings_danger_zone"
+        >
           Danger Zone
         </h3>
-        <p class="settings-danger-text">
+        <p class="settings-danger-text" data-i18n="settings_danger_text">
           Permanently delete your account and all data.
         </p>
-        <button id="delete-account-btn" class="btn-danger">
+        <button
+          id="delete-account-btn"
+          class="btn-danger"
+          data-i18n="settings_delete_account"
+        >
           Delete Account
         </button>
       </div>
