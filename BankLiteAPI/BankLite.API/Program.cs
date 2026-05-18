@@ -180,12 +180,15 @@ builder.Services.AddRateLimiter(options =>
 
 var app = builder.Build();
 
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BankLite API v1");
-    c.RoutePrefix = "swagger";
-});
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "BankLite API v1");
+        c.RoutePrefix = "swagger";
+    });
+}
 
 if (app.Environment.IsDevelopment())
 {
