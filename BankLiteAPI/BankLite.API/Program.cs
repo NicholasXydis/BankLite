@@ -105,6 +105,7 @@ builder.Services.AddScoped<IValidator<DepositWithdrawDto>, DepositWithdrawValida
 builder.Services.AddScoped<IValidator<TransferDto>, TransferValidator>();
 builder.Services.AddScoped<IValidator<ExternalTransferDto>, ExternalTransferValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordDto>, ChangePasswordValidator>();
+builder.Services.AddScoped<IValidator<ChatMessageDto>, ChatMessageValidator>();
 builder.Services.AddResponseCompression();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IBalanceNotifier, SignalRBalanceNotifier>();
