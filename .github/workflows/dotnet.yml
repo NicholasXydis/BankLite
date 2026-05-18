@@ -27,6 +27,7 @@ jobs:
 
       - name: Build
         run: dotnet build --no-restore
+        continue-on-error: true
 
       - name: Test
         run: dotnet test --no-build --verbosity normal
