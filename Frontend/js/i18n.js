@@ -188,6 +188,15 @@ const i18n = {
     page_of_total: "of",
     placeholder_email: "you@example.com",
     placeholder_fullname: "Full Name",
+    landing_meta_description:
+      "BankLite - A full-stack banking app built with C#, .NET 8, PostgreSQL, JavaScript, Docker, and CI/CD.",
+    landing_og_title: "BankLite | Landing",
+    landing_og_description:
+      "A polished full-stack banking app with secure auth, real-time features, and bilingual support.",
+    landing_page_title: "BankLite | Full-Stack Banking App",
+    landing_change_language: "Change language",
+    landing_sign_in: "Sign in",
+    landing_stack_aria: "Technology stack",
   },
 
   fr: {
@@ -388,6 +397,15 @@ const i18n = {
     page_of_total: "sur",
     placeholder_email: "vous@exemple.com",
     placeholder_fullname: "Nom complet",
+    landing_meta_description:
+      "BankLite - Une application bancaire full-stack développée avec C#, .NET 8, PostgreSQL, JavaScript, Docker et CI/CD.",
+    landing_og_title: "BankLite | Accueil",
+    landing_og_description:
+      "Une application bancaire complète avec authentification sécurisée, fonctionnalités en temps réel et assistance bilingue.",
+    landing_page_title: "BankLite | Application Bancaire Full-Stack",
+    landing_change_language: "Changer la langue",
+    landing_sign_in: "Se connecter",
+    landing_stack_aria: "Pile technologique",
   },
 };
 
@@ -434,6 +452,10 @@ function applyTranslations() {
     "terms.html": {
       en: "BankLite | Terms of Service",
       fr: "BankLite | Conditions d'utilisation",
+    },
+    "landing.html": {
+      en: "BankLite | Full-Stack Banking App",
+      fr: "BankLite | Application Bancaire Full-Stack",
     },
   };
   const page = window.location.pathname.split("/").pop() || "index.html";
