@@ -20,8 +20,9 @@ namespace BankLite.Application.Services
         private readonly ILogger<AuthService> _logger;
         private readonly IPasswordResetRepository _passwordResetRepository;
         private readonly IEmailService _emailService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration, IAuditLogRepository auditLogRepository, ILogger<AuthService> logger, IRefreshTokenRepository refreshTokenRepository, IPasswordResetRepository passwordResetRepository, IEmailService emailService)
+        public AuthService(IUserRepository userRepository, IConfiguration configuration, IAuditLogRepository auditLogRepository, ILogger<AuthService> logger, IRefreshTokenRepository refreshTokenRepository, IPasswordResetRepository passwordResetRepository, IEmailService emailService, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
             _configuration = configuration;
@@ -30,6 +31,7 @@ namespace BankLite.Application.Services
             _refreshTokenRepository = refreshTokenRepository;
             _passwordResetRepository = passwordResetRepository;
             _emailService = emailService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
@@ -51,6 +53,7 @@ namespace BankLite.Application.Services
                 PasswordHash = passwordHash
             };
             await _userRepository.AddAsync(user);
+            await _unitOfWork.SaveAsync();
             _logger.LogInformation("User Registered Successfully: {Email}", dto.Email);
 
             await _auditLogRepository.LogAsync(new AuditLog
@@ -60,6 +63,7 @@ namespace BankLite.Application.Services
                 Details = $"User {user.Email} registered",
                 PerformedAt = DateTime.UtcNow,
             });
+            await _unitOfWork.SaveAsync();
 
             var token = GenerateToken(user);
             var refreshToken = await GenerateRefreshTokenAsync(user.Id);
@@ -95,6 +99,7 @@ namespace BankLite.Application.Services
                     _logger.LogWarning("Account locked due to failed attempts: {Email}", dto.Email.ToLower());
                 }
                 await _userRepository.UpdateAsync(user);
+                await _unitOfWork.SaveAsync();
                 throw new InvalidOperationException("Invalid Credentials");
             }
 
@@ -103,6 +108,7 @@ namespace BankLite.Application.Services
 
             user.LastLoginAt = DateTime.UtcNow;
             await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
@@ -111,6 +117,7 @@ namespace BankLite.Application.Services
                 Details = $"User {user.Email} logged in",
                 PerformedAt = DateTime.UtcNow,
             });
+            await _unitOfWork.SaveAsync();
 
             _logger.LogInformation("User logged in successfully: {Email}", user.Email);
 
@@ -169,6 +176,7 @@ namespace BankLite.Application.Services
             var existing = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
             if (existing != null && !existing.IsRevoked)
                 await _refreshTokenRepository.RevokeAsync(existing);
+                await _unitOfWork.SaveAsync();
         }
 
         private async Task<string> GenerateRefreshTokenAsync(Guid userId)
@@ -181,13 +189,14 @@ namespace BankLite.Application.Services
                 ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
             await _refreshTokenRepository.AddAsync(refreshToken);
+            await _unitOfWork.SaveAsync();
             return token;
         }
 
         public async Task ForgotPasswordAsync(string email, string resetBaseUrl)
         {
             var user = await _userRepository.GetByEmailAsync(email.ToLower());
-            if (user == null) return; 
+            if (user == null) return;
 
             var token = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64));
             var resetToken = new BankLite.Domain.Entities.PasswordResetToken
@@ -198,6 +207,7 @@ namespace BankLite.Application.Services
             };
 
             await _passwordResetRepository.AddAsync(resetToken);
+            await _unitOfWork.SaveAsync();
 
             var resetLink = $"{resetBaseUrl}?token={Uri.EscapeDataString(token)}";
             await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
@@ -213,9 +223,11 @@ namespace BankLite.Application.Services
 
             resetToken.IsUsed = true;
             await _passwordResetRepository.UpdateAsync(resetToken);
+            await _unitOfWork.SaveAsync();
 
             resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
             await _userRepository.UpdateAsync(resetToken.User);
+            await _unitOfWork.SaveAsync();
 
             _logger.LogInformation("Password reset successful for user {UserId}", resetToken.UserId);
         }

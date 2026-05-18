@@ -65,6 +65,7 @@ namespace BankLite.Application.Services
                 Details = $"User {userId} deposited {dto.Amount} to account {dto.AccountId}",
                 PerformedAt = DateTime.UtcNow,
             });
+            await _unitOfWork.SaveAsync();
 
             return transaction;
         }
@@ -115,6 +116,7 @@ namespace BankLite.Application.Services
                 Details = $"User {userId} withdrew {dto.Amount} from account {dto.AccountId}",
                 PerformedAt = DateTime.UtcNow,
             });
+            await _unitOfWork.SaveAsync();
 
             return transaction;
         }
@@ -177,6 +179,7 @@ namespace BankLite.Application.Services
                 Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account {dto.ToAccountId}",
                 PerformedAt = DateTime.UtcNow,
             });
+            await _unitOfWork.SaveAsync();
         }
 
         public async Task TransferExternalAsync(ExternalTransferDto dto, Guid userId, string? idempotencyKey = null)
@@ -239,6 +242,7 @@ namespace BankLite.Application.Services
                 Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account number {dto.ToAccountNumber}",
                 PerformedAt = DateTime.UtcNow,
             });
+            await _unitOfWork.SaveAsync();
         }
 
         public async Task<PagedResultDto<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize, string? type = null)

@@ -17,7 +17,6 @@ namespace BankLite.Infrastructure.Repositories
         public async Task AddAsync(PasswordResetToken token)
         {
             await _context.PasswordResetTokens.AddAsync(token);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<PasswordResetToken?> GetByTokenAsync(string token)
@@ -30,7 +29,6 @@ namespace BankLite.Infrastructure.Repositories
         public async Task UpdateAsync(PasswordResetToken token)
         {
             _context.PasswordResetTokens.Update(token);
-            await _context.SaveChangesAsync();
         }
     }
 }

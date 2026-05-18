@@ -27,7 +27,6 @@ namespace BankLite.Infrastructure.Repositories
         public async Task AddAsync(Account account)
         {
             await _context.Accounts.AddAsync(account);
-            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(Account account)

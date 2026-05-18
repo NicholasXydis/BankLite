@@ -34,13 +34,11 @@ namespace BankLite.Infrastructure.Repositories
         public async Task AddAsync(User user)
         {
             await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(User user)
         {
             _context.Users.Update(user);
-            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(User user)
@@ -55,7 +53,6 @@ namespace BankLite.Infrastructure.Repositories
             {
 
                 _context.Users.Remove(tracked);
-                await _context.SaveChangesAsync();
             }
         }
     }

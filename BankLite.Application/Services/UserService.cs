@@ -9,10 +9,12 @@ namespace BankLite.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserService> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserService(IUserRepository userRepository, ILogger<UserService> logger)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -42,6 +44,7 @@ namespace BankLite.Application.Services
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
             await _userRepository.UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
             _logger.LogInformation("Password changed for user: {UserId}", userId);
         }
 
@@ -52,6 +55,7 @@ namespace BankLite.Application.Services
                 throw new InvalidOperationException("User not found");
 
             await _userRepository.DeleteAsync(user);
+            await _unitOfWork.SaveAsync();
             _logger.LogInformation("Account deleted for user: {UserId}", userId);
         }
     }

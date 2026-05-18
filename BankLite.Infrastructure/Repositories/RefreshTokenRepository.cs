@@ -17,7 +17,6 @@ namespace BankLite.Infrastructure.Repositories
         public async Task AddAsync(RefreshToken refreshToken)
         {
             await _context.RefreshTokens.AddAsync(refreshToken);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<RefreshToken?> GetByTokenAsync(string token)
@@ -31,7 +30,6 @@ namespace BankLite.Infrastructure.Repositories
         {
             refreshToken.IsRevoked = true;
             _context.RefreshTokens.Update(refreshToken);
-            await _context.SaveChangesAsync();
         }
 
         public async Task RevokeAllForUserAsync(Guid userId)
@@ -42,8 +40,6 @@ namespace BankLite.Infrastructure.Repositories
 
             foreach (var token in tokens)
                 token.IsRevoked = true;
-
-            await _context.SaveChangesAsync();
         }
     }
 }

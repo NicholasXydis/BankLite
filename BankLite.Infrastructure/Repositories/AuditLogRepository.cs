@@ -24,7 +24,6 @@ namespace BankLite.Infrastructure.Repositories
         public async Task LogAsync(AuditLog auditlog)
         {
             await _context.AuditLogs.AddAsync(auditlog);
-            await _context.SaveChangesAsync();
         }
     }
 }
