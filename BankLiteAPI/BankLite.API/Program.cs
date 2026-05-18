@@ -106,6 +106,8 @@ builder.Services.AddScoped<IValidator<TransferDto>, TransferValidator>();
 builder.Services.AddScoped<IValidator<ExternalTransferDto>, ExternalTransferValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordDto>, ChangePasswordValidator>();
 builder.Services.AddScoped<IValidator<ChatMessageDto>, ChatMessageValidator>();
+builder.Services.AddScoped<IValidator<ForgotPasswordDto>, ForgotPasswordValidator>();
+builder.Services.AddScoped<IValidator<ResetPasswordDto>, ResetPasswordValidator>();
 builder.Services.AddResponseCompression();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IBalanceNotifier, SignalRBalanceNotifier>();

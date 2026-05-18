@@ -1,5 +1,6 @@
 ﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
+using BankLite.Application.Validators;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,14 +17,17 @@ namespace BankLite.API.Controllers
         private readonly IAuthService _authService;
         private readonly IValidator<RegisterUserDto> _registerValidator;
         private readonly IValidator<LoginUserDto> _loginValidator;
+        private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
         private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration)
+
+        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration, IValidator<ForgotPasswordDto> forgotPasswordValidator)
         {
             _authService = authService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
             _configuration = configuration;
+            _forgotPasswordValidator = forgotPasswordValidator;
         }
 
         [HttpPost("register")]
@@ -87,6 +91,11 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
+
+            var validation = await _forgotPasswordValidator.ValidateAsync(dto);
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
+
             var resetBaseUrl = _configuration["Frontend:ResetPasswordUrl"]
             ?? throw new InvalidOperationException("Reset password URL not configured");
             await _authService.ForgotPasswordAsync(dto.Email, resetBaseUrl);
