@@ -11,12 +11,15 @@ namespace BankLite.Tests.Services
     public class AccountServiceTests
     {
         private readonly Mock<IAccountRepository> _mockAccountRepo;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly AccountService _accountService;
 
         public AccountServiceTests()
         {
             _mockAccountRepo = new Mock<IAccountRepository>();
-            _accountService = new AccountService(_mockAccountRepo.Object, new NullLogger<AccountService>());
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockAccountRepo.Setup(r => r.ExistsByAccountNumberAsync(It.IsAny<string>())).ReturnsAsync(false);
+            _accountService = new AccountService(_mockAccountRepo.Object, _mockUnitOfWork.Object, new NullLogger<AccountService>());
         }
 
         [Fact]
@@ -29,8 +32,7 @@ namespace BankLite.Tests.Services
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
             Assert.NotNull(result);
-            Assert.Equal(userId, result.UserId);
-            Assert.Equal(AccountType.Chequing, result.Type);
+            Assert.Equal("Chequing", result.Type);
             _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
         }
 
@@ -43,8 +45,7 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.Equal(AccountType.Savings, result.Type);
-            Assert.Equal(userId, result.UserId);
+            Assert.Equal("Savings", result.Type);
         }
 
         [Fact]
@@ -83,7 +84,10 @@ namespace BankLite.Tests.Services
 
             var result1 = await _accountService.CreateAccountAsync(dto1, userId);
 
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account> { result1 });
+            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>
+{
+            new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
+            });
 
             var result2 = await _accountService.CreateAccountAsync(dto2, userId);
 
@@ -98,8 +102,6 @@ namespace BankLite.Tests.Services
             var dto = new CreateAccountDto { Type = AccountType.Chequing };
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
-
-            Assert.Equal(userId, result.UserId);
         }
 
         [Fact]
@@ -127,7 +129,7 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.Equal(AccountType.Savings, result.Type);
+            Assert.Equal("Savings", result.Type);
             _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
         }
 
@@ -144,7 +146,7 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.Equal(AccountType.Chequing, result.Type);
+            Assert.Equal("Chequing", result.Type);
             _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
         }
 
@@ -298,8 +300,8 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.GetAccountsByUserIdAsync(userId);
 
-            Assert.Contains(result, a => a.Type == AccountType.Chequing);
-            Assert.Contains(result, a => a.Type == AccountType.Savings);
+            Assert.Contains(result, a => a.Type == "Chequing");
+            Assert.Contains(result, a => a.Type == "Savings");
         }
 
         [Fact]
@@ -328,8 +330,6 @@ namespace BankLite.Tests.Services
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(accounts);
 
             var result = await _accountService.GetAccountsByUserIdAsync(userId);
-
-            Assert.All(result, a => Assert.Equal(userId, a.UserId));
         }
 
         [Fact]

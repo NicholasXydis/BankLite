@@ -12,11 +12,13 @@ namespace BankLite.Tests.Services
     {
         private readonly Mock<IUserRepository> _mockUserRepo;
         private readonly UserService _userService;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
         public UserServiceTests()
         {
             _mockUserRepo = new Mock<IUserRepository>();
-            _userService = new UserService(_mockUserRepo.Object, new NullLogger<UserService>());
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _userService = new UserService(_mockUserRepo.Object, _mockUnitOfWork.Object, new NullLogger<UserService>());
         }
 
         [Fact]

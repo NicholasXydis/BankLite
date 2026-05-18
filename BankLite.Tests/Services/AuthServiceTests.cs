@@ -19,6 +19,7 @@ namespace BankLite.Tests.Services
         private readonly Mock<IPasswordResetRepository> _mockPasswordResetRepo;
         private readonly Mock<IEmailService> _mockEmailService;
         private readonly AuthService _authService;
+        private readonly Mock<IUnitOfWork> _mockUnitOfWork;
 
         public AuthServiceTests()
         {
@@ -32,11 +33,14 @@ namespace BankLite.Tests.Services
             jwtSection.Setup(x => x["Audience"]).Returns("BankLiteClient");
             jwtSection.Setup(x => x["ExpiryMinutes"]).Returns("60");
             _mockConfig.Setup(x => x.GetSection("JwtSettings")).Returns(jwtSection.Object);
+            _mockConfig.Setup(x => x["JwtSettings:ExpiryMinutes"]).Returns("60");
 
             _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
             _mockPasswordResetRepo = new Mock<IPasswordResetRepository>();
             _mockEmailService = new Mock<IEmailService>();
-            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), _mockRefreshTokenRepo.Object, _mockPasswordResetRepo.Object, _mockEmailService.Object);
+            _mockUnitOfWork = new Mock<IUnitOfWork>();
+
+            _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), _mockRefreshTokenRepo.Object, _mockPasswordResetRepo.Object, _mockEmailService.Object, _mockUnitOfWork.Object);
         }
 
         [Fact]
@@ -561,7 +565,10 @@ namespace BankLite.Tests.Services
                 User = user
             };
 
-            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("valid-token")).ReturnsAsync(resetToken);
+            var hashedToken = Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("valid-token")));
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync(hashedToken)).ReturnsAsync(resetToken);
 
             await _authService.ResetPasswordAsync("valid-token", "NewPassword123");
 
@@ -589,7 +596,10 @@ namespace BankLite.Tests.Services
                 User = user
             };
 
-            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("valid-token")).ReturnsAsync(resetToken);
+            var hashedToken = Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("valid-token")));
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync(hashedToken)).ReturnsAsync(resetToken);
 
             await _authService.ResetPasswordAsync("valid-token", "NewPassword123");
 
@@ -618,7 +628,10 @@ namespace BankLite.Tests.Services
                 User = user
             };
 
-            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("valid-token")).ReturnsAsync(resetToken);
+            var hashedToken = Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("valid-token")));
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync(hashedToken)).ReturnsAsync(resetToken);
 
             await _authService.ResetPasswordAsync("valid-token", "NewPassword123");
 
@@ -700,7 +713,10 @@ namespace BankLite.Tests.Services
                 ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
 
-            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync("valid-refresh-token")).ReturnsAsync(refreshToken);
+            var hashedToken = Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("valid-refresh-token")));
+            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync(hashedToken)).ReturnsAsync(refreshToken);
 
             await _authService.RevokeRefreshTokenAsync("valid-refresh-token");
 
@@ -729,7 +745,10 @@ namespace BankLite.Tests.Services
                 ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
 
-            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync("already-revoked-token")).ReturnsAsync(refreshToken);
+            var hashedToken = Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("already-revoked-token")));
+            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync(hashedToken)).ReturnsAsync(refreshToken);
 
             await _authService.RevokeRefreshTokenAsync("already-revoked-token");
 
