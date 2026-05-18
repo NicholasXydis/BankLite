@@ -11,7 +11,7 @@ namespace BankLite.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Tags("Auth")]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseController
     {
         private readonly IAuthService _authService;
         private readonly IValidator<RegisterUserDto> _registerValidator;

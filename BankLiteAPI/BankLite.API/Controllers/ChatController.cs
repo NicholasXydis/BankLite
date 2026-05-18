@@ -10,7 +10,7 @@ namespace BankLite.API.Controllers
     [Route("api/[controller]")]
     [Authorize]
     [Tags("Chat")]
-    public class ChatController : ControllerBase
+    public class ChatController : BaseController
     {
         private readonly IGroqService _groqService;
 

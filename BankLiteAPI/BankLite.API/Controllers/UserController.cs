@@ -12,7 +12,7 @@ namespace BankLite.API.Controllers
     [Route("api/[controller]")]
     [Authorize]
     [Tags("User")]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private readonly IUserService _userService;
         private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
@@ -30,7 +30,8 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetProfile()
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             var profile = await _userService.GetProfileAsync(userId);
             return Ok(profile);
         }
@@ -47,7 +48,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             await _userService.ChangePasswordAsync(userId, dto);
             return Ok(new { message = "Password changed successfully" });
         }
@@ -59,7 +61,8 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteAccount()
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             await _userService.DeleteAccountAsync(userId);
             return Ok(new { message = "Account deleted successfully" });
         }

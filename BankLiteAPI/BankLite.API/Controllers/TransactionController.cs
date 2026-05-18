@@ -14,7 +14,7 @@ namespace BankLite.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Tags("Transactions")]
-    public class TransactionController : ControllerBase
+    public class TransactionController : BaseController
     {
         private readonly ITransactionService _transactionService;
         private readonly IValidator<DepositWithdrawDto> _depositWithdrawValidator;
@@ -41,7 +41,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             var result = await _transactionService.DepositAsync(dto, userId, idempotencyKey);
             var response = new TransactionResponseDto
@@ -69,7 +70,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             var result = await _transactionService.WithdrawAsync(dto, userId, idempotencyKey);
             var response = new TransactionResponseDto
@@ -96,7 +98,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             await _transactionService.TransferAsync(dto, userId, idempotencyKey);
             return Ok(new { message = "Transfer successful", amount = dto.Amount });
@@ -115,7 +118,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             await _transactionService.TransferExternalAsync(dto, userId, idempotencyKey);
             return Ok(new { message = "Transfer successful", amount = dto.Amount });
@@ -128,7 +132,8 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetTransactions(Guid accountId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? type = null)
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             var result = await _transactionService.GetTransactionsByAccountIdAsync(accountId, userId, page, pageSize, type);
 
             var response = new PagedResultDto<TransactionResponseDto>
@@ -156,7 +161,8 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetTransactionsByDateRange(Guid accountId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
             var result = await _transactionService.GetTransactionsByDateRangeAsync(accountId, userId, startDate, endDate);
 
             var response = result.Select(t => new TransactionResponseDto

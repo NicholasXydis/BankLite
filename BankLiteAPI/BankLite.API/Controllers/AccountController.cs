@@ -14,7 +14,7 @@ namespace BankLite.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Tags("Accounts")]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseController
     {
         private readonly IAccountService _accountService;
         private readonly IValidator<CreateAccountDto> _accountValidator;
@@ -38,7 +38,8 @@ namespace BankLite.API.Controllers
             if (!validation.IsValid)
                 return BadRequest(validation.Errors);
 
-            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
 
             try
             {
