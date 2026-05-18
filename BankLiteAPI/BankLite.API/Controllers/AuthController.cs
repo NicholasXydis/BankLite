@@ -118,7 +118,9 @@ namespace BankLite.API.Controllers
             return Ok(result);
         }
 
+
         [HttpPost("forgot-password")]
+        [EnableRateLimiting("forgotpassword")]
         [SwaggerOperation(Summary = "Request password reset", Description = "Sends a password reset email if the provided email exists in the system.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
@@ -131,6 +133,7 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("reset-password")]
+        [EnableRateLimiting("forgotpassword")]
         [SwaggerOperation(Summary = "Reset password", Description = "Resets the user's password using a valid reset token.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]

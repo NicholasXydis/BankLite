@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "BankLite API",
         Version = "v1",
-        Description = "A clean architecture banking API with JWT authentication via HttpOnly cookies. Rate limited: 30 req/min global, 5 req/min login, 3 req/min register.",
+        Description = "A clean architecture banking API with JWT authentication via HttpOnly cookies. Rate limited: 30 req/min global, 5 req/min login, 3 req/min register, 3 req/min forgot/reset password.",
         Contact = new OpenApiContact
         {
             Name = "Nick",
@@ -168,6 +168,14 @@ builder.Services.AddRateLimiter(options =>
     });
 
     options.AddFixedWindowLimiter("register", config =>
+    {
+        config.PermitLimit = 3;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        config.QueueLimit = 0;
+    });
+
+    options.AddFixedWindowLimiter("forgotpassword", config =>
     {
         config.PermitLimit = 3;
         config.Window = TimeSpan.FromMinutes(1);
