@@ -39,21 +39,8 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var (token, refreshToken, result) = await _authService.RegisterAsync(dto);
-            Response.Cookies.Append("accessToken", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(60)
-            });
-            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddDays(1),
-                Path = "/api/auth/refresh"
-            });
+            Response.Cookies.Append("accessToken", token, AccessTokenCookieOptions());
+            Response.Cookies.Append("refreshToken", refreshToken, RefreshTokenCookieOptions());
             return Ok(result);
         }
 
@@ -70,21 +57,8 @@ namespace BankLite.API.Controllers
                 return BadRequest(validation.Errors);
 
             var (token, refreshToken, result) = await _authService.LoginAsync(dto);
-            Response.Cookies.Append("accessToken", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(60)
-            });
-            Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddDays(1),
-                Path = "/api/auth/refresh"
-            });
+            Response.Cookies.Append("accessToken", token, AccessTokenCookieOptions());
+            Response.Cookies.Append("refreshToken", refreshToken, RefreshTokenCookieOptions());
             return Ok(result);
         }
 
@@ -100,21 +74,8 @@ namespace BankLite.API.Controllers
                 return Unauthorized(new { message = "No refresh token provided." });
 
             var (token, newRefreshToken, result) = await _authService.RefreshAsync(refreshToken);
-            Response.Cookies.Append("accessToken", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(60)
-            });
-            Response.Cookies.Append("refreshToken", newRefreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTimeOffset.UtcNow.AddDays(1),
-                Path = "/api/auth/refresh"
-            });
+            Response.Cookies.Append("accessToken", token, AccessTokenCookieOptions());
+            Response.Cookies.Append("refreshToken", refreshToken, RefreshTokenCookieOptions());
             return Ok(result);
         }
 
@@ -160,5 +121,22 @@ namespace BankLite.API.Controllers
             Response.Cookies.Delete("refreshToken");
             return Ok();
         }
+
+        private CookieOptions AccessTokenCookieOptions() => new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
+        };
+
+        private CookieOptions RefreshTokenCookieOptions() => new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTimeOffset.UtcNow.AddDays(1),
+            Path = "/api/auth/refresh"
+        };
     }
 }
