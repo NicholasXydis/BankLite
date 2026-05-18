@@ -64,6 +64,17 @@ namespace BankLite.Infrastructure.Data
             modelBuilder.Entity<Account>()
                 .HasIndex(a => a.AccountNumber)
                 .IsUnique();
+
+            modelBuilder.Entity<AuditLog>()
+                 .HasIndex(a => a.UserId);
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasIndex(rt => rt.Token)
+                .IsUnique();
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasIndex(p => p.Token)
+                .IsUnique();
         }
     }
 }
