@@ -18,7 +18,7 @@ namespace BankLite.Infrastructure.Repositories
 
         public async Task<IEnumerable<AuditLog>> GetByUserIdAsync(Guid userId)
         {
-            return await _context.AuditLogs.Where(a => a.UserId == userId).ToListAsync();
+            return await _context.AuditLogs.AsNoTracking().Where(a => a.UserId == userId).ToListAsync();
         }
 
         public async Task LogAsync(AuditLog auditlog)

@@ -21,7 +21,7 @@ namespace BankLite.Infrastructure.Repositories
 
         public async Task<IEnumerable<Transaction>> GetByAccountIdAsync(Guid accountId, int page, int pageSize, string? type = null)
         {
-            var query = _context.Transactions.Where(t => t.AccountId == accountId);
+            var query = _context.Transactions.AsNoTracking().Where(t => t.AccountId == accountId);
             if (!string.IsNullOrEmpty(type) && Enum.TryParse<TransactionType>(type, true, out var transactionType))
                 query = query.Where(t => t.Type == transactionType);
             return await query
@@ -33,7 +33,7 @@ namespace BankLite.Infrastructure.Repositories
 
         public async Task<int> GetTotalCountAsync(Guid accountId, string? type = null)
         {
-            var query = _context.Transactions.Where(t => t.AccountId == accountId);
+            var query = _context.Transactions.AsNoTracking().Where(t => t.AccountId == accountId);
             if (!string.IsNullOrEmpty(type) && Enum.TryParse<TransactionType>(type, true, out var transactionType))
                 query = query.Where(t => t.Type == transactionType);
             return await query.CountAsync();
@@ -42,6 +42,7 @@ namespace BankLite.Infrastructure.Repositories
         public async Task<IEnumerable<Transaction>> GetByAccountIdAndDateRangeAsync(Guid accountId, DateTime startDate, DateTime endDate)
         {
             return await _context.Transactions
+                .AsNoTracking()
                 .Where(t => t.AccountId == accountId && t.CreatedAt >= startDate && t.CreatedAt <= endDate)
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
@@ -50,6 +51,7 @@ namespace BankLite.Infrastructure.Repositories
         public async Task<Transaction?> GetByIdempotencyKeyAsync(string key)
         {
             return await _context.Transactions
+                .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.IdempotencyKey == key);
         }
     }

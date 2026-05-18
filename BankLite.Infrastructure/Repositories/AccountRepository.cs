@@ -21,7 +21,7 @@ namespace BankLite.Infrastructure.Repositories
 
         public async Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId)
         {
-            return await _context.Accounts.Where(a => a.UserId == userId).ToListAsync();
+            return await _context.Accounts.AsNoTracking().Where(a => a.UserId == userId).ToListAsync();
         }
 
         public async Task AddAsync(Account account)
@@ -37,6 +37,7 @@ namespace BankLite.Infrastructure.Repositories
         public async Task<Account?> GetByAccountNumberAsync(string accountNumber)
         {
             return await _context.Accounts
+                .AsNoTracking()
                 .FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
         }
 
