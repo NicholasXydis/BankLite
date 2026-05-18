@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="BankLite - A full-stack banking app built with C#, .NET 8, PostgreSQL, JavaScript, Docker, and CI/CD."
+      data-i18n="landing_meta_description"
+      data-i18n-attr="content"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta
+      property="og:title"
+      content="BankLite | Landing"
+      data-i18n="landing_og_title"
+      data-i18n-attr="content"
+    />
+    <meta
+      property="og:description"
+      content="A polished full-stack banking app with secure auth, real-time features, and bilingual support."
+      data-i18n="landing_og_description"
+      data-i18n-attr="content"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#1a3a5c" />
+    <title data-i18n="landing_page_title">
+      BankLite | Full-Stack Banking App
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="xFavicon.ico" type="image/x-icon" />
+  </head>
+  <body class="lp-page">
+    <button
+      id="lp-lang-btn"
+      class="lp-btn-flag"
+      type="button"
+      aria-label="Change language"
+      data-i18n="landing_change_language"
+      data-i18n-attr="aria-label"
+    >
+      <span id="lp-flag"></span>
+      <span id="lp-lang-label"></span>
+    </button>
+
+    <div class="lp-scene" aria-hidden="true"></div>
+    <div class="lp-grid" aria-hidden="true"></div>
+
+    <main class="lp-shell">
+      <section class="lp-hero" aria-labelledby="lp-title">
+        <div class="lp-copy">
+          <h1 id="lp-title">BankLite</h1>
+          <div class="lp-actions">
+            <button class="lp-btn-signin" id="lp-demo-btn" type="button">
+              <span data-i18n="landing_sign_in">Sign in</span>
+            </button>
+            <a
+              class="lp-btn-secondary"
+              href="https://github.com/NicholasXydis/BankLiteAPI"
+              target="_blank"
+              rel="noopener noreferrer"
+              >GitHub</a
+            >
+          </div>
+          <div class="lp-stack-wrap">
+            <div
+              class="lp-stack"
+              aria-label="Technology stack"
+              data-i18n="landing_stack_aria"
+              data-i18n-attr="aria-label"
+            >
+              <span data-depth="18">C#</span>
+              <span data-depth="28">.NET 8</span>
+              <span data-depth="20">PostgreSQL</span>
+              <span data-depth="32">JavaScript</span>
+              <span data-depth="24">JWT Auth</span>
+              <span data-depth="36">SignalR</span>
+              <span data-depth="22">Docker</span>
+              <span data-depth="30">CI/CD</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lp-showcase" aria-hidden="true">
+          <div class="lp-card-scene">
+            <div class="lp-credit-card">
+              <div class="lp-card-sheen"></div>
+              <div class="lp-card-top">
+                <span>BankLite</span>
+              </div>
+              <div class="lp-card-chip"></div>
+              <div class="lp-card-number">•••• •••• •••• 2026</div>
+              <div class="lp-card-bottom">
+                <span>Nicholas Xydis</span>
+                <strong><img src="xFavicon.ico" alt="" /></strong>
+              </div>
+            </div>
+            <div class="lp-card-shadow"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="js/i18n.js"></script>
+    <script defer src="js/landing.js"></script>
+  </body>
+</html>
