@@ -16,12 +16,14 @@ namespace BankLite.API.Controllers
         private readonly IAuthService _authService;
         private readonly IValidator<RegisterUserDto> _registerValidator;
         private readonly IValidator<LoginUserDto> _loginValidator;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator)
+        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration)
         {
             _authService = authService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -122,7 +124,8 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
-            var resetBaseUrl = "http://127.0.0.1:5500/reset-password.html";
+            var resetBaseUrl = _configuration["Frontend:ResetPasswordUrl"]
+            ?? throw new InvalidOperationException("Reset password URL not configured");
             await _authService.ForgotPasswordAsync(dto.Email, resetBaseUrl);
             return Ok(new { message = "If that email exists, a reset link has been sent." });
         }
