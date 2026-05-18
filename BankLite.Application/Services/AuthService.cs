@@ -71,7 +71,7 @@ namespace BankLite.Application.Services
             {
                 UserId = user.Id,
                 FullName = user.FullName,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(60),
+                ExpiresAt = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
             });
         }
         public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> LoginAsync(LoginUserDto dto)
@@ -127,7 +127,7 @@ namespace BankLite.Application.Services
             {
                 UserId = user.Id,
                 FullName = user.FullName,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(60)
+                ExpiresAt = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
             });
         }
 
@@ -167,7 +167,7 @@ namespace BankLite.Application.Services
             {
                 UserId = existing.User.Id,
                 FullName = existing.User.FullName,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(60)
+                ExpiresAt = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
             });
         }
 
