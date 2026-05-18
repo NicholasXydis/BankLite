@@ -11,5 +11,6 @@ namespace BankLite.Domain.Interfaces
         Task AddAsync(Account account);
         Task UpdateAsync(Account account);
         Task<Account?> GetByAccountNumberAsync(string accountNumber);
+        Task<bool> ExistsByAccountNumberAsync(string accountNumber);
     }
 }

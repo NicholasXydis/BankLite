@@ -28,9 +28,9 @@ namespace BankLite.Application.Services
 
             var account = new Account
             {
-                UserId = userId,
+                UserId = userId, 
                 Type = dto.Type,
-                AccountNumber = Guid.NewGuid().ToString("N")[..12].ToUpper()
+                AccountNumber = await GenerateUniqueAccountNumberAsync()
             };
 
             await _accountRepository.AddAsync(account);
@@ -57,6 +57,20 @@ namespace BankLite.Application.Services
                 Balance = a.Balance,
                 CreatedAt = a.CreatedAt
             });
+        }
+
+        private async Task<string> GenerateUniqueAccountNumberAsync()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            var random = System.Security.Cryptography.RandomNumberGenerator.Create();
+            string accountNumber;
+            do
+            {
+                var bytes = new byte[12];
+                random.GetBytes(bytes);
+                accountNumber = new string(bytes.Select(b => chars[b % chars.Length]).ToArray());
+            } while (await _accountRepository.ExistsByAccountNumberAsync(accountNumber));
+            return accountNumber;
         }
     }
 }

@@ -39,5 +39,12 @@ namespace BankLite.Infrastructure.Repositories
             return await _context.Accounts
                 .FirstOrDefaultAsync(a => a.AccountNumber == accountNumber);
         }
+
+        public async Task<bool> ExistsByAccountNumberAsync(string accountNumber)
+        {
+            return await _context.Accounts
+                .AsNoTracking()
+                .AnyAsync(a => a.AccountNumber == accountNumber);
+        }
     }
 }
