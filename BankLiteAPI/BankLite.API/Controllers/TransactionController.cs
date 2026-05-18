@@ -46,17 +46,7 @@ namespace BankLite.API.Controllers
             if (error != null) return error;
             var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             var result = await _transactionService.DepositAsync(dto, userId, idempotencyKey);
-            var response = new TransactionResponseDto
-            {
-                Id = result.Id,
-                AccountId = result.AccountId,
-                Amount = result.Amount,
-                Type = result.Type.ToString(),
-                Description = result.Description,
-                CreatedAt = result.CreatedAt,
-            };
-
-            return Ok(response);
+            return Ok(result);
         }
 
         [HttpPost("withdraw")]
@@ -75,16 +65,7 @@ namespace BankLite.API.Controllers
             if (error != null) return error;
             var idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             var result = await _transactionService.WithdrawAsync(dto, userId, idempotencyKey);
-            var response = new TransactionResponseDto
-            {
-                Id = result.Id,
-                AccountId = result.AccountId,
-                Amount = result.Amount,
-                Type = result.Type.ToString(),
-                Description = result.Description,
-                CreatedAt = result.CreatedAt,
-            };
-            return Ok(response);
+            return Ok(result);
         }
 
         [HttpPost("transfer")]
@@ -140,23 +121,7 @@ namespace BankLite.API.Controllers
             if (page < 1) page = 1;
 
             var result = await _transactionService.GetTransactionsByAccountIdAsync(accountId, userId, page, pageSize, type);
-
-            var response = new PagedResultDto<TransactionResponseDto>
-            {
-                Items = result.Items.Select(t => new TransactionResponseDto
-                {
-                    Id = t.Id,
-                    AccountId = t.AccountId,
-                    Amount = t.Amount,
-                    Type = t.Type.ToString(),
-                    Description = t.Description,
-                    CreatedAt = t.CreatedAt
-                }),
-                TotalCount = result.TotalCount,
-                Page = result.Page,
-                PageSize = result.PageSize
-            };
-            return Ok(response);
+            return Ok(result);
         }
 
         [HttpGet("{accountId}/range")]
@@ -173,18 +138,7 @@ namespace BankLite.API.Controllers
             if ((endDate - startDate).TotalDays > 365) return BadRequest(new { message = "Date range cannot exceed 365 days." });
 
             var result = await _transactionService.GetTransactionsByDateRangeAsync(accountId, userId, startDate, endDate);
-
-            var response = result.Select(t => new TransactionResponseDto
-            {
-                Id = t.Id,
-                AccountId = t.AccountId,
-                Amount = t.Amount,
-                Type = t.Type.ToString(),
-                Description = t.Description,
-                CreatedAt = t.CreatedAt
-            });
-
-            return Ok(response);
+            return Ok(result);
         }
     }
 }

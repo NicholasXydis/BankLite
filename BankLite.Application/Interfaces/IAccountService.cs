@@ -5,7 +5,7 @@ namespace BankLite.Application.Interfaces
 {
     public interface IAccountService
     {
-        Task<Account> CreateAccountAsync(CreateAccountDto dto, Guid userId);
-        Task<IEnumerable<Account>> GetAccountsByUserIdAsync(Guid userId);
+        Task<AccountResponseDto> CreateAccountAsync(CreateAccountDto dto, Guid userId);
+        Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId);
     }
 }

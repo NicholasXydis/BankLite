@@ -25,13 +25,13 @@ namespace BankLite.Application.Services
             _balanceNotifier = balanceNotifier;
         }
 
-        public async Task<Transaction> DepositAsync(DepositWithdrawDto dto, Guid userId, string? idempotencyKey = null)
+        public async Task<TransactionResponseDto> DepositAsync(DepositWithdrawDto dto, Guid userId, string? idempotencyKey = null)
         {
 
             if (!string.IsNullOrEmpty(idempotencyKey))
             {
                 var existing = await _transactionRepository.GetByIdempotencyKeyAsync(idempotencyKey);
-                if (existing != null) return existing;
+                if (existing != null) return MapToDto(existing);
             }
 
             var account = await _accountRepository.GetByIdAsync(dto.AccountId);
@@ -67,16 +67,16 @@ namespace BankLite.Application.Services
             });
             await _unitOfWork.SaveAsync();
 
-            return transaction;
+            return MapToDto(transaction);
         }
 
-        public async Task<Transaction> WithdrawAsync(DepositWithdrawDto dto, Guid userId, string? idempotencyKey = null)
+        public async Task<TransactionResponseDto> WithdrawAsync(DepositWithdrawDto dto, Guid userId, string? idempotencyKey = null)
         {
 
             if (!string.IsNullOrEmpty(idempotencyKey))
             {
                 var existing = await _transactionRepository.GetByIdempotencyKeyAsync(idempotencyKey);
-                if (existing != null) return existing;
+                if (existing != null) return MapToDto(existing);
             }
 
             var account = await _accountRepository.GetByIdAsync(dto.AccountId);
@@ -118,7 +118,7 @@ namespace BankLite.Application.Services
             });
             await _unitOfWork.SaveAsync();
 
-            return transaction;
+            return MapToDto(transaction);
         }
 
         public async Task TransferAsync(TransferDto dto, Guid userId, string? idempotencyKey = null)
@@ -245,7 +245,7 @@ namespace BankLite.Application.Services
             await _unitOfWork.SaveAsync();
         }
 
-        public async Task<PagedResultDto<Transaction>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize, string? type = null)
+        public async Task<PagedResultDto<TransactionResponseDto>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize, string? type = null)
         {
             var account = await _accountRepository.GetByIdAsync(accountId);
             if (account == null || account.UserId != userId)
@@ -256,16 +256,16 @@ namespace BankLite.Application.Services
 
             var transactions = await _transactionRepository.GetByAccountIdAsync(accountId, page, pageSize, type);
             var totalCount = await _transactionRepository.GetTotalCountAsync(accountId, type);
-            return new PagedResultDto<Transaction>
+            return new PagedResultDto<TransactionResponseDto>
             {
-                Items = transactions,
+                Items = transactions.Select(MapToDto),
                 TotalCount = totalCount,
                 Page = page,
                 PageSize = pageSize,
             };
         }
 
-        public async Task<IEnumerable<Transaction>> GetTransactionsByDateRangeAsync(Guid accountId, Guid userId, DateTime startDate, DateTime endDate)
+        public async Task<IEnumerable<TransactionResponseDto>> GetTransactionsByDateRangeAsync(Guid accountId, Guid userId, DateTime startDate, DateTime endDate)
         {
             var account = await _accountRepository.GetByIdAsync(accountId);
             if (account == null || account.UserId != userId)
@@ -274,7 +274,18 @@ namespace BankLite.Application.Services
                 throw new UnauthorizedAccessException("You do not have access to this account.");
             }
 
-            return await _transactionRepository.GetByAccountIdAndDateRangeAsync(accountId, startDate, endDate);
+            var transactions = await _transactionRepository.GetByAccountIdAndDateRangeAsync(accountId, startDate, endDate);
+            return transactions.Select(MapToDto);
         }
+
+        private static TransactionResponseDto MapToDto(Transaction t) => new TransactionResponseDto
+        {
+            Id = t.Id,
+            AccountId = t.AccountId,
+            Amount = t.Amount,
+            Type = t.Type.ToString(),
+            Description = t.Description,
+            CreatedAt = t.CreatedAt
+        };
     }
 }

@@ -4,7 +4,6 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
@@ -44,16 +43,7 @@ namespace BankLite.API.Controllers
             try
             {
                 var result = await _accountService.CreateAccountAsync(dto, userId);
-
-                var response = new AccountResponseDto
-                {
-                    Id = result.Id,
-                    AccountNumber = result.AccountNumber,
-                    Type = result.Type.ToString(),
-                    Balance = result.Balance,
-                    CreatedAt = result.CreatedAt
-                };
-                return StatusCode(201, response);
+                return StatusCode(201, result);
             }
             catch (InvalidOperationException ex)
             {
@@ -68,18 +58,11 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetAccounts()
         {
-            var userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-            var result = await _accountService.GetAccountsByUserIdAsync(userId);
+            var error = TryGetUserId(out var userId);
+            if (error != null) return error;
 
-            var response = result.Select(a => new AccountResponseDto
-            {
-                Id = a.Id,
-                AccountNumber = a.AccountNumber,
-                Type = a.Type.ToString(),
-                Balance = a.Balance,
-                CreatedAt = a.CreatedAt
-            });
-            return Ok(response);
+            var result = await _accountService.GetAccountsByUserIdAsync(userId);
+            return Ok(result);
         }
     }
 }

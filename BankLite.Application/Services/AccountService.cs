@@ -19,7 +19,7 @@ namespace BankLite.Application.Services
             _logger = logger;
         }
 
-        public async Task<Account> CreateAccountAsync(CreateAccountDto dto, Guid userId)
+        public async Task<AccountResponseDto> CreateAccountAsync(CreateAccountDto dto, Guid userId)
         {
 
             var existingAccounts = await _accountRepository.GetByUserIdAsync(userId);
@@ -36,13 +36,27 @@ namespace BankLite.Application.Services
             await _accountRepository.AddAsync(account);
             await _unitOfWork.SaveAsync();
             _logger.LogInformation("Account created for user {UserId}: {AccountNumber}", userId, account.AccountNumber);
-            return account;
+            return new AccountResponseDto
+            {
+                Id = account.Id,
+                AccountNumber = account.AccountNumber,
+                Type = account.Type.ToString(),
+                Balance = account.Balance,
+                CreatedAt = account.CreatedAt
+            };
         }
 
-        public async Task<IEnumerable<Account>> GetAccountsByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<AccountResponseDto>> GetAccountsByUserIdAsync(Guid userId)
         {
-            _logger.LogInformation("Fetching accounts for user {UserId}", userId);
-            return await _accountRepository.GetByUserIdAsync(userId);
+            var accounts = await _accountRepository.GetByUserIdAsync(userId);
+            return accounts.Select(a => new AccountResponseDto
+            {
+                Id = a.Id,
+                AccountNumber = a.AccountNumber,
+                Type = a.Type.ToString(),
+                Balance = a.Balance,
+                CreatedAt = a.CreatedAt
+            });
         }
     }
 }
