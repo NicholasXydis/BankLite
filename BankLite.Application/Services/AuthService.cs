@@ -175,8 +175,10 @@ namespace BankLite.Application.Services
         {
             var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
             if (existing != null && !existing.IsRevoked)
-                await _refreshTokenRepository.RevokeAsync(existing);
-                await _unitOfWork.SaveAsync();
+            { 
+            await _refreshTokenRepository.RevokeAsync(existing);
+            await _unitOfWork.SaveAsync();
+            }
         }
 
         private async Task<string> GenerateRefreshTokenAsync(Guid userId)
@@ -202,7 +204,7 @@ namespace BankLite.Application.Services
             var resetToken = new BankLite.Domain.Entities.PasswordResetToken
             {
                 UserId = user.Id,
-                Token = token,
+                Token = HashToken(token),
                 ExpiresAt = DateTime.UtcNow.AddMinutes(15)
             };
 
@@ -217,7 +219,7 @@ namespace BankLite.Application.Services
 
         public async Task ResetPasswordAsync(string token, string newPassword)
         {
-            var resetToken = await _passwordResetRepository.GetByTokenAsync(token);
+            var resetToken = await _passwordResetRepository.GetByTokenAsync(HashToken(token));
             if (resetToken == null || resetToken.IsUsed || resetToken.ExpiresAt < DateTime.UtcNow)
                 throw new InvalidOperationException("Invalid or expired reset token.");
 
