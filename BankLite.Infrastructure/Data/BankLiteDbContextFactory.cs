@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using System;
+using Microsoft.Extensions.Configuration;
 
 namespace BankLite.Infrastructure.Data
 {
@@ -8,8 +8,14 @@ namespace BankLite.Infrastructure.Data
     {
         public BankLiteDbContext CreateDbContext(string[] args)
         {
+            var config = new ConfigurationBuilder()
+                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../BankLite.API"))
+                 .AddJsonFile("appsettings.json", optional: false)
+                 .AddEnvironmentVariables()
+                 .Build();
+
             var optionsBuilder = new DbContextOptionsBuilder<BankLiteDbContext>();
-            optionsBuilder.UseSqlServer("Data Source=localhost\\SQLEXPRESS;Initial Catalog=BankLiteDb;Integrated Security=True;Trust Server Certificate=True;");
+            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
 
             return new BankLiteDbContext(optionsBuilder.Options);
         }
