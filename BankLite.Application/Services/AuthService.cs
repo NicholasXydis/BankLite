@@ -155,7 +155,7 @@ namespace BankLite.Application.Services
 
         public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RefreshAsync(string refreshToken)
         {
-            var existing = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
             if (existing == null || existing.IsRevoked || existing.ExpiresAt < DateTime.UtcNow)
                 throw new UnauthorizedAccessException("Invalid or expired refresh token.");
 
@@ -173,7 +173,7 @@ namespace BankLite.Application.Services
 
         public async Task RevokeRefreshTokenAsync(string refreshToken)
         {
-            var existing = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
             if (existing != null && !existing.IsRevoked)
                 await _refreshTokenRepository.RevokeAsync(existing);
                 await _unitOfWork.SaveAsync();
@@ -185,7 +185,7 @@ namespace BankLite.Application.Services
             var refreshToken = new BankLite.Domain.Entities.RefreshToken
             {
                 UserId = userId,
-                Token = token,
+                Token = HashToken(token),
                 ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
             await _refreshTokenRepository.AddAsync(refreshToken);
@@ -230,6 +230,12 @@ namespace BankLite.Application.Services
             await _unitOfWork.SaveAsync();
 
             _logger.LogInformation("Password reset successful for user {UserId}", resetToken.UserId);
+        }
+
+        private static string HashToken(string token)
+        {
+            var bytes = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(token));
+            return Convert.ToBase64String(bytes);
         }
 
     }
