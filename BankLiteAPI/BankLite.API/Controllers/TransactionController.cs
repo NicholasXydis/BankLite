@@ -1,11 +1,12 @@
-﻿using BankLite.Application.DTOs;
+﻿using Azure;
+using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
-using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 
 namespace BankLite.API.Controllers
 {
@@ -134,6 +135,10 @@ namespace BankLite.API.Controllers
         {
             var error = TryGetUserId(out var userId);
             if (error != null) return error;
+
+            if (pageSize > 100) pageSize = 100;
+            if (page < 1) page = 1;
+
             var result = await _transactionService.GetTransactionsByAccountIdAsync(accountId, userId, page, pageSize, type);
 
             var response = new PagedResultDto<TransactionResponseDto>
@@ -163,6 +168,10 @@ namespace BankLite.API.Controllers
         {
             var error = TryGetUserId(out var userId);
             if (error != null) return error;
+
+            if (endDate < startDate) return BadRequest(new { message = "End date must be after start date." });
+            if ((endDate - startDate).TotalDays > 365) return BadRequest(new { message = "Date range cannot exceed 365 days." });
+
             var result = await _transactionService.GetTransactionsByDateRangeAsync(accountId, userId, startDate, endDate);
 
             var response = result.Select(t => new TransactionResponseDto
