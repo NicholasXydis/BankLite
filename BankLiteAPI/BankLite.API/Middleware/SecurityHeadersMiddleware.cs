@@ -17,6 +17,8 @@
             context.Response.Headers.Append("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
             context.Response.Headers.Append("X-DNS-Prefetch-Control", "off");
             context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin");
+            context.Response.Headers.Append("Content-Security-Policy",
+            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'");
             await _next(context);
         }
     }
