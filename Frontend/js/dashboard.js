@@ -272,7 +272,7 @@ loadSpendingChart();
 
 function connectSignalR() {
   const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${API_URL}/hubs/bank?userId=${sessionStorage.getItem("userId")}`)
+    .withUrl(`${API_URL}/hubs/bank`, { withCredentials: true })
     .withAutomaticReconnect()
     .build();
 
@@ -285,6 +285,9 @@ function connectSignalR() {
         account.balance = newBalance;
         sessionStorage.setItem("cachedAccounts", JSON.stringify(accounts));
       }
+      const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+      const totalEl = document.getElementById("total-balance-amount");
+      if (totalEl) countUp(totalEl, totalBalance, 600);
     }
 
     const balanceEl = document.querySelector(
@@ -295,7 +298,9 @@ function connectSignalR() {
     }
   });
 
-  connection.start().catch(() => {});
+  connection
+    .start()
+    .catch((err) => console.warn("SignalR connection failed:", err));
 }
 
 connectSignalR();
