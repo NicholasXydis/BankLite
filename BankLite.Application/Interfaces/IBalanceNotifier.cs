@@ -2,5 +2,5 @@
 
 public interface IBalanceNotifier
 {
-    Task NotifyBalanceUpdatedAsync(string userId, Guid accountId, decimal newBalance);
+    Task NotifyBalanceUpdatedAsync(Guid userId, Guid accountId, decimal newBalance);
 }

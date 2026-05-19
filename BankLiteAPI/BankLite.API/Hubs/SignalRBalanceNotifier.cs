@@ -12,8 +12,8 @@ public class SignalRBalanceNotifier : IBalanceNotifier
         _hubContext = hubContext;
     }
 
-    public async Task NotifyBalanceUpdatedAsync(string userId, Guid accountId, decimal newBalance)
+    public async Task NotifyBalanceUpdatedAsync(Guid userId, Guid accountId, decimal newBalance)
     {
-        await _hubContext.Clients.Group(userId).SendAsync("BalanceUpdated", accountId, newBalance);
+        await _hubContext.Clients.Group(userId.ToString()).SendAsync("BalanceUpdated", accountId, newBalance);
     }
 }

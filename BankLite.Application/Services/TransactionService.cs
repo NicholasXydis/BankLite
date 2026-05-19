@@ -65,7 +65,7 @@ namespace BankLite.Application.Services
                 });
             });
 
-            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), account.Id, account.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId, account.Id, account.Balance);
             _logger.LogInformation("Deposit of {Amount} to account {AccountId} by user {UserId}", dto.Amount, dto.AccountId, userId);
 
             return MapToDto(transaction);
@@ -117,7 +117,7 @@ namespace BankLite.Application.Services
                 });
             });
 
-            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), account.Id, account.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId, account.Id, account.Balance);
             _logger.LogInformation("Withdrawal of {Amount} from account {AccountId} by user {UserId}", dto.Amount, dto.AccountId, userId);
 
             return MapToDto(transaction);
@@ -177,8 +177,8 @@ namespace BankLite.Application.Services
                 });
             });
 
-            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), fromAccount.Id, fromAccount.Balance);
-            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), toAccount.Id, toAccount.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId, fromAccount.Id, fromAccount.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId, toAccount.Id, toAccount.Balance);
 
             _logger.LogInformation("Transfer of {Amount} from account {FromAccountId} to account {ToAccountId} by user {UserId}", dto.Amount, dto.FromAccountId, dto.ToAccountId, userId);
         }
@@ -239,8 +239,8 @@ namespace BankLite.Application.Services
                 });
             });
 
-            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), fromAccount.Id, fromAccount.Balance);
-            await _balanceNotifier.NotifyBalanceUpdatedAsync(toAccount.UserId.ToString(), toAccount.Id, toAccount.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(userId, fromAccount.Id, fromAccount.Balance);
+            await _balanceNotifier.NotifyBalanceUpdatedAsync(toAccount.UserId, toAccount.Id, toAccount.Balance);
 
             _logger.LogInformation("External transfer of {Amount} from account {FromAccountId} to account number {ToAccountNumber} by user {UserId}", dto.Amount, dto.FromAccountId, dto.ToAccountNumber, userId);
         }
