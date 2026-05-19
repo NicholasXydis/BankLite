@@ -63,7 +63,11 @@ namespace BankLite.API.Controllers
         {
             var error = TryGetUserId(out var userId);
             if (error != null) return error;
+
             await _userService.DeleteAccountAsync(userId);
+
+            Response.Cookies.Delete("accessToken");
+            Response.Cookies.Delete("refreshToken");
             return Ok(new { message = "Account deleted successfully" });
         }
     }
