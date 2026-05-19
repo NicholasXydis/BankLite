@@ -71,7 +71,6 @@ const i18n = {
     deposit_select_account: "Select Account",
     deposit_amount: "Amount",
     deposit_btn: "Deposit",
-    deposit_loading: "Loading accounts...",
     withdraw_title: "Withdraw Funds",
     withdraw_btn: "Withdraw",
     transfer_title: "Transfer Funds",
@@ -88,7 +87,6 @@ const i18n = {
     transactions_deposits: "Deposits",
     transactions_withdrawals: "Withdrawals",
     transactions_transfers: "Transfers",
-    transactions_none: "No transactions found",
     transactions_prev: "Previous",
     transactions_next: "Next",
     transactions_select_account: "Select Account",
@@ -161,7 +159,7 @@ const i18n = {
     success_password_changed: "Password changed successfully!",
     delete_account_text:
       "This will permanently delete your account and all data. This cannot be undone.",
-    first_login: "First login",
+    first_login: "First Login",
     error_select_account: "Please select an account.",
     error_valid_amount: "Please enter a valid amount.",
     error_max_deposit: "Maximum deposit amount is $1,000,000.",
@@ -170,9 +168,12 @@ const i18n = {
     error_enter_recipient: "Please enter a recipient account number.",
     error_select_destination: "Please select a destination account.",
     error_max_transfer: "Maximum transfer amount is $1,000,000.",
-    error_same_account: "Cannot transfer to same account",
+    error_same_account: "Cannot transfer to the same account.",
     error_invalid_token: "Invalid or missing reset token.",
     error_min_8_chars: "Password must be at least 8 characters.",
+    error_csv_export: "Failed to export transactions. Please try again.",
+    error_load_accounts: "Failed to load accounts. Please refresh the page.",
+    error_load_profile: "Failed to load profile. Please try again.",
     success_password_reset:
       "Password reset successfully! Redirecting to login...",
     success_account_created: "Account created successfully!",
@@ -190,7 +191,7 @@ const i18n = {
     placeholder_fullname: "Full Name",
     landing_meta_description:
       "BankLite - A full-stack banking app built with C#, .NET 8, PostgreSQL, JavaScript, Docker, and CI/CD.",
-    landing_og_title: "BankLite | Landing",
+    landing_og_title: "BankLite | Full-Stack Banking App",
     landing_og_description:
       "A polished full-stack banking app with secure auth, real-time features, and bilingual support.",
     landing_page_title: "BankLite | Full-Stack Banking App",
@@ -233,7 +234,7 @@ const i18n = {
     logout_cancel: "Annuler",
     logout_confirm: "Se déconnecter",
     delete_title: "Supprimer le compte",
-    delete_text:
+    delete_account_text:
       "Cette action supprimera définitivement votre compte et toutes vos données. Elle est irréversible.",
     delete_confirm: "Supprimer",
     session_stay: "Rester connecté",
@@ -274,7 +275,6 @@ const i18n = {
     deposit_select_account: "Sélectionner un compte",
     deposit_amount: "Montant",
     deposit_btn: "Déposer",
-    deposit_loading: "Chargement des comptes...",
     withdraw_title: "Retirer des fonds",
     withdraw_btn: "Retirer",
     transfer_title: "Virement de fonds",
@@ -291,7 +291,6 @@ const i18n = {
     transactions_deposits: "Dépôts",
     transactions_withdrawals: "Retraits",
     transactions_transfers: "Virements",
-    transactions_none: "Aucune transaction trouvée",
     transactions_prev: "Précédent",
     transactions_next: "Suivant",
     transactions_select_account: "Sélectionner un compte",
@@ -379,9 +378,14 @@ const i18n = {
     error_select_destination: "Veuillez sélectionner un compte de destination.",
     error_max_transfer: "Le montant maximal du virement est de 1 000 000 $.",
     error_same_account:
-      "Impossible d'effectuer un virement vers le même compte",
+      "Impossible d'effectuer un virement vers le même compte.",
     error_invalid_token: "Jeton de réinitialisation invalide ou manquant.",
     error_min_8_chars: "Le mot de passe doit comporter au moins 8 caractères.",
+    error_csv_export:
+      "Échec de l'exportation des transactions. Veuillez réessayer.",
+    error_load_accounts:
+      "Échec du chargement des comptes. Veuillez actualiser la page.",
+    error_load_profile: "Échec du chargement du profil. Veuillez réessayer.",
     success_password_reset:
       "Réinitialisation du mot de passe réussie ! Redirection vers la page de connexion...",
     success_account_created: "Compte créé avec succès !",
@@ -399,7 +403,7 @@ const i18n = {
     placeholder_fullname: "Nom Complet",
     landing_meta_description:
       "BankLite - Une application bancaire full-stack développée avec C#, .NET 8, PostgreSQL, JavaScript, Docker et CI/CD.",
-    landing_og_title: "BankLite | Accueil",
+    landing_og_title: "BankLite | Application Bancaire Full-Stack",
     landing_og_description:
       "Une application bancaire complète avec authentification sécurisée, fonctionnalités en temps réel et assistance bilingue.",
     landing_page_title: "BankLite | Application Bancaire Full-Stack",
@@ -416,6 +420,7 @@ function t(key) {
 
 function applyTranslations() {
   const lang = localStorage.getItem("language") || "en";
+  document.documentElement.lang = lang === "fr" ? "fr" : "en";
   const titles = {
     "index.html": { en: "BankLite | Login", fr: "BankLite | Connexion" },
     "register.html": {
@@ -475,13 +480,6 @@ function applyTranslations() {
 function setLanguage(lang) {
   localStorage.setItem("language", lang);
   applyTranslations();
-  document.documentElement.lang = lang === "fr" ? "fr" : "en";
 }
 
 document.addEventListener("DOMContentLoaded", applyTranslations);
-if (
-  document.readyState === "complete" ||
-  document.readyState === "interactive"
-) {
-  applyTranslations();
-}
