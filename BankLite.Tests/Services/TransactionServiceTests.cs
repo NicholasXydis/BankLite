@@ -62,7 +62,7 @@ namespace BankLite.Tests.Services
             Assert.Equal(1250, account.Balance);
             _mockTransactionRepo.Verify(r => r.AddAsync(It.IsAny<Transaction>()), Times.Once);
             _mockAccountRepo.Verify(r => r.UpdateAsync(account), Times.Once);
-            _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Exactly(2));
+            _mockUnitOfWork.Verify(r => r.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()), Times.Once);
         }
 
         [Fact]
@@ -173,7 +173,7 @@ namespace BankLite.Tests.Services
             Assert.Equal(750, account.Balance);
             _mockTransactionRepo.Verify(r => r.AddAsync(It.IsAny<Transaction>()), Times.Once);
             _mockAccountRepo.Verify(r => r.UpdateAsync(account), Times.Once);
-            _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Exactly(2));
+            _mockUnitOfWork.Verify(r => r.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()), Times.Once);
         }
 
         [Fact]

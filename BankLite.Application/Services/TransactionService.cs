@@ -52,20 +52,21 @@ namespace BankLite.Application.Services
                 IdempotencyKey = idempotencyKey
             };
 
-            await _transactionRepository.AddAsync(transaction);
-            await _accountRepository.UpdateAsync(account);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                await _transactionRepository.AddAsync(transaction);
+                await _accountRepository.UpdateAsync(account);
+                await _auditLogRepository.LogAsync(new AuditLog
+                {
+                    UserId = userId,
+                    Action = "Deposit",
+                    Details = $"User {userId} deposited {dto.Amount} to account {dto.AccountId}",
+                    PerformedAt = DateTime.UtcNow,
+                });
+            });
+
             await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), account.Id, account.Balance);
             _logger.LogInformation("Deposit of {Amount} to account {AccountId} by user {UserId}", dto.Amount, dto.AccountId, userId);
-
-            await _auditLogRepository.LogAsync(new AuditLog
-            {
-                UserId = userId,
-                Action = "Deposit",
-                Details = $"User {userId} deposited {dto.Amount} to account {dto.AccountId}",
-                PerformedAt = DateTime.UtcNow,
-            });
-            await _unitOfWork.SaveAsync();
 
             return MapToDto(transaction);
         }
@@ -103,20 +104,21 @@ namespace BankLite.Application.Services
                 IdempotencyKey = idempotencyKey
             };
 
-            await _transactionRepository.AddAsync(transaction);
-            await _accountRepository.UpdateAsync(account);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                await _transactionRepository.AddAsync(transaction);
+                await _accountRepository.UpdateAsync(account);
+                await _auditLogRepository.LogAsync(new AuditLog
+                {
+                    UserId = userId,
+                    Action = "Withdrawal",
+                    Details = $"User {userId} withdrew {dto.Amount} from account {dto.AccountId}",
+                    PerformedAt = DateTime.UtcNow,
+                });
+            });
+
             await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), account.Id, account.Balance);
             _logger.LogInformation("Withdrawal of {Amount} from account {AccountId} by user {UserId}", dto.Amount, dto.AccountId, userId);
-
-            await _auditLogRepository.LogAsync(new AuditLog
-            {
-                UserId = userId,
-                Action = "Withdrawal",
-                Details = $"User {userId} withdrew {dto.Amount} from account {dto.AccountId}",
-                PerformedAt = DateTime.UtcNow,
-            });
-            await _unitOfWork.SaveAsync();
 
             return MapToDto(transaction);
         }
