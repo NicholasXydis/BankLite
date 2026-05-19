@@ -62,7 +62,7 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "cookieAuth"
                 }
             },
-            new string[] { }
+            Array.Empty<string>()
         }
     });
 

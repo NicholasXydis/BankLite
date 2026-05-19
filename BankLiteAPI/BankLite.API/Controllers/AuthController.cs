@@ -146,7 +146,7 @@ namespace BankLite.API.Controllers
             Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
         };
 
-        private CookieOptions RefreshTokenCookieOptions() => new CookieOptions
+        private static CookieOptions RefreshTokenCookieOptions() => new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
