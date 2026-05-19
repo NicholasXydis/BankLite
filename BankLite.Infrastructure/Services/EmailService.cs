@@ -8,23 +8,23 @@ namespace BankLite.Infrastructure.Services
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration _configuration;
+        private readonly string _apiKey;
+        private readonly string _fromEmail;
+        private readonly string _fromName;
         private readonly ILogger<EmailService> _logger;
 
         public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
-        {     
-            _configuration = configuration;
+        {
+            _apiKey = configuration["SendGrid:ApiKey"] ?? throw new InvalidOperationException("SendGrid API key not configured");
+            _fromEmail = configuration["SendGrid:FromEmail"] ?? throw new InvalidOperationException("SendGrid from email not configured");
+            _fromName = configuration["SendGrid:FromName"] ?? "BankLite";
             _logger = logger;
         }
 
         public async Task SendPasswordResetEmailAsync(string toEmail, string resetLink)
         {
-            var apiKey = _configuration["SendGrid:ApiKey"];
-            var fromEmail = _configuration["SendGrid:FromEmail"];
-            var fromName = _configuration["SendGrid:FromName"];
-
-            var client = new SendGridClient(apiKey);
-            var from = new EmailAddress(fromEmail, fromName);
+            var client = new SendGridClient(_apiKey);
+            var from = new EmailAddress(_fromEmail, _fromName);
             var to = new EmailAddress(toEmail);
             var subject = "BankLite — Reset Your Password";
             var plainText = $"Click the link to reset your password: {resetLink}";

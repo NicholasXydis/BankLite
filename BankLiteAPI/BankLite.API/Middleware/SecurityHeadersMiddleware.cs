@@ -18,7 +18,7 @@
             context.Response.Headers.Append("X-DNS-Prefetch-Control", "off");
             context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin");
             context.Response.Headers.Append("Content-Security-Policy",
-            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'");
+            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' wss://localhost:7205; frame-ancestors 'none'");
             context.Response.Headers.Append("X-Permitted-Cross-Domain-Policies", "none");
             await _next(context);
         }
