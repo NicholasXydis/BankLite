@@ -1,4 +1,5 @@
 using BankLite.API.Middleware;
+using BankLite.API.Services;
 using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
 using BankLite.Application.Services;
@@ -111,6 +112,7 @@ builder.Services.AddScoped<IValidator<ResetPasswordDto>, ResetPasswordValidator>
 builder.Services.AddResponseCompression();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IBalanceNotifier, SignalRBalanceNotifier>();
+builder.Services.AddHostedService<TokenCleanupService>();
 builder.Services.AddHealthChecks();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
