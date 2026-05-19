@@ -24,6 +24,7 @@ namespace BankLite.Application.Services
             if (user == null)
                 throw new InvalidOperationException("User not found");
 
+            _logger.LogInformation("Profile fetched for user {UserId}", userId);
             return new UserProfileDto
             {
                 FullName = user.FullName,

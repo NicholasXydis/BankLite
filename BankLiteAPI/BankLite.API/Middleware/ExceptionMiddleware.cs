@@ -22,8 +22,8 @@ namespace BankLite.API.Middleware
             catch (Exception ex)
             {
 
-                _logger.LogError(ex, "Unhandled exception on {Method} {Path}: {Message}",
-                context.Request.Method, context.Request.Path, ex.Message);
+                _logger.LogError(ex, "Unhandled exception on {Method} {Path}",
+                context.Request.Method, context.Request.Path);
 
                 context.Response.ContentType = "application/json";
 
