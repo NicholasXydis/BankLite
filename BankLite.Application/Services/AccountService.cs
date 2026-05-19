@@ -62,11 +62,11 @@ namespace BankLite.Application.Services
         private async Task<string> GenerateUniqueAccountNumberAsync()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            var random = System.Security.Cryptography.RandomNumberGenerator.Create();
+            using var random = System.Security.Cryptography.RandomNumberGenerator.Create();
             string accountNumber;
+            var bytes = new byte[12];
             do
             {
-                var bytes = new byte[12];
                 random.GetBytes(bytes);
                 accountNumber = new string(bytes.Select(b => chars[b % chars.Length]).ToArray());
             } while (await _accountRepository.ExistsByAccountNumberAsync(accountNumber));

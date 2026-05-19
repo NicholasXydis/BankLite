@@ -23,6 +23,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, config) =>
 {
     config
+      .MinimumLevel.Is(context.HostingEnvironment.IsDevelopment()
+            ? Serilog.Events.LogEventLevel.Information
+            : Serilog.Events.LogEventLevel.Warning)
         .WriteTo.Console()
         .WriteTo.File("logs/banklite.txt", rollingInterval: RollingInterval.Day);
 });

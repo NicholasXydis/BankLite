@@ -16,6 +16,7 @@ namespace BankLite.API.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
