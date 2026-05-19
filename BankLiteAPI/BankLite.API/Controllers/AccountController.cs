@@ -40,15 +40,8 @@ namespace BankLite.API.Controllers
             var error = TryGetUserId(out var userId);
             if (error != null) return error;
 
-            try
-            {
-                var result = await _accountService.CreateAccountAsync(dto, userId);
-                return StatusCode(201, result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var result = await _accountService.CreateAccountAsync(dto, userId);
+            return StatusCode(201, result);
         }
 
         [HttpGet]
