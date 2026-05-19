@@ -39,6 +39,8 @@ namespace BankLite.Tests.Services
             _mockPasswordResetRepo = new Mock<IPasswordResetRepository>();
             _mockEmailService = new Mock<IEmailService>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
+            _mockUnitOfWork.Setup(u => u.ExecuteInTransactionAsync(It.IsAny<Func<Task>>()))
+            .Returns((Func<Task> operation) => operation());
 
             _authService = new AuthService(_mockUserRepo.Object, _mockConfig.Object, _mockAuditRepo.Object, new NullLogger<AuthService>(), _mockRefreshTokenRepo.Object, _mockPasswordResetRepo.Object, _mockEmailService.Object, _mockUnitOfWork.Object);
         }
