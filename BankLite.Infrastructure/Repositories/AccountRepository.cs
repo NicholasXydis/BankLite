@@ -14,9 +14,9 @@ namespace BankLite.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Account?> GetByIdAsync(Guid Id)
+        public async Task<Account?> GetByIdAsync(Guid id)
         {
-            return await _context.Accounts.FindAsync(Id);
+            return await _context.Accounts.FindAsync(id);
         }
 
         public async Task<IEnumerable<Account>> GetByUserIdAsync(Guid userId)
