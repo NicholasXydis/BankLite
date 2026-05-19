@@ -457,8 +457,8 @@ document.addEventListener("DOMContentLoaded", function () {
   if (languageToggle) {
     languageToggle.checked = localStorage.getItem("language") === "fr";
     languageToggle.addEventListener("change", function () {
-      window.location.reload();
       setLanguage(this.checked ? "fr" : "en");
+      window.location.reload();
     });
   }
 
