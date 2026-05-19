@@ -1,5 +1,6 @@
 ﻿using BankLite.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
 
@@ -9,11 +10,13 @@ namespace BankLite.Application.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
+        private readonly ILogger<GroqService> _logger;
 
-        public GroqService(HttpClient httpClient, IConfiguration configuration)
+        public GroqService(HttpClient httpClient, IConfiguration configuration, ILogger<GroqService> logger)
         {
             _httpClient = httpClient;
             _apiKey = configuration["Groq:ApiKey"] ?? throw new InvalidOperationException("Groq API key not configured");
+            _logger = logger;
         }
 
         public async Task<string> GetChatResponseAsync(string userMessage)
@@ -46,7 +49,11 @@ namespace BankLite.Application.Services
 
             var response = await _httpClient.SendAsync(request);
             if (!response.IsSuccessStatusCode)
-                throw new HttpRequestException($"Groq API request failed with status {response.StatusCode}");
+            {
+                _logger.LogError("Groq API request failed with status {Status}", response.StatusCode);
+                throw new HttpRequestException("AI assistant is temporarily unavailable. Please try again later.");
+            }
+            _logger.LogInformation("Groq API request completed successfully");
 
             var responseJson = await response.Content.ReadAsStringAsync();
             var responseObj = JsonSerializer.Deserialize<JsonElement>(responseJson);
