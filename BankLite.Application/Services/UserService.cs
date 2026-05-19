@@ -10,12 +10,14 @@ namespace BankLite.Application.Services
         private readonly IUserRepository _userRepository;
         private readonly ILogger<UserService> _logger;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<UserService> logger)
+        public UserService(IUserRepository userRepository, IUnitOfWork unitOfWork, ILogger<UserService> logger, IRefreshTokenRepository refreshTokenRepository)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _logger = logger;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<UserProfileDto> GetProfileAsync(Guid userId)
@@ -45,6 +47,7 @@ namespace BankLite.Application.Services
 
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
             await _userRepository.UpdateAsync(user);
+            await _refreshTokenRepository.RevokeAllForUserAsync(userId);
             await _unitOfWork.SaveAsync();
             _logger.LogInformation("Password changed for user: {UserId}", userId);
         }
