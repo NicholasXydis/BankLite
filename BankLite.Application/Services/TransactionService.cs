@@ -165,21 +165,20 @@ namespace BankLite.Application.Services
 
                 await _transactionRepository.AddAsync(debitTransaction);
                 await _transactionRepository.AddAsync(creditTransaction);
+
+                await _auditLogRepository.LogAsync(new AuditLog
+                {
+                    UserId = userId,
+                    Action = "Transfer",
+                    Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account {dto.ToAccountId}",
+                    PerformedAt = DateTime.UtcNow,
+                });
             });
 
             await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), fromAccount.Id, fromAccount.Balance);
             await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), toAccount.Id, toAccount.Balance);
 
             _logger.LogInformation("Transfer of {Amount} from account {FromAccountId} to account {ToAccountId} by user {UserId}", dto.Amount, dto.FromAccountId, dto.ToAccountId, userId);
-
-            await _auditLogRepository.LogAsync(new AuditLog
-            {
-                UserId = userId,
-                Action = "Transfer",
-                Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account {dto.ToAccountId}",
-                PerformedAt = DateTime.UtcNow,
-            });
-            await _unitOfWork.SaveAsync();
         }
 
         public async Task TransferExternalAsync(ExternalTransferDto dto, Guid userId, string? idempotencyKey = null)
@@ -228,21 +227,20 @@ namespace BankLite.Application.Services
 
                 await _transactionRepository.AddAsync(debitTransaction);
                 await _transactionRepository.AddAsync(creditTransaction);
+
+                await _auditLogRepository.LogAsync(new AuditLog
+                {
+                    UserId = userId,
+                    Action = "ExternalTransfer",
+                    Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account number {dto.ToAccountNumber}",
+                    PerformedAt = DateTime.UtcNow,
+                });
             });
 
             await _balanceNotifier.NotifyBalanceUpdatedAsync(userId.ToString(), fromAccount.Id, fromAccount.Balance);
             await _balanceNotifier.NotifyBalanceUpdatedAsync(toAccount.UserId.ToString(), toAccount.Id, toAccount.Balance);
 
             _logger.LogInformation("External transfer of {Amount} from account {FromAccountId} to account number {ToAccountNumber} by user {UserId}", dto.Amount, dto.FromAccountId, dto.ToAccountNumber, userId);
-
-            await _auditLogRepository.LogAsync(new AuditLog
-            {
-                UserId = userId,
-                Action = "ExternalTransfer",
-                Details = $"User {userId} transferred {dto.Amount} from account {dto.FromAccountId} to account number {dto.ToAccountNumber}",
-                PerformedAt = DateTime.UtcNow,
-            });
-            await _unitOfWork.SaveAsync();
         }
 
         public async Task<PagedResultDto<TransactionResponseDto>> GetTransactionsByAccountIdAsync(Guid accountId, Guid userId, int page, int pageSize, string? type = null)
