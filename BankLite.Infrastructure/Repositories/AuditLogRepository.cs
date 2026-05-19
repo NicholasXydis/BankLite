@@ -2,8 +2,6 @@
 using BankLite.Domain.Interfaces;
 using BankLite.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
 
 namespace BankLite.Infrastructure.Repositories
 {
