@@ -178,6 +178,14 @@ builder.Services.AddRateLimiter(options =>
         config.QueueLimit = 0;
     });
 
+    options.AddFixedWindowLimiter("chat", config =>
+    {
+        config.PermitLimit = 10;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        config.QueueLimit = 0;
+    });
+
     options.AddFixedWindowLimiter("forgotpassword", config =>
     {
         config.PermitLimit = 3;
