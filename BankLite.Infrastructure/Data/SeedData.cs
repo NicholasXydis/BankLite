@@ -23,7 +23,7 @@ namespace BankLite.Infrastructure.Data
             {
                 UserId = user.Id,
                 Type = AccountType.Chequing,
-                AccountNumber = "Test001",
+                AccountNumber = "TESTCHQ00001",
                 Balance = 1000m
             };
 
@@ -31,7 +31,7 @@ namespace BankLite.Infrastructure.Data
             {
                 UserId = user.Id,
                 Type = AccountType.Savings,
-                AccountNumber = "Test002",
+                AccountNumber = "TESTSAV00001",
                 Balance = 5000m
             };
 
