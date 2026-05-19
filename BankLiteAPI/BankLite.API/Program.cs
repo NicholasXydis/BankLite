@@ -211,13 +211,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        var context = scope.ServiceProvider.GetRequiredService<BankLiteDbContext>();
+    var context = scope.ServiceProvider.GetRequiredService<BankLiteDbContext>();
+    await context.Database.MigrateAsync();
+    if (app.Environment.IsDevelopment())
         await SeedData.SeedAsync(context);
-    }
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
