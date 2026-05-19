@@ -19,15 +19,17 @@ namespace BankLite.API.Controllers
         private readonly IValidator<LoginUserDto> _loginValidator;
         private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
         private readonly IConfiguration _configuration;
+        private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
 
 
-        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration, IValidator<ForgotPasswordDto> forgotPasswordValidator)
+        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator)
         {
             _authService = authService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
             _configuration = configuration;
             _forgotPasswordValidator = forgotPasswordValidator;
+            _resetPasswordValidator = resetPasswordValidator;
         }
 
         [HttpPost("register")]
@@ -111,6 +113,11 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
+
+            var validation = await _resetPasswordValidator.ValidateAsync(dto);
+            if (!validation.IsValid)
+                return BadRequest(validation.Errors);
+
             await _authService.ResetPasswordAsync(dto.Token, dto.NewPassword);
             return Ok(new { message = "Password reset successfully." });
         }
