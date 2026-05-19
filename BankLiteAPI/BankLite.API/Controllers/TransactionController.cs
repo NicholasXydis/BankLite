@@ -1,12 +1,10 @@
-﻿using Azure;
-using BankLite.Application.DTOs;
+﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 
 namespace BankLite.API.Controllers
 {
