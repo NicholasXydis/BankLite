@@ -67,6 +67,7 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("refresh")]
+        [EnableRateLimiting("refresh")]
         [SwaggerOperation(Summary = "Refresh access token", Description = "Issues a new JWT access token using the HttpOnly refresh token cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(401)]
