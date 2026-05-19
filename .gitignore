@@ -482,7 +482,6 @@ $RECYCLE.BIN/
 *.swp
 
 #Extras
-appsettings.json
 appsettings.Development.json
 *.user
 .vs/
