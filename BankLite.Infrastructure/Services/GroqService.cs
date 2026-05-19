@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
 
-namespace BankLite.Application.Services
+namespace BankLite.Infrastructure.Services
 {
     public class GroqService : IGroqService
     {
