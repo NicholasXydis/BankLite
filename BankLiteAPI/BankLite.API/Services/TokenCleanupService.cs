@@ -18,7 +18,14 @@ namespace BankLite.API.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await CleanupExpiredTokensAsync();
+                try
+                {
+                    await CleanupExpiredTokensAsync();
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Token cleanup failed");
+                }
                 await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
         }
