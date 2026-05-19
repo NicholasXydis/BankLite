@@ -147,21 +147,21 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-            var allowedOrigins = new List<string>
+        var allowedOrigins = new List<string>
         {
             builder.Configuration["AllowedOrigins:Frontend"] ?? "http://localhost:3000"
         };
 
-            if (builder.Environment.IsDevelopment())
-            {
-                allowedOrigins.Add("http://127.0.0.1:5500");
-                allowedOrigins.Add("https://localhost:3000");
-            }
+        if (builder.Environment.IsDevelopment())
+        {
+            allowedOrigins.Add("http://127.0.0.1:5500");
+            allowedOrigins.Add("https://localhost:3000");
+        }
 
-            policy.WithOrigins(allowedOrigins.ToArray())
-                   .AllowAnyHeader()
-               .AllowAnyMethod()
-               .AllowCredentials();
+        policy.WithOrigins(allowedOrigins.ToArray())
+               .AllowAnyHeader()
+           .AllowAnyMethod()
+           .AllowCredentials();
     });
 });
 

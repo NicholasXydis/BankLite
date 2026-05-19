@@ -28,7 +28,7 @@ namespace BankLite.Application.Services
 
             var account = new Account
             {
-                UserId = userId, 
+                UserId = userId,
                 Type = dto.Type,
                 AccountNumber = await GenerateUniqueAccountNumberAsync()
             };
