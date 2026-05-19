@@ -175,9 +175,9 @@ namespace BankLite.Application.Services
         {
             var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
             if (existing != null && !existing.IsRevoked)
-            { 
-            await _refreshTokenRepository.RevokeAsync(existing);
-            await _unitOfWork.SaveAsync();
+            {
+                await _refreshTokenRepository.RevokeAsync(existing);
+                await _unitOfWork.SaveAsync();
             }
         }
 
@@ -223,13 +223,13 @@ namespace BankLite.Application.Services
             if (resetToken == null || resetToken.IsUsed || resetToken.ExpiresAt < DateTime.UtcNow)
                 throw new InvalidOperationException("Invalid or expired reset token.");
 
-            resetToken.IsUsed = true;
-            await _passwordResetRepository.UpdateAsync(resetToken);
-            await _unitOfWork.SaveAsync();
-
-            resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-            await _userRepository.UpdateAsync(resetToken.User);
-            await _unitOfWork.SaveAsync();
+            await _unitOfWork.ExecuteInTransactionAsync(async () =>
+            {
+                resetToken.IsUsed = true;
+                await _passwordResetRepository.UpdateAsync(resetToken);
+                resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                await _userRepository.UpdateAsync(resetToken.User);
+            });
 
             _logger.LogInformation("Password reset successful for user {UserId}", resetToken.UserId);
         }
