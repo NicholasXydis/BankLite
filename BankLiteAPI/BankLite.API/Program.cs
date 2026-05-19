@@ -144,12 +144,19 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(
-            "https://localhost:3000",
-             "http://127.0.0.1:5500",
+            var allowedOrigins = new List<string>
+        {
             builder.Configuration["AllowedOrigins:Frontend"] ?? "http://localhost:3000"
-            )
-               .AllowAnyHeader()
+        };
+
+            if (builder.Environment.IsDevelopment())
+            {
+                allowedOrigins.Add("http://127.0.0.1:5500");
+                allowedOrigins.Add("https://localhost:3000");
+            }
+
+            policy.WithOrigins(allowedOrigins.ToArray())
+                   .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials();
     });
