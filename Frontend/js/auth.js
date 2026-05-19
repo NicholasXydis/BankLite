@@ -484,7 +484,10 @@ document.addEventListener("DOMContentLoaded", function () {
   function addMessage(text, isUser) {
     const div = document.createElement("div");
     div.className = `chatbot-message ${isUser ? "chatbot-message--user" : "chatbot-message--alfred"}`;
-    div.innerHTML = `<div class="chatbot-bubble">${text}</div>`;
+    const bubble = document.createElement("div");
+    bubble.className = "chatbot-bubble";
+    bubble.textContent = text;
+    div.appendChild(bubble);
     chatbotMessages.appendChild(div);
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
   }
@@ -493,7 +496,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const div = document.createElement("div");
     div.className = "chatbot-message chatbot-message--alfred chatbot-typing";
     div.id = "chatbot-typing";
-    div.innerHTML = `<div class="chatbot-bubble">${t("chatbot_typing")}</div>`;
+    const bubble = document.createElement("div");
+    bubble.className = "chatbot-bubble";
+    bubble.textContent = t("chatbot_typing");
+    div.appendChild(bubble);
     chatbotMessages.appendChild(div);
     chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
   }

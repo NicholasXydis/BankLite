@@ -25,25 +25,39 @@ async function loadDashboard() {
         if (e.target.closest(".copy-btn")) return;
         window.location.href = `transactions.html?accountId=${account.id}`;
       });
-      card.innerHTML = `
-      <div class="card-header">
-      <div class="account-icon">
-      ${
+      const cardHeader = document.createElement("div");
+      cardHeader.className = "card-header";
+      const accountIcon = document.createElement("div");
+      accountIcon.className = "account-icon";
+      accountIcon.innerHTML =
         account.type === "Chequing"
           ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/><circle cx="17" cy="15" r="1.5" fill="#1a3a5c"/></svg>`
-          : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M4 7v5c0 1.657 3.582 3 8 3s8-1.343 8-3V7"/><path d="M4 12v5c0 1.657 3.582 3 8 3s8-1.343 8-3v-5"/></svg>`
-      }
-        </div>
-        <h2>${account.type === "Chequing" ? t("dashboard_chequing") : t("dashboard_savings")}</h2>
-        </div>
-        <div class="account-number-row">
-        <p class="account-number">${account.accountNumber}</p>
-        <button class="copy-btn" data-number="${account.accountNumber}">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        </button>
-        </div>
-        <p class="account-balance-amount" data-balance="${account.balance}">$0.00</p>
-      `;
+          : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M4 7v5c0 1.657 3.582 3 8 3s8-1.343 8-3V7"/><path d="M4 12v5c0 1.657 3.582 3 8 3s8-1.343 8-3v-5"/></svg>`;
+      const accountTitle = document.createElement("h2");
+      accountTitle.textContent =
+        account.type === "Chequing"
+          ? t("dashboard_chequing")
+          : t("dashboard_savings");
+      cardHeader.appendChild(accountIcon);
+      cardHeader.appendChild(accountTitle);
+      const accountNumberRow = document.createElement("div");
+      accountNumberRow.className = "account-number-row";
+      const accountNumberEl = document.createElement("p");
+      accountNumberEl.className = "account-number";
+      accountNumberEl.textContent = account.accountNumber;
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "copy-btn";
+      copyBtn.dataset.number = account.accountNumber;
+      copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+      accountNumberRow.appendChild(accountNumberEl);
+      accountNumberRow.appendChild(copyBtn);
+      const balanceEl = document.createElement("p");
+      balanceEl.className = "account-balance-amount";
+      balanceEl.dataset.balance = account.balance;
+      balanceEl.textContent = "$0.00";
+      card.appendChild(cardHeader);
+      card.appendChild(accountNumberRow);
+      card.appendChild(balanceEl);
       accountsContainer.appendChild(card);
     });
 
