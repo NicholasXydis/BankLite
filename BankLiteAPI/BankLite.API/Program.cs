@@ -6,6 +6,7 @@ using BankLite.Application.Validators;
 using BankLite.Domain.Interfaces;
 using BankLite.Infrastructure.Data;
 using BankLite.Infrastructure.Repositories;
+using BankLite.Infrastructure.Services;
 using BankLiteAPI.Hubs;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
