@@ -19,6 +19,7 @@
             context.Response.Headers.Append("Cross-Origin-Opener-Policy", "same-origin");
             context.Response.Headers.Append("Content-Security-Policy",
             "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'");
+            context.Response.Headers.Append("X-Permitted-Cross-Domain-Policies", "none");
             await _next(context);
         }
     }
