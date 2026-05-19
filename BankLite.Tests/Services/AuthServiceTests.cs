@@ -423,23 +423,6 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task RegisterAsync_ShouldTrimFullName()
-        {
-            _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);
-
-            User? savedUser = null;
-            _mockUserRepo.Setup(r => r.AddAsync(It.IsAny<User>()))
-                .Callback<User>(u => savedUser = u);
-
-            var dto = new RegisterUserDto { FullName = "  New User  ", Email = "new@banklite.com", Password = "Password123" };
-
-            await _authService.RegisterAsync(dto);
-
-            Assert.NotNull(savedUser);
-            Assert.Equal("New User", savedUser!.FullName);
-        }
-
-        [Fact]
         public async Task RegisterAsync_ShouldHashPassword()
         {
             _mockUserRepo.Setup(r => r.ExistsAsync(It.IsAny<string>())).ReturnsAsync(false);

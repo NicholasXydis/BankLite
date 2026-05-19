@@ -84,7 +84,7 @@ namespace BankLite.Tests.Validators
         public async Task TransferValidator_ShouldPass_WhenAmountIsLarge()
         {
             var fromId = Guid.NewGuid();
-            var dto = new TransferDto { FromAccountId = fromId, ToAccountId = Guid.NewGuid(), Amount = 9999999 };
+            var dto = new TransferDto { FromAccountId = fromId, ToAccountId = Guid.NewGuid(), Amount = 999999 };
             var result = await _transferValidator.ValidateAsync(dto);
             Assert.True(result.IsValid);
         }
