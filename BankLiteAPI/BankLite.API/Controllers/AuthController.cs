@@ -80,7 +80,7 @@ namespace BankLite.API.Controllers
 
             var (token, newRefreshToken, result) = await _authService.RefreshAsync(refreshToken);
             Response.Cookies.Append("accessToken", token, AccessTokenCookieOptions());
-            Response.Cookies.Append("refreshToken", refreshToken, RefreshTokenCookieOptions());
+            Response.Cookies.Append("refreshToken", newRefreshToken, RefreshTokenCookieOptions());
             return Ok(result);
         }
 
