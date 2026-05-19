@@ -8,6 +8,10 @@ namespace BankLite.Infrastructure.Services
 {
     public class GroqService : IGroqService
     {
+
+        private const string GroqApiUrl = "https://api.groq.com/openai/v1/chat/completions";
+        private const string ModelName = "llama-3.3-70b-versatile";
+
         private readonly HttpClient _httpClient;
         private readonly string _apiKey;
         private readonly ILogger<GroqService> _logger;
@@ -23,7 +27,7 @@ namespace BankLite.Infrastructure.Services
         {
             var requestBody = new
             {
-                model = "llama-3.3-70b-versatile",
+                model = ModelName,
                 messages = new[]
                 {
                     new
@@ -43,7 +47,7 @@ namespace BankLite.Infrastructure.Services
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://api.groq.com/openai/v1/chat/completions");
+            var request = new HttpRequestMessage(HttpMethod.Post, GroqApiUrl);
             request.Headers.Add("Authorization", $"Bearer {_apiKey}");
             request.Content = content;
 
