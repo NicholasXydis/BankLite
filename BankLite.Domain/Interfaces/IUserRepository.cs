@@ -1,5 +1,4 @@
 ﻿using BankLite.Domain.Entities;
-using System;
 
 namespace BankLite.Domain.Interfaces
 {

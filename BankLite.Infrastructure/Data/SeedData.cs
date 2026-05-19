@@ -1,6 +1,5 @@
 ﻿using BankLite.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
 
 namespace BankLite.Infrastructure.Data
 {

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using BankLite.Domain.Entities;
 
 namespace BankLite.Infrastructure.Data

@@ -3,7 +3,6 @@ using BankLite.Application.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
