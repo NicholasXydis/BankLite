@@ -14,6 +14,9 @@ namespace BankLite.Tests.Validators
         private readonly LoginUserValidator _loginUserValidator = new();
         private readonly ChangePasswordValidator _changePasswordValidator = new();
         private readonly CreateAccountValidator _createAccountValidator = new();
+        private readonly ForgotPasswordValidator _forgotPasswordValidator = new();
+        private readonly ResetPasswordValidator _resetPasswordValidator = new();
+        private readonly ChatMessageValidator _chatMessageValidator = new();
 
         [Fact]
         public async Task DepositWithdrawValidator_ShouldPass_WhenValid()
@@ -150,6 +153,15 @@ namespace BankLite.Tests.Validators
         }
 
         [Fact]
+        public async Task TransferValidator_ShouldFail_WhenAmountExceedsLimit()
+        {
+            var fromId = Guid.NewGuid();
+            var dto = new TransferDto { FromAccountId = fromId, ToAccountId = Guid.NewGuid(), Amount = 1000001 };
+            var result = await _transferValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
         public async Task ExternalTransferValidator_ShouldPass_WhenValid()
         {
             var dto = new ExternalTransferDto { FromAccountId = Guid.NewGuid(), ToAccountNumber = "ACC123456789", Amount = 100 };
@@ -219,6 +231,14 @@ namespace BankLite.Tests.Validators
             var dto = new ExternalTransferDto { FromAccountId = Guid.NewGuid(), ToAccountNumber = "", Amount = 100 };
             var result = await _externalTransferValidator.ValidateAsync(dto);
             Assert.Contains(result.Errors, e => e.ErrorMessage.Contains("account number"));
+        }
+
+        [Fact]
+        public async Task ExternalTransferValidator_ShouldFail_WhenAccountNumberWrongLength()
+        {
+            var dto = new ExternalTransferDto { FromAccountId = Guid.NewGuid(), ToAccountNumber = "SHORT", Amount = 100 };
+            var result = await _externalTransferValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
         }
 
         [Fact]
@@ -362,6 +382,86 @@ namespace BankLite.Tests.Validators
         {
             var dto = new RegisterUserDto { FullName = "Test User", Email = "test@banklite.com", Password = new string('a', 101) };
             var result = await _registerUserValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordValidator_ShouldPass_WhenEmailValid()
+        {
+            var dto = new ForgotPasswordDto { Email = "test@banklite.com" };
+            var result = await _forgotPasswordValidator.ValidateAsync(dto);
+            Assert.True(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordValidator_ShouldFail_WhenEmailEmpty()
+        {
+            var dto = new ForgotPasswordDto { Email = "" };
+            var result = await _forgotPasswordValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ForgotPasswordValidator_ShouldFail_WhenEmailFormatInvalid()
+        {
+            var dto = new ForgotPasswordDto { Email = "notanemail" };
+            var result = await _forgotPasswordValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ResetPasswordValidator_ShouldPass_WhenValid()
+        {
+            var dto = new ResetPasswordDto { Token = "valid-token", NewPassword = "Password123" };
+            var result = await _resetPasswordValidator.ValidateAsync(dto);
+            Assert.True(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ResetPasswordValidator_ShouldFail_WhenTokenEmpty()
+        {
+            var dto = new ResetPasswordDto { Token = "", NewPassword = "Password123" };
+            var result = await _resetPasswordValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ResetPasswordValidator_ShouldFail_WhenPasswordTooShort()
+        {
+            var dto = new ResetPasswordDto { Token = "valid-token", NewPassword = "short" };
+            var result = await _resetPasswordValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ResetPasswordValidator_ShouldFail_WhenTokenTooLong()
+        {
+            var dto = new ResetPasswordDto { Token = new string('a', 257), NewPassword = "Password123" };
+            var result = await _resetPasswordValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ChatMessageValidator_ShouldPass_WhenValid()
+        {
+            var dto = new ChatMessageDto("Hello Alfred");
+            var result = await _chatMessageValidator.ValidateAsync(dto);
+            Assert.True(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ChatMessageValidator_ShouldFail_WhenContentEmpty()
+        {
+            var dto = new ChatMessageDto("");
+            var result = await _chatMessageValidator.ValidateAsync(dto);
+            Assert.False(result.IsValid);
+        }
+
+        [Fact]
+        public async Task ChatMessageValidator_ShouldFail_WhenContentTooLong()
+        {
+            var dto = new ChatMessageDto(new string('a', 201));
+            var result = await _chatMessageValidator.ValidateAsync(dto);
             Assert.False(result.IsValid);
         }
 

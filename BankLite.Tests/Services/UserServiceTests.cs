@@ -198,6 +198,56 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
+        public async Task ChangePasswordAsync_ShouldRevokeAllTokens_OnSuccess()
+        {
+            var userId = Guid.NewGuid();
+            var user = new User
+            {
+                Id = userId,
+                FullName = "Test User",
+                Email = "test@banklite.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
+            };
+            _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
+            var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
+
+            await _userService.ChangePasswordAsync(userId, dto);
+
+            _mockRefreshTokenRepo.Verify(r => r.RevokeAllForUserAsync(userId), Times.Once);
+        }
+
+        [Fact]
+        public async Task ChangePasswordAsync_ShouldCallSaveAsync_OnSuccess()
+        {
+            var userId = Guid.NewGuid();
+            var user = new User
+            {
+                Id = userId,
+                FullName = "Test User",
+                Email = "test@banklite.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
+            };
+            _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
+            var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
+
+            await _userService.ChangePasswordAsync(userId, dto);
+
+            _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeleteAccountAsync_ShouldCallSaveAsync_OnSuccess()
+        {
+            var userId = Guid.NewGuid();
+            var user = new User { Id = userId, FullName = "Test User", Email = "test@banklite.com", PasswordHash = string.Empty };
+            _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
+
+            await _userService.DeleteAccountAsync(userId);
+
+            _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Once);
+        }
+
+        [Fact]
         public async Task ChangePasswordAsync_ShouldPreserveOldHash_WhenPasswordIsWrong()
         {
             var userId = Guid.NewGuid();

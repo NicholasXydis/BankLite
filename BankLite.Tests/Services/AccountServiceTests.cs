@@ -95,16 +95,6 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAccountAsync_ShouldSetCorrectUserId()
-        {
-            var userId = Guid.NewGuid();
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
-            var dto = new CreateAccountDto { Type = AccountType.Chequing };
-
-            var result = await _accountService.CreateAccountAsync(dto, userId);
-        }
-
-        [Fact]
         public async Task CreateAccountAsync_ShouldCallAddAsync_Once()
         {
             var userId = Guid.NewGuid();
@@ -114,6 +104,18 @@ namespace BankLite.Tests.Services
             await _accountService.CreateAccountAsync(dto, userId);
 
             _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateAccountAsync_ShouldCallSaveAsync_OnSuccess()
+        {
+            var userId = Guid.NewGuid();
+            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
+            var dto = new CreateAccountDto { Type = AccountType.Chequing };
+
+            await _accountService.CreateAccountAsync(dto, userId);
+
+            _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Once);
         }
 
         [Fact]
@@ -317,19 +319,6 @@ namespace BankLite.Tests.Services
             var result = await _accountService.GetAccountsByUserIdAsync(userId);
 
             Assert.Single(result);
-        }
-
-        [Fact]
-        public async Task GetAccountsByUserIdAsync_ShouldReturnAccountsWithCorrectUserId()
-        {
-            var userId = Guid.NewGuid();
-            var accounts = new List<Account>
-            {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
-            };
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(accounts);
-
-            var result = await _accountService.GetAccountsByUserIdAsync(userId);
         }
 
         [Fact]

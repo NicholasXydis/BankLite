@@ -654,7 +654,10 @@ namespace BankLite.Tests.Services
                 User = user
             };
 
-            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("expired-token")).ReturnsAsync(resetToken);
+            var hashedExpiredToken = Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("expired-token")));
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync(hashedExpiredToken)).ReturnsAsync(resetToken);
 
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _authService.ResetPasswordAsync("expired-token", "NewPassword123"));
@@ -681,7 +684,10 @@ namespace BankLite.Tests.Services
                 User = user
             };
 
-            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync("used-token")).ReturnsAsync(resetToken);
+            var hashedUsedToken = Convert.ToBase64String(
+            System.Security.Cryptography.SHA256.HashData(
+            System.Text.Encoding.UTF8.GetBytes("used-token")));
+            _mockPasswordResetRepo.Setup(r => r.GetByTokenAsync(hashedUsedToken)).ReturnsAsync(resetToken);
 
             await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _authService.ResetPasswordAsync("used-token", "NewPassword123"));
@@ -738,6 +744,46 @@ namespace BankLite.Tests.Services
             await _authService.RevokeRefreshTokenAsync("already-revoked-token");
 
             _mockRefreshTokenRepo.Verify(r => r.RevokeAsync(It.IsAny<RefreshToken>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RefreshAsync_ShouldThrow_WhenTokenRevoked()
+        {
+            var rawToken = "test-token";
+            var hashedToken = Convert.ToBase64String(
+                System.Security.Cryptography.SHA256.HashData(
+                    System.Text.Encoding.UTF8.GetBytes(rawToken)));
+            var refreshToken = new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                Token = hashedToken,
+                IsRevoked = true,
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
+            };
+            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync(hashedToken)).ReturnsAsync(refreshToken);
+
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(
+                () => _authService.RefreshAsync(rawToken));
+        }
+
+        [Fact]
+        public async Task RefreshAsync_ShouldThrow_WhenTokenExpired()
+        {
+            var rawToken = "test-token";
+            var hashedToken = Convert.ToBase64String(
+                System.Security.Cryptography.SHA256.HashData(
+                    System.Text.Encoding.UTF8.GetBytes(rawToken)));
+            var refreshToken = new RefreshToken
+            {
+                Id = Guid.NewGuid(),
+                Token = hashedToken,
+                IsRevoked = false,
+                ExpiresAt = DateTime.UtcNow.AddDays(-1)
+            };
+            _mockRefreshTokenRepo.Setup(r => r.GetByTokenAsync(hashedToken)).ReturnsAsync(refreshToken);
+
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(
+                () => _authService.RefreshAsync(rawToken));
         }
     }
 }
