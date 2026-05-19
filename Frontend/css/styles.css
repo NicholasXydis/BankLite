@@ -581,6 +581,16 @@ input.error {
   text-align: left;
 }
 
+.transaction-arrow {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.transaction-arrow--transfer {
+  margin-left: 2px;
+}
+
 .transaction-row:hover {
   background: #f8fafc;
   border-radius: 8px;
