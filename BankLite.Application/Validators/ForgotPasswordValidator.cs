@@ -9,6 +9,7 @@ namespace BankLite.Application.Validators
         {
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")
+                .Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("Please enter a valid email address.")
                 .MaximumLength(256);
         }
     }
