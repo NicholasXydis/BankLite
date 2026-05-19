@@ -1,5 +1,6 @@
 ﻿using BankLite.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net.Mail;
@@ -9,10 +10,12 @@ namespace BankLite.Application.Services
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IConfiguration configuration)
-        {
+        public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
+        {     
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task SendPasswordResetEmailAsync(string toEmail, string resetLink)
@@ -35,7 +38,13 @@ namespace BankLite.Application.Services
                 </div>";
 
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainText, html);
-            await client.SendEmailAsync(msg);
+            var response = await client.SendEmailAsync(msg);
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("SendGrid failed to send email to {Email}. Status: {Status}", toEmail, response.StatusCode);
+                throw new InvalidOperationException("Failed to send reset email. Please try again later.");
+            }
+            _logger.LogInformation("Password reset email sent successfully to {Email}", toEmail);
         }
     }
 }
