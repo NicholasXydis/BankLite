@@ -147,7 +147,7 @@ document.getElementById("amount").addEventListener("input", function () {
 
 const toggleMyAccounts = document.getElementById("toggle-my-accounts");
 const toggleExternal = document.getElementById("toggle-external");
-const toAccountSelect = document
+const toAccountSelectGroup = document
   .querySelector("#to-account-select")
   .closest(".form-group");
 const externalGroup = document.getElementById("external-account-group");
@@ -155,14 +155,14 @@ const externalGroup = document.getElementById("external-account-group");
 toggleMyAccounts.addEventListener("click", function () {
   toggleMyAccounts.classList.add("active");
   toggleExternal.classList.remove("active");
-  toAccountSelect.style.display = "flex";
+  toAccountSelectGroup.style.display = "flex";
   externalGroup.style.display = "none";
 });
 
 toggleExternal.addEventListener("click", function () {
   toggleExternal.classList.add("active");
   toggleMyAccounts.classList.remove("active");
-  toAccountSelect.style.display = "none";
+  toAccountSelectGroup.style.display = "none";
   externalGroup.style.display = "flex";
 });
 
