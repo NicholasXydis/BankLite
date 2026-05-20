@@ -151,7 +151,6 @@
           <a
             href="#"
             class="link-accent"
-            style="font-size: 0.8rem"
             id="forgot-password-link"
             data-i18n="login_forgot"
             >Forgot password?</a
@@ -174,11 +173,7 @@
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
 
-    <div
-      id="forgot-modal"
-      class="modal-overlay"
-      style="display: none; padding-left: 0"
-    >
+    <div id="forgot-modal" class="modal-overlay hidden forgot-modal">
       <div class="modal">
         <h3 class="modal-title" data-i18n="forgot_title">Reset Password</h3>
         <p class="modal-text" data-i18n="forgot_text">
@@ -192,12 +187,11 @@
         ></div>
         <div
           id="forgot-success"
-          class="success-msg"
+          class="success-msg hidden"
           role="status"
           aria-live="polite"
-          style="display: none"
         ></div>
-        <div style="margin: 0.75rem 0">
+        <div class="forgot-email-wrap">
           <input
             type="email"
             id="forgot-email"
@@ -206,21 +200,19 @@
             data-i18n="placeholder_email"
             data-i18n-attr="placeholder"
             autocomplete="email"
-            style="width: 100%; text-align: left"
           />
         </div>
-        <div class="modal-actions" style="display: flex; gap: 1rem">
+        <div class="modal-actions">
           <button
             id="forgot-cancel-btn"
-            class="modal-cancel"
-            style="flex: 1"
+            class="modal-cancel modal-btn-flex"
             data-i18n="forgot_cancel"
           >
             Cancel
           </button>
           <button
             id="forgot-submit-btn"
-            style="flex: 1"
+            class="modal-btn-flex"
             data-i18n="forgot_submit"
           >
             Send Reset Link

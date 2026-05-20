@@ -2214,6 +2214,22 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   display: none;
 }
 
+.forgot-modal {
+  padding-left: 0;
+}
+
+.forgot-email-wrap {
+  margin: 0.75rem 0;
+}
+
+.modal-btn-flex {
+  flex: 1;
+}
+
+.forgot-password a {
+  font-size: 0.8rem;
+}
+
 @keyframes lp-beam-drift {
   0%,
   100% {
