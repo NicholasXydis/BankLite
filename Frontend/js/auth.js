@@ -137,6 +137,26 @@ if (registerForm) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  const langToggleBtn = document.getElementById("lang-toggle-btn");
+  if (langToggleBtn) {
+    const lang = localStorage.getItem("language") || "en";
+    const flag = document.getElementById("lang-flag");
+    const label = document.getElementById("lang-label");
+    if (lang === "fr") {
+      flag.innerHTML =
+        '<svg width="24" height="18" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="18" fill="#fff"/><rect width="6" height="18" fill="#D80621"/><rect x="18" width="6" height="18" fill="#D80621"/><path d="M12 3l1 3h3l-2.5 2 1 3L12 9.5 9.5 11l1-3L8 6h3z" fill="#D80621"/></svg>';
+      label.textContent = "EN";
+    } else {
+      flag.innerHTML =
+        '<svg width="24" height="18" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="18" fill="#003DA5"/><rect x="11" width="2" height="18" fill="#fff"/><rect y="8" width="24" height="2" fill="#fff"/><text x="3.5" y="7" font-size="5" fill="#fff" font-family="serif">⚜</text><text x="15.5" y="7" font-size="5" fill="#fff" font-family="serif">⚜</text><text x="3.5" y="16" font-size="5" fill="#fff" font-family="serif">⚜</text><text x="15.5" y="16" font-size="5" fill="#fff" font-family="serif">⚜</text></svg>';
+      label.textContent = "FR";
+    }
+    langToggleBtn.addEventListener("click", function () {
+      setLanguage(localStorage.getItem("language") === "fr" ? "en" : "fr");
+      window.location.reload();
+    });
+  }
+
   document.body.insertAdjacentHTML(
     "beforeend",
     `

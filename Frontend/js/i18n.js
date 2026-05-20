@@ -483,3 +483,9 @@ function setLanguage(lang) {
 }
 
 document.addEventListener("DOMContentLoaded", applyTranslations);
+
+document.addEventListener("DOMContentLoaded", function () {
+  if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark-mode");
+  }
+});

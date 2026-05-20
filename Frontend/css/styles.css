@@ -2178,6 +2178,38 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   transform: translate(-50%, -50%) rotateZ(-10deg);
 }
 
+.lang-toggle-wrap {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+}
+
+.lang-toggle-btn {
+  background: #1a3a5c;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 0.4rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(4px);
+  width: auto;
+  height: auto;
+  box-shadow: none;
+}
+
+.lang-toggle-btn:hover {
+  background: #1a3a5c;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.9;
+}
+
 @keyframes lp-beam-drift {
   0%,
   100% {
