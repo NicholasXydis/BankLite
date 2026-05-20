@@ -287,6 +287,7 @@ async function loadSpendingChart() {
 loadSpendingChart();
 
 function connectSignalR() {
+  if (typeof signalR === "undefined") return;
   const connection = new signalR.HubConnectionBuilder()
     .withUrl(`${API_URL}/hubs/bank`, { withCredentials: true })
     .withAutomaticReconnect()
