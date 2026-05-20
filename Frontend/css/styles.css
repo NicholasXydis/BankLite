@@ -4,6 +4,50 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-input: #f1f5f9;
+  --bg-sidebar: linear-gradient(180deg, #1a3a5c 0%, #0f2340 100%);
+  --text-primary: #0f2340;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --brand: #1a3a5c;
+  --brand-dark: #0f2340;
+  --brand-gradient: linear-gradient(135deg, #1a3a5c 0%, #0f2340 100%);
+  --border: #e2e8f0;
+  --border-input: #cbd5e1;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 8px 20px rgba(26, 58, 92, 0.4);
+  --shadow-btn: 0 4px 12px rgba(26, 58, 92, 0.3);
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --success-bg: #dcfce7;
+  --success-text: #166534;
+  --error-bg: #fee2e2;
+  --error-text: #991b1b;
+  --color-deposit: #059669;
+  --color-withdrawal: #dc3545;
+  --color-danger: #991b1b;
+  --color-accent: #4f86c6;
+}
+
+body.dark-mode {
+  --bg-primary: #0d1117;
+  --bg-secondary: #0d1117;
+  --bg-card: #161b22;
+  --bg-input: #0d1117;
+  --bg-sidebar: linear-gradient(180deg, #0d1117 0%, #080d12 100%);
+  --text-primary: #ffffff;
+  --text-secondary: #8b949e;
+  --text-muted: #8b949e;
+  --border: #30363d;
+  --border-input: #30363d;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
 body {
   background: linear-gradient(135deg, #1a3a5c 0%, #0f2340 100%);
   font-family:
@@ -32,27 +76,30 @@ main {
 h1 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0f2340;
+  color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   text-align: center;
 }
 
 p {
-  text-align: center;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   margin-bottom: 0.5rem;
   font-weight: 500;
+}
+
+.auth-page p {
+  text-align: center;
 }
 
 label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f2340;
+  color: var(--text-primary);
 }
 
 form {
-  background-color: #ffffff;
+  background-color: var(--bg-primary);
   padding: 2.5rem 2rem;
   border-radius: 16px;
   width: 100%;
@@ -71,12 +118,12 @@ input {
   width: 100%;
   height: 48px;
   padding: 0 14px 0 40px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--border-input);
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 500;
-  color: #0f2340;
-  background: #f1f5f9;
+  color: var(--text-primary);
+  background: var(--bg-input);
   outline: none;
   box-sizing: border-box;
   transition: all 0.2s;
@@ -101,19 +148,19 @@ input {
 
 input:focus {
   outline: none;
-  border: 1.5px solid #1a3a5c;
+  border: 1.5px solid var(--brand);
   box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.15);
-  background: #ffffff;
+  background: var(--bg-primary);
 }
 
 input::placeholder {
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 button {
   width: 100%;
   height: 50px;
-  background: linear-gradient(135deg, #1a3a5c 0%, #0f2340 100%);
+  background: var(--brand-gradient);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -185,8 +232,8 @@ a:hover {
 
 .error-msg {
   display: none;
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--error-bg);
+  color: var(--error-text);
   padding: 10px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -219,7 +266,7 @@ input.error {
   display: flex;
   min-height: 100vh;
   align-items: flex-start;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 .sidebar {
@@ -306,7 +353,7 @@ input.error {
 .dashboard-main {
   flex: 1;
   padding: 3.5rem 2rem 2rem;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   display: flex;
   flex-direction: column;
   animation: fadeInUp 0.3s ease both;
@@ -314,7 +361,7 @@ input.error {
 }
 
 .dashboard-title {
-  color: #0f2340;
+  color: var(--text-primary);
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
@@ -329,12 +376,16 @@ input.error {
   margin-bottom: 1.5rem;
 }
 
+.transactions-header .dashboard-title {
+  margin-bottom: 0;
+}
+
 #accounts-container {
   width: 100%;
 }
 
 .account-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 1.75rem;
   width: 100%;
@@ -363,7 +414,7 @@ input.error {
 }
 
 .account-card h2 {
-  color: #1a3a5c;
+  color: var(--brand);
   font-size: 1.1rem;
   margin: 0 0 0.25rem 0;
   text-align: left;
@@ -372,14 +423,14 @@ input.error {
 .account-card p {
   text-align: left;
   margin: 0;
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 0.85rem;
 }
 
-.account-card p:last-child {
+.account-card .account-balance-amount {
   font-size: 2rem;
   font-weight: 700;
-  color: #0f2340;
+  color: var(--text-primary);
   margin-top: 0.5rem;
 }
 
@@ -469,12 +520,12 @@ input.error {
 }
 
 .form-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 2.5rem;
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -484,8 +535,8 @@ input.error {
 .form-card--create {
   max-width: 500px;
   padding: 2rem 2.5rem 2rem;
-  background: linear-gradient(160deg, #ffffff 0%, #f1f5f9 100%);
-  border: 1px solid #e2e8f0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 16px;
   min-height: unset;
 }
@@ -512,12 +563,12 @@ input.error {
 .form-group select {
   height: 48px;
   padding: 0 14px 0 12px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--border-input);
   border-radius: 10px;
   font-size: 1rem;
   font-weight: 500;
-  color: #0f2340;
-  background: #f1f5f9;
+  color: var(--text-primary);
+  background: var(--bg-input);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230f2340' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
@@ -533,8 +584,8 @@ input.error {
 
 .success-msg {
   display: none;
-  background: #dcfce7;
-  color: #166534;
+  background: var(--success-bg);
+  color: var(--success-text);
   padding: 10px;
   border-radius: 8px;
   font-size: 0.875rem;
@@ -576,7 +627,7 @@ input.error {
 
 .transaction-date {
   font-size: 0.78rem;
-  color: #9ca3af;
+  color: var(--text-muted);
   font-weight: 400;
   text-align: left;
 }
@@ -606,12 +657,12 @@ input.error {
 
 .transaction-row.deposit .transaction-arrow,
 .transaction-row.deposit .transaction-amount {
-  color: #059669;
+  color: var(--color-deposit);
 }
 
 .transaction-row.withdrawal .transaction-arrow,
 .transaction-row.withdrawal .transaction-amount {
-  color: #dc3545;
+  color: var(--color-withdrawal);
 }
 
 .pagination {
@@ -677,13 +728,13 @@ input.error {
 .empty-state-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f2340;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .empty-state-text {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 1rem;
 }
@@ -729,8 +780,8 @@ input.error {
 }
 
 #welcome-msg {
-  text-align: left !important;
-  color: #1a3a5c;
+  text-align: left;
+  color: var(--text-primary);
   font-weight: 700;
   font-size: 1.1rem;
   margin-bottom: 1rem;
@@ -837,12 +888,8 @@ input[type="number"] {
 .section-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #0f2340;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
-}
-
-#create-account-section {
-  margin-top: 0rem;
 }
 
 .modal-overlay {
@@ -857,7 +904,7 @@ input[type="number"] {
 }
 
 .modal {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 2rem;
   max-width: 380px;
@@ -869,12 +916,12 @@ input[type="number"] {
 .modal-title {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #0f2340;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
 }
 
 .modal-text {
-  color: #6b7280;
+  color: var(--text-secondary);
   margin-bottom: 1.5rem;
 }
 
@@ -899,7 +946,7 @@ input[type="number"] {
 
 .modal-confirm {
   width: 120px;
-  background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+  background: linear-gradient(135deg, var(--color-danger) 0%, #7f1d1d 100%);
   box-shadow: 0 4px 12px rgba(153, 27, 27, 0.3);
 }
 
@@ -998,7 +1045,7 @@ input[type="number"] {
   right: -400px;
   width: 380px;
   height: 100vh;
-  background: #fff;
+  background: var(--bg-card);
   z-index: 1040;
   overflow-y: auto;
   transition: right 0.3s ease;
@@ -1021,12 +1068,6 @@ body.dark-mode .sidebar {
   border-right: 1px solid #1e293b;
 }
 
-body.dark-mode .account-card {
-  background: #161b22;
-  border-color: #30363d;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
 body.dark-mode .account-card h2 {
   color: #ffffff;
 }
@@ -1043,74 +1084,8 @@ body.dark-mode .account-number {
   color: #8b949e;
 }
 
-body.dark-mode .total-balance {
-  background: linear-gradient(135deg, #1a3a5c, #0f2340);
-}
-
-body.dark-mode .form-card {
-  background: #161b22;
-  border-color: #30363d;
-}
-
-body.dark-mode .form-card--create {
-  background: #161b22;
-  border-color: #30363d;
-}
-
 body.dark-mode .chart-card {
-  background: #161b22;
-  border-color: #30363d;
-}
-
-body.dark-mode .section-title {
-  color: #ffffff;
-}
-
-body.dark-mode .dashboard-title {
-  color: #ffffff;
-}
-
-body.dark-mode #welcome-msg {
-  color: #ffffff;
-}
-
-body.dark-mode label {
-  color: #8b949e;
-}
-
-body.dark-mode input {
-  background: #0d1117;
-  border-color: #30363d;
-  color: #ffffff;
-}
-
-body.dark-mode input:focus {
-  background: #161b22;
-  border-color: #4f86c6;
-  box-shadow: 0 0 0 3px rgba(79, 134, 198, 0.15);
-}
-
-body.dark-mode input::placeholder {
-  color: #8b949e;
-}
-
-body.dark-mode select {
-  background: #0d1117;
-  border-color: #30363d;
-  color: #ffffff;
-}
-
-body.dark-mode select option {
-  background: #161b22;
-  color: #ffffff;
-}
-
-body.dark-mode .settings-panel {
-  background: #161b22;
-}
-
-body.dark-mode .settings-title {
-  color: #ffffff;
+  border-color: var(--border);
 }
 
 body.dark-mode .settings-section {
@@ -1119,10 +1094,6 @@ body.dark-mode .settings-section {
 
 body.dark-mode .settings-label {
   color: #8b949e;
-}
-
-body.dark-mode .settings-value {
-  color: #ffffff;
 }
 
 body.dark-mode .settings-close-btn {
@@ -1145,20 +1116,12 @@ body.dark-mode .transaction-row:hover {
   background: #161b22;
 }
 
-body.dark-mode .transaction-type {
-  color: #ffffff;
-}
-
 body.dark-mode .transaction-date {
   color: #8b949e;
 }
 
 body.dark-mode .transaction-date-header {
   color: #8b949e;
-}
-
-body.dark-mode .transaction-amount {
-  color: #ffffff;
 }
 
 body.dark-mode .filter-btn {
@@ -1180,18 +1143,6 @@ body.dark-mode .filter-btn.active {
   box-shadow: 0 4px 12px rgba(26, 58, 92, 0.5);
 }
 
-body.dark-mode .modal {
-  background: #161b22;
-}
-
-body.dark-mode .modal-title {
-  color: #ffffff;
-}
-
-body.dark-mode .modal-text {
-  color: #8b949e;
-}
-
 body.dark-mode .modal-cancel {
   background: #0d1117;
   color: #8b949e;
@@ -1203,22 +1154,6 @@ body.dark-mode .modal-cancel:hover {
   box-shadow: none;
 }
 
-body.dark-mode p {
-  color: #8b949e;
-}
-
-body.dark-mode .chart-stat-amount {
-  color: #ffffff;
-}
-
-body.dark-mode .chart-stat-label {
-  color: #8b949e;
-}
-
-body.dark-mode .chart-stat-percent {
-  color: #8b949e;
-}
-
 body.dark-mode .chart-title {
   color: #ffffff;
 }
@@ -1228,30 +1163,12 @@ body.dark-mode .empty-state {
   border-color: #30363d;
 }
 
-body.dark-mode .empty-state-title {
-  color: #ffffff;
-}
-
-body.dark-mode .empty-state-text {
-  color: #8b949e;
-}
-
 body.dark-mode #page-info {
   color: #8b949e;
 }
 
 body.dark-mode .settings-overlay {
   background: rgba(0, 0, 0, 0.7);
-}
-
-body.dark-mode #session-warning {
-  background: #1a3a5c;
-  color: #ffffff;
-}
-
-body.dark-mode #session-stay-btn {
-  background: #ffffff;
-  color: #1a3a5c;
 }
 
 body.dark-mode .form-group select {
@@ -1324,22 +1241,6 @@ body.dark-mode .static-page-content h2 {
   color: #ffffff;
 }
 
-body.dark-mode .static-page-content p {
-  color: #8b949e;
-}
-
-body.dark-mode .static-page-date {
-  color: #8b949e;
-}
-
-body.dark-mode h1 {
-  color: #ffffff;
-}
-
-body.dark-mode .static-error-title {
-  color: #ffffff;
-}
-
 body.dark-mode .chatbot-panel {
   background: #161b22;
   border: 1px solid #30363d;
@@ -1370,7 +1271,7 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 }
 
 .static-page-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 2.5rem;
   max-width: 700px;
@@ -1459,7 +1360,6 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   color: #ffffff;
   position: relative;
   overflow: hidden;
-  overflow-x: hidden;
   overflow-x: clip;
   touch-action: pan-y;
   isolation: isolate;
@@ -1927,18 +1827,6 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   -webkit-tap-highlight-color: transparent;
 }
 
-.lp-depth-shadow {
-  position: absolute;
-  width: min(470px, 84vw);
-  height: 120px;
-  left: 54%;
-  top: 78%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.34), transparent 68%);
-  filter: blur(18px);
-  transform: translate(-50%, -50%);
-}
-
 #lp-lang-btn {
   position: fixed;
   top: 1rem;
@@ -2154,16 +2042,6 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   justify-content: center;
   width: 30px;
   height: 30px;
-}
-
-.lp-card-bottom strong img {
-  width: 32px;
-  height: 32px;
-  display: block;
-  border-radius: 0;
-  filter: drop-shadow(0 0 10px rgba(127, 176, 232, 0.36))
-    drop-shadow(0 7px 12px rgba(0, 0, 0, 0.22));
-  opacity: 0.98;
 }
 
 .lp-card-shadow {
@@ -2411,10 +2289,9 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
     padding-left: 0;
   }
 
-  .account-card p:last-child {
+  .account-card .account-balance-amount {
     font-size: 1.4rem;
   }
-
   .total-balance h2 {
     font-size: 1.4rem;
   }
@@ -2868,7 +2745,7 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 }
 
 .chart-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 2rem 1.5rem;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -2882,12 +2759,6 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 .chart-card .section-title {
   color: #1a3a5c;
   font-size: 1.2rem;
-}
-
-.chart-stats-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
 }
 
 .chart-stat {
@@ -2914,19 +2785,27 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   display: inline-block;
 }
 
+.chart-stat-dot--deposit {
+  background: var(--color-deposit);
+}
+
+.chart-stat-dot--withdrawal {
+  background: var(--color-withdrawal);
+}
+
 .chart-stat-label {
   display: flex;
   align-items: center;
   gap: 0.4rem;
   font-size: 1rem;
   font-weight: 700;
-  color: #6b7280;
+  color: var(--text-secondary);
 }
 
 .chart-stat-amount {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #0f2340;
+  color: var(--text-primary);
 }
 
 .chart-stat-percent {
@@ -2955,7 +2834,7 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 .settings-title {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #0f2340;
+  color: var(--text-primary);
 }
 
 .settings-close-btn {
@@ -3020,7 +2899,7 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 .settings-value {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f2340;
+  color: var(--text-primary);
   text-align: right;
 }
 
@@ -3096,7 +2975,7 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+  background: linear-gradient(135deg, var(--color-danger) 0%, #7f1d1d 100%);
   box-shadow: 0 4px 12px rgba(153, 27, 27, 0.3);
 }
 
