@@ -40,7 +40,6 @@ async function loadTransfer() {
 document
   .getElementById("transfer-btn")
   .addEventListener("click", async function () {
-
     const errorMsg = document.getElementById("error-msg");
     const successMsg = document.getElementById("success-msg");
     const accountId = document.getElementById("account-select").value;
@@ -96,6 +95,11 @@ document
 
     try {
       if (isExternal) {
+        if (!/^[a-zA-Z0-9]+$/.test(toAccountNumber.trim())) {
+          errorMsg.textContent = t("error_enter_recipient");
+          errorMsg.style.display = "block";
+          return;
+        }
         await transferExternal(accountId, toAccountNumber.trim(), amount);
       } else {
         await transfer(accountId, toAccountId, amount);
