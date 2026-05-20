@@ -425,23 +425,26 @@ document.addEventListener("DOMContentLoaded", function () {
     deleteAccountBtn.addEventListener("click", function () {
       if (!sessionStorage.getItem("expiresAt")) return;
       closeSettings();
-      const modal = document.getElementById("logout-modal");
-      const modalTitle = document.querySelector(".modal-title");
-      const modalText = document.querySelector(".modal-text");
-      const modalConfirm = document.getElementById("modal-confirm-btn");
-      modalTitle.textContent = t("delete_title");
-      modalText.textContent = t("delete_account_text");
-      modalConfirm.textContent = t("delete_confirm");
-      modal.style.display = "flex";
-      modalConfirm.onclick = async function () {
-        try {
-          await deleteAccount();
-          await logout();
-          window.location.href = "index.html";
-        } catch (error) {
-          modal.style.display = "none";
-        }
-      };
+      document.getElementById("delete-modal").style.display = "flex";
+    });
+  }
+
+  const deleteCancelBtn = document.getElementById("delete-cancel-btn");
+  if (deleteCancelBtn) {
+    deleteCancelBtn.addEventListener("click", function () {
+      document.getElementById("delete-modal").style.display = "none";
+    });
+  }
+  const deleteConfirmBtn = document.getElementById("delete-confirm-btn");
+  if (deleteConfirmBtn) {
+    deleteConfirmBtn.addEventListener("click", async function () {
+      try {
+        await deleteAccount();
+        await logout();
+        window.location.href = "index.html";
+      } catch (error) {
+        document.getElementById("delete-modal").style.display = "none";
+      }
     });
   }
 

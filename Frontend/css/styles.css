@@ -2210,6 +2210,10 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   opacity: 0.9;
 }
 
+.hidden {
+  display: none;
+}
+
 @keyframes lp-beam-drift {
   0%,
   100% {

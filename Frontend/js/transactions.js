@@ -3,7 +3,6 @@ const pageSize = 10;
 let currentFilter = "all";
 
 async function loadTransactions(accountId, page, type = null) {
-  requireAuth();
 
   const errorMsg = document.getElementById("error-msg");
   const transactionsList = document.getElementById("transactions-list");

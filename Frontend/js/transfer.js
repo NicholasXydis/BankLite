@@ -40,7 +40,6 @@ async function loadTransfer() {
 document
   .getElementById("transfer-btn")
   .addEventListener("click", async function () {
-    requireAuth();
 
     const errorMsg = document.getElementById("error-msg");
     const successMsg = document.getElementById("success-msg");

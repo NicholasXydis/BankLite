@@ -288,6 +288,32 @@
         </div>
       </div>
     </div>
+
+    <div id="delete-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <h3 class="modal-title" data-i18n="delete_title">Delete Account</h3>
+        <p class="modal-text" data-i18n="delete_account_text">
+          This will permanently delete your account and all data.
+        </p>
+        <div class="modal-actions">
+          <button
+            id="delete-cancel-btn"
+            class="modal-cancel"
+            data-i18n="logout_cancel"
+          >
+            Cancel
+          </button>
+          <button
+            id="delete-confirm-btn"
+            class="modal-confirm btn-danger"
+            data-i18n="delete_confirm"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div
       id="settings-overlay"
       class="settings-overlay"
