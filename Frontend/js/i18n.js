@@ -485,7 +485,11 @@ function setLanguage(lang) {
 document.addEventListener("DOMContentLoaded", applyTranslations);
 
 document.addEventListener("DOMContentLoaded", function () {
-  if (localStorage.getItem("darkMode") === "true") {
+  const isLandingOrAuth =
+    document.querySelector(".lp-page") !== null ||
+    document.getElementById("login-form") !== null ||
+    document.getElementById("register-form") !== null;
+  if (!isLandingOrAuth && localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark-mode");
   }
   const goBackBtn = document.querySelector(".go-back-btn");
