@@ -226,7 +226,10 @@ document
       a.download = "transactions.csv";
       a.click();
       URL.revokeObjectURL(url);
-    } catch (error) {}
+    } catch (error) {
+      document.getElementById("error-msg").textContent = t("error_csv_export");
+      document.getElementById("error-msg").style.display = "block";
+    }
   });
 
 document.querySelectorAll(".filter-btn").forEach((btn) => {

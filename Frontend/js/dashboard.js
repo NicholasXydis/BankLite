@@ -279,7 +279,9 @@ async function loadSpendingChart() {
       `$${totalWithdrawals.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
     document.getElementById("withdrawal-percent").textContent =
       total > 0 ? `${((totalWithdrawals / total) * 100).toFixed(1)}%` : "0%";
-  } catch (error) {}
+  } catch (error) {
+    document.getElementById("chart-card").style.display = "none";
+  }
 }
 
 loadSpendingChart();
