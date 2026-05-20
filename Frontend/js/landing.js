@@ -46,11 +46,7 @@
   }
   function toggleLanguage() {
     const nextLang = getLanguage() === "fr" ? "en" : "fr";
-    if (typeof setLanguage === "function") {
-      setLanguage(nextLang);
-    } else {
-      saveLanguage(nextLang);
-    }
+    saveLanguage(nextLang);
     window.location.reload();
   }
 
