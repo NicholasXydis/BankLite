@@ -488,4 +488,9 @@ document.addEventListener("DOMContentLoaded", function () {
   if (localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark-mode");
   }
+  const goBackBtn = document.querySelector(".go-back-btn");
+  if (goBackBtn)
+    goBackBtn.addEventListener("click", function () {
+      history.back();
+    });
 });
