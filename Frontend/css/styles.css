@@ -2230,6 +2230,36 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   font-size: 0.8rem;
 }
 
+#lp-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(79, 134, 198, 0.9);
+  box-shadow:
+    0 0 16px rgba(79, 134, 198, 0.8),
+    0 0 32px rgba(79, 134, 198, 0.4);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.2s,
+    height 0.2s,
+    opacity 0.2s;
+  mix-blend-mode: screen;
+}
+
+.lp-cursor-trail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
 @keyframes lp-beam-drift {
   0%,
   100% {

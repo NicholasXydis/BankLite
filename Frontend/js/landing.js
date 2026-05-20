@@ -84,38 +84,16 @@
     if (isMobileView() || isReducedMotion()) return;
     const cursor = document.createElement("div");
     cursor.id = "lp-cursor";
-    cursor.style.cssText = [
-      "position:fixed",
-      "top:0",
-      "left:0",
-      "width:12px",
-      "height:12px",
-      "border-radius:50%",
-      "background:rgba(79,134,198,0.9)",
-      "box-shadow:0 0 16px rgba(79,134,198,0.8),0 0 32px rgba(79,134,198,0.4)",
-      "pointer-events:none",
-      "z-index:9999",
-      "transform:translate(-50%,-50%)",
-      "transition:width 0.2s,height 0.2s,opacity 0.2s",
-      "mix-blend-mode:screen",
-    ].join(";");
     document.body.appendChild(cursor);
     const trail = [];
     for (let i = 0; i < 8; i++) {
       const dot = document.createElement("div");
       const size = 8 - i;
-      dot.style.cssText = [
-        "position:fixed",
-        "top:0",
-        "left:0",
-        `width:${size}px`,
-        `height:${size}px`,
-        "border-radius:50%",
-        `background:rgba(79,134,198,${0.5 - i * 0.05})`,
-        "pointer-events:none",
-        `z-index:${9998 - i}`,
-        "transform:translate(-50%,-50%)",
-      ].join(";");
+      dot.className = "lp-cursor-trail";
+      dot.style.width = size + "px";
+      dot.style.height = size + "px";
+      dot.style.background = `rgba(79,134,198,${0.5 - i * 0.05})`;
+      dot.style.zIndex = 9998 - i;
       document.body.appendChild(dot);
       trail.push({ el: dot, x: 0, y: 0 });
     }
