@@ -1105,15 +1105,14 @@ body {
   .lp-page a,
   .lp-page button,
   .lp-page *,
-  .lp-page .lp-stack span,
-  .lp-page .lp-card-scene #lp-lang-btn {
+  .lp-page .lp-stack span {
     -webkit-tap-highlight-color: transparent;
   }
 
-  .lp-page a:focus,
-  .lp-page button:focus,
-  .lp-page .lp-stack span:focus,
-  .lp-page .lp-card-scene:focus {
+  .lp-page a:focus:not(:focus-visible),
+  .lp-page button:focus:not(:focus-visible),
+  .lp-page .lp-stack span:focus:not(:focus-visible),
+  .lp-page .lp-card-scene:focus:not(:focus-visible) {
     outline: none;
   }
 
