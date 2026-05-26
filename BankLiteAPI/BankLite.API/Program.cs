@@ -215,6 +215,14 @@ builder.Services.AddRateLimiter(options =>
         config.QueueLimit = 0;
     });
 
+    options.AddFixedWindowLimiter("changepassword", config =>
+    {
+        config.PermitLimit = 5;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        config.QueueLimit = 0;
+    });
+
     options.RejectionStatusCode = 429;
 });
 

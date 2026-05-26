@@ -3,6 +3,7 @@ using BankLite.Application.Interfaces;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
@@ -36,6 +37,7 @@ namespace BankLite.API.Controllers
         }
 
         [HttpPost("change-password")]
+        [EnableRateLimiting("changepassword")]
         [SwaggerOperation(Summary = "Change password", Description = "Changes the authenticated user's password.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
