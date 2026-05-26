@@ -3,7 +3,6 @@ const pageSize = 10;
 let currentFilter = "all";
 
 async function loadTransactions(accountId, page, type = null) {
-
   const errorMsg = document.getElementById("error-msg");
   const transactionsList = document.getElementById("transactions-list");
   const pageInfo = document.getElementById("page-info");
@@ -201,24 +200,41 @@ document
 
     try {
       const result = await getTransactions(accountId, 1, 10000);
-      const rows = [["Date", "Type", "Amount", "Description"]];
+      const rows = [
+        [t("csv_date"), t("csv_type"), t("csv_amount"), t("csv_description")],
+      ];
 
       result.items.forEach((tx) => {
-        const date = new Date(tx.createdAt + "Z").toLocaleString("en-CA", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
-        });
+        const lang = localStorage.getItem("language") || "en";
+        const date = new Date(tx.createdAt + "Z").toLocaleString(
+          lang === "fr" ? "fr-CA" : "en-CA",
+          {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+          },
+        );
         const amount = `${tx.type === "Deposit" ? "+" : "-"}$${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-        rows.push([date, tx.type, amount, tx.description]);
+        const type =
+          tx.type === "Deposit" ? t("nav_deposit") : t("nav_withdraw");
+        let desc = tx.description;
+        if (desc.startsWith("Deposit of"))
+          desc = `${t("nav_deposit")} $${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2 })}`;
+        if (desc.startsWith("Withdrawal of"))
+          desc = `${t("nav_withdraw")} $${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2 })}`;
+        if (desc.startsWith("Transfer"))
+          desc = `${t("nav_transfer")} $${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2 })}`;
+        rows.push([date, type, amount, desc]);
       });
 
       const csv = rows
         .map((r) => r.map((cell) => `"${cell}"`).join(","))
         .join("\n");
-      const blob = new Blob([csv], { type: "text/csv" });
+      const blob = new Blob(["\uFEFF" + csv], {
+        type: "text/csv;charset=utf-8;",
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;

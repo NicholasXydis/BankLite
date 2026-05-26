@@ -19,16 +19,28 @@ async function login(email, password) {
     body: JSON.stringify({ email, password }),
   });
 
-  if (response.status === 429)
-    throw new Error("Too many login attempts. Please wait a minute.");
+  if (response.status === 429) throw new Error(t("error_too_many_login"));
   const data = await response.json();
 
   handleServerError(response);
   if (!response.ok) {
     if (Array.isArray(data)) {
-      throw new Error(data.map((e) => e.errorMessage).join(", "));
+      throw new Error(
+        data
+          .map((e) => {
+            if (e.errorMessage.includes("valid email"))
+              return t("error_valid_email");
+            if (e.errorMessage.includes("least 8"))
+              return t("error_min_8_chars");
+            return e.errorMessage;
+          })
+          .join(" "),
+      );
     }
-    throw new Error(data.message || "Login failed");
+    const msg = data.message || "Login failed";
+    if (msg.includes("Invalid Credentials"))
+      throw new Error(t("error_invalid_credentials"));
+    throw new Error(msg);
   }
 
   return data;
@@ -44,18 +56,29 @@ async function register(fullName, email, password) {
     body: JSON.stringify({ fullName, email, password }),
   });
 
-  if (response.status === 429)
-    throw new Error("Too many registration attempts. Please wait a minute.");
-
+  if (response.status === 429) throw new Error(t("error_too_many_register"));
   const data = await response.json();
-
   handleServerError(response);
   if (!response.ok) {
     if (Array.isArray(data)) {
-      const uniqueErrors = [...new Set(data.map((e) => e.errorMessage))];
-      throw new Error(uniqueErrors.join(". "));
+      const uniqueErrors = [
+        ...new Set(
+          data.map((e) => {
+            if (e.errorMessage.includes("least 8"))
+              return t("error_min_8_chars");
+            if (e.errorMessage.includes("valid email"))
+              return t("error_valid_email");
+            if (e.errorMessage.includes("already"))
+              return t("error_email_taken");
+            return e.errorMessage;
+          }),
+        ),
+      ];
+      throw new Error(uniqueErrors.join(" "));
     }
-    throw new Error(data.message || "Registration failed");
+    const msg = data.message || "";
+    if (msg.includes("already")) throw new Error(t("error_email_taken"));
+    throw new Error(msg || t("error_occurred"));
   }
 
   return data;
@@ -75,7 +98,7 @@ async function getAccounts(forceRefresh = false) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch accounts");
+    throw new Error(data.message || t("error_load_accounts"));
   }
   sessionStorage.setItem("cachedAccounts", JSON.stringify(data));
   return data;
@@ -95,7 +118,11 @@ async function deposit(accountId, amount) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to deposit funds");
+    const msg = data.message || "";
+    if (msg.includes("Insufficient"))
+      throw new Error(t("error_insufficient_funds"));
+    if (msg.includes("access")) throw new Error(t("error_no_access"));
+    throw new Error(msg || t("error_occurred"));
   }
 
   return data;
@@ -115,7 +142,11 @@ async function withdraw(accountId, amount) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to withdraw funds");
+    const msg = data.message || "";
+    if (msg.includes("Insufficient"))
+      throw new Error(t("error_insufficient_funds"));
+    if (msg.includes("access")) throw new Error(t("error_no_access"));
+    throw new Error(msg || t("error_occurred"));
   }
 
   return data;
@@ -135,7 +166,11 @@ async function transfer(fromAccountId, toAccountId, amount) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to transfer funds");
+    const msg = data.message || "";
+    if (msg.includes("Insufficient"))
+      throw new Error(t("error_insufficient_funds"));
+    if (msg.includes("access")) throw new Error(t("error_no_access"));
+    throw new Error(msg || t("error_occurred"));
   }
 
   return data;
@@ -155,7 +190,13 @@ async function transferExternal(fromAccountId, toAccountNumber, amount) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to transfer funds");
+    const msg = data.message || "";
+    if (msg.includes("Insufficient"))
+      throw new Error(t("error_insufficient_funds"));
+    if (msg.includes("not found") || msg.includes("Account"))
+      throw new Error(t("error_account_not_found"));
+    if (msg.includes("access")) throw new Error(t("error_no_access"));
+    throw new Error(msg || t("error_occurred"));
   }
 
   return data;
@@ -181,7 +222,9 @@ async function getTransactions(
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch transactions");
+    const msg = data.message || "";
+    if (msg.includes("access")) throw new Error(t("error_no_access"));
+    throw new Error(msg || t("error_occurred"));
   }
 
   return data;
@@ -200,7 +243,7 @@ async function getTransactionsByDateRange(accountId, startDate, endDate) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch transactions");
+    throw new Error(data.message || t("error_occurred"));
   }
 
   return data;
@@ -220,7 +263,10 @@ async function createAccount(accountType) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to create account");
+    const msg = data.message || "";
+    if (msg.includes("already have"))
+      throw new Error(t("error_account_exists"));
+    throw new Error(msg || t("error_occurred"));
   }
 
   return data;
@@ -233,7 +279,7 @@ async function getUserProfile() {
   });
   const data = await response.json();
   handleServerError(response);
-  if (!response.ok) throw new Error(data.message || "Failed to load profile");
+  if (!response.ok) throw new Error(data.message || t("error_load_profile"));
   return data;
 }
 
@@ -246,13 +292,28 @@ async function changePassword(currentPassword, newPassword) {
     },
     body: JSON.stringify({ currentPassword, newPassword }),
   });
+
+  if (response.status === 429) throw new Error(t("error_too_many_attempts"));
   const data = await response.json();
   handleServerError(response);
   if (!response.ok) {
     if (Array.isArray(data)) {
-      throw new Error(data.map((e) => e.errorMessage).join(", "));
+      throw new Error(
+        data
+          .map((e) => {
+            if (e.errorMessage.includes("least 8"))
+              return t("error_min_8_chars");
+            if (e.errorMessage.includes("different"))
+              return t("error_password_same");
+            return e.errorMessage;
+          })
+          .join(" "),
+      );
     }
-    throw new Error(data.message || "Failed to change password");
+    const msg = data.message || "";
+    if (msg.includes("different")) throw new Error(t("error_password_same"));
+    if (msg.includes("incorrect")) throw new Error(t("error_wrong_password"));
+    throw new Error(msg || t("error_occurred"));
   }
   return data;
 }
@@ -264,7 +325,7 @@ async function deleteAccount() {
   });
   const data = await response.json();
   handleServerError(response);
-  if (!response.ok) throw new Error(data.message || "Failed to delete account");
+  if (!response.ok) throw new Error(data.message || t("error_occurred"));
 }
 
 async function sendChatMessage(message) {
@@ -281,7 +342,7 @@ async function sendChatMessage(message) {
 
   handleServerError(response);
   if (!response.ok) {
-    throw new Error(data.message || "Failed to get response");
+    throw new Error(data.message || t("error_occurred"));
   }
 
   return data.response;
@@ -313,9 +374,9 @@ async function forgotPassword(email) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
   });
+  if (response.status === 429) throw new Error(t("error_too_many_attempts"));
   const data = await response.json();
-  if (!response.ok)
-    throw new Error(data.message || "Failed to send reset email");
+  if (!response.ok) throw new Error(data.message || t("error_occurred"));
   return data;
 }
 
@@ -327,7 +388,12 @@ async function resetPassword(token, newPassword) {
     body: JSON.stringify({ token, newPassword }),
   });
   const data = await response.json();
-  if (!response.ok) throw new Error(data.message || "Failed to reset password");
+  if (!response.ok) {
+    const msg = data.message || "";
+    if (msg.includes("Invalid") || msg.includes("expired"))
+      throw new Error(t("error_invalid_token"));
+    throw new Error(msg || t("error_occurred"));
+  }
   return data;
 }
 

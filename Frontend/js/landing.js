@@ -36,11 +36,11 @@
     if (!flag || !label) return;
     if (getLanguage() === "fr") {
       flag.innerHTML =
-        '<svg width="24" height="18" viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#fff"/><rect width="6" height="18" fill="#D80621"/><rect x="18" width="6" height="18" fill="#D80621"/><path d="M12 3l1 3h3l-2.5 2 1 3L12 9.5 9.5 11l1-3L8 6h3z" fill="#D80621"/></svg>';
+        '<svg width="24" height="18" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,1)"><rect width="24" height="17" fill="#fff"/><rect width="6" height="17" fill="#D80621"/><rect x="18" width="6" height="17" fill="#D80621"/><path d="M12 4l1 3h3l-2.5 2 1 3L12 10.5 9.5 12l1-3L8 7h3z" fill="#D80621"/></g></svg>';
       label.textContent = "EN";
     } else {
       flag.innerHTML =
-        '<svg width="24" height="18" viewBox="0 0 24 18" aria-hidden="true"><rect width="24" height="18" fill="#003DA5"/><rect x="11" width="2" height="18" fill="#fff"/><rect y="8" width="24" height="2" fill="#fff"/><circle cx="6" cy="4.5" r="1.5" fill="#fff"/><circle cx="18" cy="4.5" r="1.5" fill="#fff"/><circle cx="6" cy="13.5" r="1.5" fill="#fff"/><circle cx="18" cy="13.5" r="1.5" fill="#fff"/></svg>';
+        '<svg width="24" height="18" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg"><g transform="translate(0,1)"><rect width="24" height="17" fill="#003DA5"/><rect x="11" width="2" height="17" fill="#fff"/><rect y="7" width="24" height="2" fill="#fff"/><text x="3.5" y="7" font-size="5" fill="#fff" font-family="serif">⚜</text><text x="15.5" y="7" font-size="5" fill="#fff" font-family="serif">⚜</text><text x="3.5" y="15" font-size="5" fill="#fff" font-family="serif">⚜</text><text x="15.5" y="15" font-size="5" fill="#fff" font-family="serif">⚜</text></g></svg>';
       label.textContent = "FR";
     }
   }

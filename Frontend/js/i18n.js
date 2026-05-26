@@ -169,13 +169,31 @@ const i18n = {
     error_select_destination: "Please select a destination account.",
     error_max_transfer: "Maximum transfer amount is $1,000,000.",
     error_same_account: "Cannot transfer to the same account.",
-    error_invalid_token: "Invalid or missing reset token.",
+    error_invalid_token: "This reset link is invalid or has expired.",
     error_min_8_chars: "Password must be at least 8 characters.",
     error_csv_export: "Failed to export transactions. Please try again.",
     error_load_accounts: "Failed to load accounts. Please refresh the page.",
     error_load_profile: "Failed to load profile. Please try again.",
+    error_account_exists: "You already have an account of this type.",
     success_password_reset:
       "Password reset successfully! Redirecting to login...",
+    error_too_many_attempts: "Too many attempts. Please wait a minute.",
+    error_valid_email: "Please enter a valid email address.",
+    error_too_many_login: "Too many login attempts. Please wait a minute.",
+    error_too_many_register:
+      "Too many registration attempts. Please wait a minute.",
+    error_too_many_attempts: "Too many attempts. Please wait a minute.",
+    error_invalid_credentials: "Invalid credentials. Please try again.",
+    error_email_taken: "This email is already registered.",
+    error_too_many_register:
+      "Too many registration attempts. Please wait a minute.",
+    error_password_same:
+      "New password must be different from current password.",
+    error_insufficient_funds: "Insufficient funds.",
+    error_account_not_found:
+      "Account not found. Please check the account number.",
+    error_no_access: "You do not have access to this account.",
+    error_wrong_password: "Current password is incorrect.",
     success_account_created: "Account created successfully!",
     label_today: "Today",
     label_yesterday: "Yesterday",
@@ -187,6 +205,10 @@ const i18n = {
     dashboard_welcome: "Welcome back,",
     page_of: "Page",
     page_of_total: "of",
+    csv_date: "Date",
+    csv_type: "Type",
+    csv_amount: "Amount",
+    csv_description: "Description",
     placeholder_email: "you@example.com",
     placeholder_fullname: "Full Name",
     landing_meta_description:
@@ -194,7 +216,7 @@ const i18n = {
     landing_og_title: "BankLite | Full-Stack Banking App",
     landing_og_description:
       "A polished full-stack banking app with secure auth, real-time features, and bilingual support.",
-    landing_page_title: "BankLite | Full-Stack Banking App",
+    landing_page_title: "BankLite | Homepage",
     landing_change_language: "Change language",
     landing_sign_in: "Sign in",
     landing_stack_aria: "Technology stack",
@@ -379,7 +401,8 @@ const i18n = {
     error_max_transfer: "Le montant maximal du virement est de 1 000 000 $.",
     error_same_account:
       "Impossible d'effectuer un virement vers le même compte.",
-    error_invalid_token: "Jeton de réinitialisation invalide ou manquant.",
+    error_invalid_token:
+      "Ce lien de réinitialisation est invalide ou a expiré.",
     error_min_8_chars: "Le mot de passe doit comporter au moins 8 caractères.",
     error_csv_export:
       "Échec de l'exportation des transactions. Veuillez réessayer.",
@@ -388,6 +411,27 @@ const i18n = {
     error_load_profile: "Échec du chargement du profil. Veuillez réessayer.",
     success_password_reset:
       "Réinitialisation du mot de passe réussie ! Redirection vers la page de connexion...",
+    error_too_many_attempts:
+      "Trop de tentatives. Veuillez patienter une minute.",
+    error_valid_email: "Veuillez saisir une adresse e-mail valide.",
+    error_too_many_login:
+      "Trop de tentatives de connexion. Veuillez patienter une minute.",
+    error_too_many_register:
+      "Trop de tentatives d'inscription. Veuillez patienter une minute.",
+    error_too_many_attempts:
+      "Trop de tentatives. Veuillez patienter une minute.",
+    error_invalid_credentials: "Identifiants invalides. Veuillez réessayer.",
+    error_email_taken: "Cette adresse e-mail est déjà enregistrée.",
+    error_too_many_register:
+      "Trop de tentatives d'inscription. Veuillez patienter une minute.",
+    error_password_same:
+      "Le nouveau mot de passe doit être différent du mot de passe actuel.",
+    error_account_exists: "Vous avez déjà un compte de ce type.",
+    error_insufficient_funds: "Fonds insuffisants.",
+    error_account_not_found:
+      "Compte introuvable. Veuillez vérifier le numéro de compte.",
+    error_no_access: "Vous n'avez pas accès à ce compte.",
+    error_wrong_password: "Le mot de passe actuel est incorrect.",
     success_account_created: "Compte créé avec succès !",
     label_today: "Aujourd'hui",
     label_yesterday: "Hier",
@@ -399,6 +443,10 @@ const i18n = {
     dashboard_welcome: "Bon retour,",
     page_of: "Page",
     page_of_total: "sur",
+    csv_date: "Date",
+    csv_type: "Type",
+    csv_amount: "Montant",
+    csv_description: "Description",
     placeholder_email: "vous@exemple.com",
     placeholder_fullname: "Nom Complet",
     landing_meta_description:
@@ -406,7 +454,7 @@ const i18n = {
     landing_og_title: "BankLite | Application Bancaire Full-Stack",
     landing_og_description:
       "Une application bancaire complète avec authentification sécurisée, fonctionnalités en temps réel et assistance bilingue.",
-    landing_page_title: "BankLite | Application Bancaire Full-Stack",
+    landing_page_title: "BankLite | Page D'accueil",
     landing_change_language: "Changer la langue",
     landing_sign_in: "Se connecter",
     landing_stack_aria: "Pile technologique",
@@ -459,8 +507,8 @@ function applyTranslations() {
       fr: "BankLite | Conditions d'utilisation",
     },
     "landing.html": {
-      en: "BankLite | Full-Stack Banking App",
-      fr: "BankLite | Application Bancaire Full-Stack",
+      en: "BankLite | HomePage",
+      fr: "BankLite | Page D'accueil",
     },
   };
   const page = window.location.pathname.split("/").pop() || "index.html";
