@@ -368,11 +368,12 @@ async function refreshToken() {
 }
 
 async function forgotPassword(email) {
+  const lang = localStorage.getItem("language") || "en";
   const response = await fetch(API_URL + "/api/auth/forgot-password", {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, lang }),
   });
   if (response.status === 429) throw new Error(t("error_too_many_attempts"));
   const data = await response.json();
