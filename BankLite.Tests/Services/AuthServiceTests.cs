@@ -506,9 +506,9 @@ namespace BankLite.Tests.Services
 
             _mockUserRepo.Setup(r => r.GetByEmailAsync(It.IsAny<string>())).ReturnsAsync(existingUser);
 
-            await _authService.ForgotPasswordAsync("test@banklite.com", "http://localhost/reset");
+            await _authService.ForgotPasswordAsync("test@banklite.com", "http://localhost/reset", "en");
 
-            _mockEmailService.Verify(e => e.SendPasswordResetEmailAsync(existingUser.Email, It.IsAny<string>()), Times.Once);
+            _mockEmailService.Verify(e => e.SendPasswordResetEmailAsync(existingUser.Email, It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
 
         [Fact]
