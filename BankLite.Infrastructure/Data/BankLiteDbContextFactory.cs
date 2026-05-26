@@ -15,7 +15,7 @@ namespace BankLite.Infrastructure.Data
                  .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<BankLiteDbContext>();
-            optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            optionsBuilder.UseNpgsql(config.GetConnectionString("DefaultConnection"));
 
             return new BankLiteDbContext(optionsBuilder.Options);
         }

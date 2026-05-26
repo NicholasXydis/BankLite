@@ -27,7 +27,7 @@ namespace BankLite.Infrastructure.Data
             modelBuilder.Entity<Transaction>()
                 .HasIndex(t => t.IdempotencyKey)
                 .IsUnique()
-                .HasFilter("[IdempotencyKey] IS NOT NULL");
+                .HasFilter("\"IdempotencyKey\" IS NOT NULL");
 
             modelBuilder.Entity<Transaction>()
                 .HasIndex(t => t.CreatedAt);
