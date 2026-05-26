@@ -1381,7 +1381,7 @@ button:active {
 
 .chatbot-panel {
   position: fixed;
-  bottom: -100%;
+  bottom: -600%;
   right: 24px;
   width: 360px;
   height: 500px;
@@ -1585,7 +1585,7 @@ button:active {
 
 .static-error-title {
   font-size: 1.3rem;
-  color: var(--brand-dark);
+  color: var(--text-primary);
   margin: 0.5rem 0;
 }
 
@@ -1668,6 +1668,10 @@ body.dark-mode .account-number {
 
 body.dark-mode .chart-card .section-title {
   color: var(--text-primary);
+}
+
+body.dark-mode .empty-state {
+  background: var(--bg-card);
 }
 
 body.dark-mode .settings-close-btn {
