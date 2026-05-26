@@ -193,7 +193,7 @@ namespace BankLite.Application.Services
             return token;
         }
 
-        public async Task ForgotPasswordAsync(string email, string resetBaseUrl)
+        public async Task ForgotPasswordAsync(string email, string resetBaseUrl, string lang = "en")
         {
             var user = await _userRepository.GetByEmailAsync(email.ToLower());
             if (user == null) return;
@@ -210,7 +210,7 @@ namespace BankLite.Application.Services
             await _unitOfWork.SaveAsync();
 
             var resetLink = $"{resetBaseUrl}?token={Uri.EscapeDataString(token)}";
-            await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink);
+            await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink, lang);
 
             _logger.LogInformation("Password reset email sent to {Email}", user.Email);
         }

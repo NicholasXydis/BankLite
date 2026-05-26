@@ -100,7 +100,7 @@ namespace BankLite.API.Controllers
 
             var resetBaseUrl = _configuration["Frontend:ResetPasswordUrl"]
             ?? throw new InvalidOperationException("Reset password URL not configured");
-            await _authService.ForgotPasswordAsync(dto.Email, resetBaseUrl);
+            await _authService.ForgotPasswordAsync(dto.Email, resetBaseUrl, dto.Lang);
             return Ok(new { message = "If that email exists, a reset link has been sent." });
         }
 
