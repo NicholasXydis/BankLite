@@ -288,4 +288,4 @@ app.MapHub<BankHub>("/hubs/bank");
 app.Lifetime.ApplicationStopping.Register(() =>
     Log.Information("Application is shutting down..."));
 
-app.Run();
+await app.RunAsync();
