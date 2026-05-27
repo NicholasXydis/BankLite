@@ -2,6 +2,7 @@
 using BankLite.Application.Services;
 using BankLite.Domain.Entities;
 using BankLite.Domain.Interfaces;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
@@ -11,124 +12,116 @@ namespace BankLite.Tests.Services
     public class UserServiceTests
     {
         private readonly Mock<IUserRepository> _mockUserRepo;
-        private readonly UserService _userService;
         private readonly Mock<IUnitOfWork> _mockUnitOfWork;
         private readonly Mock<IRefreshTokenRepository> _mockRefreshTokenRepo;
+        private readonly UserService _userService;
 
         public UserServiceTests()
         {
             _mockUserRepo = new Mock<IUserRepository>();
             _mockUnitOfWork = new Mock<IUnitOfWork>();
             _mockRefreshTokenRepo = new Mock<IRefreshTokenRepository>();
-            _userService = new UserService(_mockUserRepo.Object, _mockUnitOfWork.Object, new NullLogger<UserService>(), _mockRefreshTokenRepo.Object);
+            _userService = new UserService(
+                _mockUserRepo.Object,
+                _mockUnitOfWork.Object,
+                new NullLogger<UserService>(),
+                _mockRefreshTokenRepo.Object);
         }
 
-        [Fact]
-        public async Task GetProfileAsync_ShouldReturnProfile_OnSuccess()
+        private User CreateTestUser(Guid? userId = null, string? passwordHash = null)
         {
-            var userId = Guid.NewGuid();
-            var user = new User
+            return new User
             {
-                Id = userId,
+                Id = userId ?? Guid.NewGuid(),
                 FullName = "Test User",
                 Email = "test@banklite.com",
-                PasswordHash = string.Empty,
+                PasswordHash = passwordHash ?? string.Empty,
                 CreatedAt = DateTime.UtcNow.AddDays(-30),
                 LastLoginAt = DateTime.UtcNow.AddDays(-1)
             };
+        }
+
+        [Fact]
+        public async Task GetProfileAsync_ValidUser_ReturnsProfileWithCorrectData()
+        {
+            var userId = Guid.NewGuid();
+            var user = CreateTestUser(userId);
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             var result = await _userService.GetProfileAsync(userId);
 
-            Assert.NotNull(result);
-            Assert.Equal(user.FullName, result.FullName);
-            Assert.Equal(user.Email, result.Email);
+            result.Should().NotBeNull();
+            result.FullName.Should().Be(user.FullName);
+            result.Email.Should().Be(user.Email);
         }
 
         [Fact]
-        public async Task GetProfileAsync_ShouldReturnCorrectCreatedAt()
+        public async Task GetProfileAsync_ValidUser_ReturnsCorrectCreatedAt()
         {
             var userId = Guid.NewGuid();
             var createdAt = DateTime.UtcNow.AddDays(-30);
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = string.Empty,
-                CreatedAt = createdAt
-            };
+            var user = CreateTestUser(userId);
+            user.CreatedAt = createdAt;
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             var result = await _userService.GetProfileAsync(userId);
 
-            Assert.Equal(createdAt, result.CreatedAt);
+            result.CreatedAt.Should().Be(createdAt);
         }
 
         [Fact]
-        public async Task GetProfileAsync_ShouldReturnCorrectLastLoginAt()
+        public async Task GetProfileAsync_ValidUser_ReturnsCorrectLastLoginAt()
         {
             var userId = Guid.NewGuid();
             var lastLoginAt = DateTime.UtcNow.AddDays(-1);
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = string.Empty,
-                LastLoginAt = lastLoginAt
-            };
+            var user = CreateTestUser(userId);
+            user.LastLoginAt = lastLoginAt;
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             var result = await _userService.GetProfileAsync(userId);
 
-            Assert.Equal(lastLoginAt, result.LastLoginAt);
+            result.LastLoginAt.Should().Be(lastLoginAt);
         }
 
         [Fact]
-        public async Task GetProfileAsync_ShouldReturnNullLastLoginAt_WhenNeverLoggedIn()
+        public async Task GetProfileAsync_UserNeverLoggedIn_ReturnsNullLastLoginAt()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = string.Empty,
-                LastLoginAt = null
-            };
+            var user = CreateTestUser(userId);
+            user.LastLoginAt = null;
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             var result = await _userService.GetProfileAsync(userId);
 
-            Assert.Null(result.LastLoginAt);
+            result.LastLoginAt.Should().BeNull();
         }
 
         [Fact]
-        public async Task GetProfileAsync_ShouldThrow_WhenUserNotFound()
+        public async Task GetProfileAsync_UserNotFound_ThrowsInvalidOperationException()
         {
             _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.GetProfileAsync(Guid.NewGuid()));
+            var act = async () => await _userService.GetProfileAsync(Guid.NewGuid());
+
+            await act.Should().ThrowAsync<InvalidOperationException>();
         }
 
         [Fact]
-        public async Task GetProfileAsync_ShouldThrow_WithCorrectMessage_WhenUserNotFound()
+        public async Task GetProfileAsync_UserNotFound_ThrowsWithCorrectMessage()
         {
             _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.GetProfileAsync(Guid.NewGuid()));
+            var act = async () => await _userService.GetProfileAsync(Guid.NewGuid());
 
-            Assert.Contains("User not found", ex.Message);
+            var ex = await act.Should().ThrowAsync<InvalidOperationException>();
+            ex.Which.Message.Should().Contain("User not found");
         }
 
         [Fact]
-        public async Task GetProfileAsync_ShouldCallRepository_Once()
+        public async Task GetProfileAsync_ValidUser_CallsRepositoryOnce()
         {
             var userId = Guid.NewGuid();
-            var user = new User { Id = userId, FullName = "Test User", Email = "test@banklite.com", PasswordHash = string.Empty };
+            var user = CreateTestUser(userId);
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             await _userService.GetProfileAsync(userId);
@@ -137,59 +130,38 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldChangePassword_OnSuccess()
+        public async Task ChangePasswordAsync_ValidRequest_ChangesPassword()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
             await _userService.ChangePasswordAsync(userId, dto);
 
-            Assert.True(BCrypt.Net.BCrypt.Verify("NewPassword123", user.PasswordHash));
+            BCrypt.Net.BCrypt.Verify("NewPassword123", user.PasswordHash).Should().BeTrue();
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldHashNewPassword()
+        public async Task ChangePasswordAsync_ValidRequest_HashesNewPassword()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
             await _userService.ChangePasswordAsync(userId, dto);
 
-            Assert.NotEqual("NewPassword123", user.PasswordHash);
-            Assert.True(BCrypt.Net.BCrypt.Verify("NewPassword123", user.PasswordHash));
+            user.PasswordHash.Should().NotBe("NewPassword123");
+            BCrypt.Net.BCrypt.Verify("NewPassword123", user.PasswordHash).Should().BeTrue();
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldCallUpdateAsync_OnSuccess()
+        public async Task ChangePasswordAsync_ValidRequest_CallsUpdateAsyncOnce()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
             await _userService.ChangePasswordAsync(userId, dto);
@@ -198,16 +170,10 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldRevokeAllTokens_OnSuccess()
+        public async Task ChangePasswordAsync_ValidRequest_RevokesAllRefreshTokens()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
@@ -217,16 +183,10 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldCallSaveAsync_OnSuccess()
+        public async Task ChangePasswordAsync_ValidRequest_CallsSaveAsyncOnce()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
@@ -236,142 +196,98 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteAccountAsync_ShouldCallSaveAsync_OnSuccess()
-        {
-            var userId = Guid.NewGuid();
-            var user = new User { Id = userId, FullName = "Test User", Email = "test@banklite.com", PasswordHash = string.Empty };
-            _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
-            await _userService.DeleteAccountAsync(userId);
-
-            _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Once);
-        }
-
-        [Fact]
-        public async Task ChangePasswordAsync_ShouldPreserveOldHash_WhenPasswordIsWrong()
+        public async Task ChangePasswordAsync_WrongCurrentPassword_PreservesOldHash()
         {
             var userId = Guid.NewGuid();
             var oldHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123");
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = oldHash
-            };
+            var user = CreateTestUser(userId, oldHash);
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
             var dto = new ChangePasswordDto { CurrentPassword = "WrongPassword", NewPassword = "NewPassword123" };
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.ChangePasswordAsync(userId, dto));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _userService.ChangePasswordAsync(userId, dto));
 
-            Assert.Equal(oldHash, user.PasswordHash);
+            user.PasswordHash.Should().Be(oldHash);
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldNotCallUpdateAsync_WhenPasswordIsWrong()
+        public async Task ChangePasswordAsync_WrongCurrentPassword_NeverCallsUpdateAsync()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
             var dto = new ChangePasswordDto { CurrentPassword = "WrongPassword", NewPassword = "NewPassword123" };
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.ChangePasswordAsync(userId, dto));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _userService.ChangePasswordAsync(userId, dto));
 
             _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Never);
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldNotCallUpdateAsync_WhenUserNotFound()
+        public async Task ChangePasswordAsync_UserNotFound_NeverCallsUpdateAsync()
         {
             _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
-
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.ChangePasswordAsync(Guid.NewGuid(), dto));
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _userService.ChangePasswordAsync(Guid.NewGuid(), dto));
 
             _mockUserRepo.Verify(r => r.UpdateAsync(It.IsAny<User>()), Times.Never);
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldThrow_WhenUserNotFound()
+        public async Task ChangePasswordAsync_UserNotFound_ThrowsInvalidOperationException()
         {
             _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
-
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.ChangePasswordAsync(Guid.NewGuid(), dto));
+            var act = async () => await _userService.ChangePasswordAsync(Guid.NewGuid(), dto);
+
+            await act.Should().ThrowAsync<InvalidOperationException>();
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldThrow_WhenCurrentPasswordIsWrong()
+        public async Task ChangePasswordAsync_WrongCurrentPassword_ThrowsInvalidOperationException()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
             var dto = new ChangePasswordDto { CurrentPassword = "WrongPassword", NewPassword = "NewPassword123" };
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.ChangePasswordAsync(userId, dto));
+            var act = async () => await _userService.ChangePasswordAsync(userId, dto);
+
+            await act.Should().ThrowAsync<InvalidOperationException>();
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldThrow_WithCorrectMessage_WhenCurrentPasswordIsWrong()
+        public async Task ChangePasswordAsync_WrongCurrentPassword_ThrowsWithCorrectMessage()
         {
             var userId = Guid.NewGuid();
-            var user = new User
-            {
-                Id = userId,
-                FullName = "Test User",
-                Email = "test@banklite.com",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("OldPassword123")
-            };
+            var user = CreateTestUser(userId, BCrypt.Net.BCrypt.HashPassword("OldPassword123"));
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
-
             var dto = new ChangePasswordDto { CurrentPassword = "WrongPassword", NewPassword = "NewPassword123" };
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.ChangePasswordAsync(userId, dto));
+            var act = async () => await _userService.ChangePasswordAsync(userId, dto);
 
-            Assert.Contains("incorrect", ex.Message);
+            var ex = await act.Should().ThrowAsync<InvalidOperationException>();
+            ex.Which.Message.Should().Contain("incorrect");
         }
 
         [Fact]
-        public async Task ChangePasswordAsync_ShouldThrow_WithCorrectMessage_WhenUserNotFound()
+        public async Task ChangePasswordAsync_UserNotFound_ThrowsWithCorrectMessage()
         {
             _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
-
             var dto = new ChangePasswordDto { CurrentPassword = "OldPassword123", NewPassword = "NewPassword123" };
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.ChangePasswordAsync(Guid.NewGuid(), dto));
+            var act = async () => await _userService.ChangePasswordAsync(Guid.NewGuid(), dto);
 
-            Assert.Contains("User not found", ex.Message);
+            var ex = await act.Should().ThrowAsync<InvalidOperationException>();
+            ex.Which.Message.Should().Contain("User not found");
         }
 
         [Fact]
-        public async Task DeleteAccountAsync_ShouldCallDeleteAsync_WithCorrectUser()
+        public async Task DeleteAccountAsync_ValidUser_CallsDeleteAsyncWithCorrectUser()
         {
             var userId = Guid.NewGuid();
-            var user = new User { Id = userId, FullName = "Test User", Email = "test@banklite.com", PasswordHash = string.Empty };
+            var user = CreateTestUser(userId);
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             await _userService.DeleteAccountAsync(userId);
@@ -380,10 +296,10 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteAccountAsync_ShouldCallGetByIdAsync_Once()
+        public async Task DeleteAccountAsync_ValidUser_CallsGetByIdAsyncOnce()
         {
             var userId = Guid.NewGuid();
-            var user = new User { Id = userId, FullName = "Test User", Email = "test@banklite.com", PasswordHash = string.Empty };
+            var user = CreateTestUser(userId);
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             await _userService.DeleteAccountAsync(userId);
@@ -392,41 +308,53 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task DeleteAccountAsync_ShouldThrow_WhenUserNotFound()
+        public async Task DeleteAccountAsync_ValidUser_CallsSaveAsyncOnce()
         {
-            _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
+            var userId = Guid.NewGuid();
+            var user = CreateTestUser(userId);
+            _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.DeleteAccountAsync(Guid.NewGuid()));
+            await _userService.DeleteAccountAsync(userId);
+
+            _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Once);
         }
 
         [Fact]
-        public async Task DeleteAccountAsync_ShouldThrow_WithCorrectMessage_WhenUserNotFound()
+        public async Task DeleteAccountAsync_UserNotFound_ThrowsInvalidOperationException()
         {
             _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
 
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.DeleteAccountAsync(Guid.NewGuid()));
+            var act = async () => await _userService.DeleteAccountAsync(Guid.NewGuid());
 
-            Assert.Contains("User not found", ex.Message);
+            await act.Should().ThrowAsync<InvalidOperationException>();
         }
 
         [Fact]
-        public async Task DeleteAccountAsync_ShouldNotCallDeleteAsync_WhenUserNotFound()
+        public async Task DeleteAccountAsync_UserNotFound_ThrowsWithCorrectMessage()
         {
             _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _userService.DeleteAccountAsync(Guid.NewGuid()));
+            var act = async () => await _userService.DeleteAccountAsync(Guid.NewGuid());
+
+            var ex = await act.Should().ThrowAsync<InvalidOperationException>();
+            ex.Which.Message.Should().Contain("User not found");
+        }
+
+        [Fact]
+        public async Task DeleteAccountAsync_UserNotFound_NeverCallsDeleteAsync()
+        {
+            _mockUserRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>())).ReturnsAsync((User?)null);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => _userService.DeleteAccountAsync(Guid.NewGuid()));
 
             _mockUserRepo.Verify(r => r.DeleteAsync(It.IsAny<User>()), Times.Never);
         }
 
         [Fact]
-        public async Task DeleteAccountAsync_ShouldNotCallUpdateAsync_WhenDeleting()
+        public async Task DeleteAccountAsync_ValidUser_NeverCallsUpdateAsync()
         {
             var userId = Guid.NewGuid();
-            var user = new User { Id = userId, FullName = "Test User", Email = "test@banklite.com", PasswordHash = string.Empty };
+            var user = CreateTestUser(userId);
             _mockUserRepo.Setup(r => r.GetByIdAsync(userId)).ReturnsAsync(user);
 
             await _userService.DeleteAccountAsync(userId);
