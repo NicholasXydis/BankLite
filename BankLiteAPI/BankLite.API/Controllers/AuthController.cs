@@ -19,9 +19,10 @@ namespace BankLite.API.Controllers
         private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
         private readonly IConfiguration _configuration;
         private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
+        private readonly IWebHostEnvironment _environment;
 
 
-        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator)
+        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IWebHostEnvironment environment)
         {
             _authService = authService;
             _registerValidator = registerValidator;
@@ -29,6 +30,7 @@ namespace BankLite.API.Controllers
             _configuration = configuration;
             _forgotPasswordValidator = forgotPasswordValidator;
             _resetPasswordValidator = resetPasswordValidator;
+            _environment = environment;
         }
 
         [HttpPost("register")]
@@ -141,16 +143,16 @@ namespace BankLite.API.Controllers
         private CookieOptions AccessTokenCookieOptions() => new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
+            Secure = !_environment.IsEnvironment("Testing"),
+            SameSite = _environment.IsEnvironment("Testing") ? SameSiteMode.Lax : SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
         };
 
-        private static CookieOptions RefreshTokenCookieOptions() => new CookieOptions
+        private CookieOptions RefreshTokenCookieOptions() => new CookieOptions
         {
             HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
+            Secure = !_environment.IsEnvironment("Testing"),
+            SameSite = _environment.IsEnvironment("Testing") ? SameSiteMode.Lax : SameSiteMode.None,
             Expires = DateTimeOffset.UtcNow.AddDays(1),
             Path = "/api/auth/refresh"
         };
