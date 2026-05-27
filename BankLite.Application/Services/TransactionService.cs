@@ -154,7 +154,8 @@ namespace BankLite.Application.Services
                     AccountId = dto.FromAccountId,
                     Amount = dto.Amount,
                     Type = TransactionType.Transfer,
-                    Description = $"Internal Transfer to account {toAccount.AccountNumber}"
+                    Description = $"Internal Transfer to account {toAccount.AccountNumber}",
+                    IdempotencyKey = idempotencyKey
                 };
 
                 var creditTransaction = new Transaction
@@ -216,7 +217,8 @@ namespace BankLite.Application.Services
                     AccountId = dto.FromAccountId,
                     Amount = dto.Amount,
                     Type = TransactionType.Transfer,
-                    Description = $"Transfer to account {toAccount.AccountNumber}"
+                    Description = $"Transfer to account {toAccount.AccountNumber}",
+                    IdempotencyKey = idempotencyKey
                 };
 
                 var creditTransaction = new Transaction
