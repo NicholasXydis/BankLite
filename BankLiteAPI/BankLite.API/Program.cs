@@ -167,62 +167,57 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddRateLimiter(options =>
 {
-    options.AddFixedWindowLimiter("fixed", config =>
-    {
-        config.PermitLimit = 30;
-        config.Window = TimeSpan.FromMinutes(1);
-        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        config.QueueLimit = 5;
-    });
+    var isTest = builder.Environment.IsEnvironment("Testing");
 
-    options.AddFixedWindowLimiter("login", config =>
+    options.AddFixedWindowLimiter("fixed", opt =>
     {
-        config.PermitLimit = 5;
-        config.Window = TimeSpan.FromMinutes(1);
-        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        config.QueueLimit = 0;
+        opt.PermitLimit = isTest ? 10000 : 30;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = isTest ? 0 : 5;
     });
-
-    options.AddFixedWindowLimiter("register", config =>
+    options.AddFixedWindowLimiter("login", opt =>
     {
-        config.PermitLimit = 3;
-        config.Window = TimeSpan.FromMinutes(1);
-        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        config.QueueLimit = 0;
+        opt.PermitLimit = isTest ? 10000 : 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
     });
-
-    options.AddFixedWindowLimiter("chat", config =>
+    options.AddFixedWindowLimiter("register", opt =>
     {
-        config.PermitLimit = 10;
-        config.Window = TimeSpan.FromMinutes(1);
-        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        config.QueueLimit = 0;
+        opt.PermitLimit = isTest ? 10000 : 3;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
     });
-
-    options.AddFixedWindowLimiter("refresh", config =>
+    options.AddFixedWindowLimiter("chat", opt =>
     {
-        config.PermitLimit = 10;
-        config.Window = TimeSpan.FromMinutes(1);
-        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        config.QueueLimit = 0;
+        opt.PermitLimit = isTest ? 10000 : 10;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
     });
-
-    options.AddFixedWindowLimiter("forgotpassword", config =>
+    options.AddFixedWindowLimiter("refresh", opt =>
     {
-        config.PermitLimit = 3;
-        config.Window = TimeSpan.FromMinutes(1);
-        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        config.QueueLimit = 0;
+        opt.PermitLimit = isTest ? 10000 : 10;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
     });
-
-    options.AddFixedWindowLimiter("changepassword", config =>
+    options.AddFixedWindowLimiter("forgotpassword", opt =>
     {
-        config.PermitLimit = 5;
-        config.Window = TimeSpan.FromMinutes(1);
-        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
-        config.QueueLimit = 0;
+        opt.PermitLimit = isTest ? 10000 : 3;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
     });
-
+    options.AddFixedWindowLimiter("changepassword", opt =>
+    {
+        opt.PermitLimit = isTest ? 10000 : 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
     options.RejectionStatusCode = 429;
 });
 
@@ -241,9 +236,12 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BankLiteDbContext>();
-    await context.Database.MigrateAsync();
-    if (app.Environment.IsDevelopment())
-        await SeedData.SeedAsync(context);
+    if (!app.Environment.IsEnvironment("Testing"))
+    {
+        await context.Database.MigrateAsync();
+        if (app.Environment.IsDevelopment())
+            await SeedData.SeedAsync(context);
+    }
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
