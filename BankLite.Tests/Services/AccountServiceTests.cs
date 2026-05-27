@@ -2,6 +2,7 @@
 using BankLite.Application.Services;
 using BankLite.Domain.Entities;
 using BankLite.Domain.Interfaces;
+using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
@@ -22,34 +23,24 @@ namespace BankLite.Tests.Services
             _accountService = new AccountService(_mockAccountRepo.Object, _mockUnitOfWork.Object, new NullLogger<AccountService>());
         }
 
-        [Fact]
-        public async Task CreateAccountAsync_ShouldCreateAccount_WhenNoExistingAccounts()
+        [Theory]
+        [InlineData(AccountType.Chequing, "Chequing")]
+        [InlineData(AccountType.Savings, "Savings")]
+        public async Task CreateAccountAsync_NoExistingAccounts_ReturnsCorrectAccountType(AccountType accountType, string expectedType)
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
-            var dto = new CreateAccountDto { Type = AccountType.Chequing };
+            var dto = new CreateAccountDto { Type = accountType };
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.NotNull(result);
-            Assert.Equal("Chequing", result.Type);
+            result.Should().NotBeNull();
+            result.Type.Should().Be(expectedType);
             _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
         }
 
         [Fact]
-        public async Task CreateAccountAsync_ShouldCreateSavingsAccount()
-        {
-            var userId = Guid.NewGuid();
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
-            var dto = new CreateAccountDto { Type = AccountType.Savings };
-
-            var result = await _accountService.CreateAccountAsync(dto, userId);
-
-            Assert.Equal("Savings", result.Type);
-        }
-
-        [Fact]
-        public async Task CreateAccountAsync_ShouldGenerateAccountNumber()
+        public async Task CreateAccountAsync_NoExistingAccounts_GeneratesAccountNumber()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
@@ -57,12 +48,12 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.NotEmpty(result.AccountNumber);
-            Assert.Equal(12, result.AccountNumber.Length);
+            result.AccountNumber.Should().NotBeNullOrEmpty();
+            result.AccountNumber.Length.Should().Be(12);
         }
 
         [Fact]
-        public async Task CreateAccountAsync_ShouldGenerateUpperCaseAccountNumber()
+        public async Task CreateAccountAsync_NoExistingAccounts_GeneratesUpperCaseAccountNumber()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
@@ -70,32 +61,31 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.Equal(result.AccountNumber, result.AccountNumber.ToUpper());
+            result.AccountNumber.Should().Be(result.AccountNumber.ToUpper());
         }
 
         [Fact]
-        public async Task CreateAccountAsync_ShouldGenerateUniqueAccountNumbers()
+        public async Task CreateAccountAsync_TwoAccountsCreated_GeneratesUniqueAccountNumbers()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
-
             var dto1 = new CreateAccountDto { Type = AccountType.Chequing };
-            var dto2 = new CreateAccountDto { Type = AccountType.Savings };
 
             var result1 = await _accountService.CreateAccountAsync(dto1, userId);
 
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>
-{
-            new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
+            {
+                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
             });
+            var dto2 = new CreateAccountDto { Type = AccountType.Savings };
 
             var result2 = await _accountService.CreateAccountAsync(dto2, userId);
 
-            Assert.NotEqual(result1.AccountNumber, result2.AccountNumber);
+            result1.AccountNumber.Should().NotBe(result2.AccountNumber);
         }
 
         [Fact]
-        public async Task CreateAccountAsync_ShouldCallAddAsync_Once()
+        public async Task CreateAccountAsync_ValidRequest_CallsAddAsyncOnce()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
@@ -107,7 +97,7 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task CreateAccountAsync_ShouldCallSaveAsync_OnSuccess()
+        public async Task CreateAccountAsync_ValidRequest_CallsSaveAsyncOnce()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
@@ -118,127 +108,65 @@ namespace BankLite.Tests.Services
             _mockUnitOfWork.Verify(r => r.SaveAsync(), Times.Once);
         }
 
-        [Fact]
-        public async Task CreateAccountAsync_ShouldAllowSavings_WhenOnlyChequingExists()
+        [Theory]
+        [InlineData(AccountType.Chequing, AccountType.Savings, "Savings")]
+        [InlineData(AccountType.Savings, AccountType.Chequing, "Chequing")]
+        public async Task CreateAccountAsync_OppositeTypeExists_ReturnsNewAccountType(AccountType existingType, AccountType newType, string expectedType)
         {
             var userId = Guid.NewGuid();
             var existing = new List<Account>
             {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
+                new Account { Id = Guid.NewGuid(), UserId = userId, Type = existingType, AccountNumber = "ACC001" }
             };
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existing);
-            var dto = new CreateAccountDto { Type = AccountType.Savings };
+            var dto = new CreateAccountDto { Type = newType };
 
             var result = await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.Equal("Savings", result.Type);
+            result.Type.Should().Be(expectedType);
             _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
         }
 
-        [Fact]
-        public async Task CreateAccountAsync_ShouldAllowChequing_WhenOnlySavingsExists()
+        [Theory]
+        [InlineData(AccountType.Chequing)]
+        [InlineData(AccountType.Savings)]
+        public async Task CreateAccountAsync_SameTypeAlreadyExists_ThrowsInvalidOperationException(AccountType accountType)
         {
             var userId = Guid.NewGuid();
             var existing = new List<Account>
             {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Savings, AccountNumber = "ACC001" }
+                new Account { Id = Guid.NewGuid(), UserId = userId, Type = accountType, AccountNumber = "ACC001" }
             };
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existing);
-            var dto = new CreateAccountDto { Type = AccountType.Chequing };
+            var dto = new CreateAccountDto { Type = accountType };
 
-            var result = await _accountService.CreateAccountAsync(dto, userId);
+            var act = async () => await _accountService.CreateAccountAsync(dto, userId);
 
-            Assert.Equal("Chequing", result.Type);
-            _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task CreateAccountAsync_ShouldThrow_WhenChequingAlreadyExists()
-        {
-            var userId = Guid.NewGuid();
-            var existing = new List<Account>
-            {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
-            };
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existing);
-            var dto = new CreateAccountDto { Type = AccountType.Chequing };
-
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _accountService.CreateAccountAsync(dto, userId));
-
+            await act.Should().ThrowAsync<InvalidOperationException>();
             _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Never);
         }
 
-        [Fact]
-        public async Task CreateAccountAsync_ShouldThrow_WhenSavingsAlreadyExists()
+        [Theory]
+        [InlineData(AccountType.Chequing, "Chequing")]
+        [InlineData(AccountType.Savings, "Savings")]
+        public async Task CreateAccountAsync_SameTypeAlreadyExists_ThrowsWithCorrectMessage(AccountType accountType, string expectedMessage)
         {
             var userId = Guid.NewGuid();
             var existing = new List<Account>
             {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Savings, AccountNumber = "ACC001" }
+                new Account { Id = Guid.NewGuid(), UserId = userId, Type = accountType, AccountNumber = "ACC001" }
             };
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existing);
-            var dto = new CreateAccountDto { Type = AccountType.Savings };
+            var dto = new CreateAccountDto { Type = accountType };
 
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _accountService.CreateAccountAsync(dto, userId));
+            var act = async () => await _accountService.CreateAccountAsync(dto, userId);
 
-            _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Never);
+            var ex = await act.Should().ThrowAsync<InvalidOperationException>();
+            ex.Which.Message.Should().Contain(expectedMessage);
         }
 
         [Fact]
-        public async Task CreateAccountAsync_ShouldThrow_WithCorrectMessage_WhenChequingExists()
-        {
-            var userId = Guid.NewGuid();
-            var existing = new List<Account>
-            {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
-            };
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existing);
-            var dto = new CreateAccountDto { Type = AccountType.Chequing };
-
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _accountService.CreateAccountAsync(dto, userId));
-
-            Assert.Contains("Chequing", ex.Message);
-        }
-
-        [Fact]
-        public async Task CreateAccountAsync_ShouldThrow_WithCorrectMessage_WhenSavingsExists()
-        {
-            var userId = Guid.NewGuid();
-            var existing = new List<Account>
-            {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Savings, AccountNumber = "ACC001" }
-            };
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existing);
-            var dto = new CreateAccountDto { Type = AccountType.Savings };
-
-            var ex = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _accountService.CreateAccountAsync(dto, userId));
-
-            Assert.Contains("Savings", ex.Message);
-        }
-
-        [Fact]
-        public async Task CreateAccountAsync_ShouldNotCallAddAsync_WhenThrows()
-        {
-            var userId = Guid.NewGuid();
-            var existing = new List<Account>
-            {
-                new Account { Id = Guid.NewGuid(), UserId = userId, Type = AccountType.Chequing, AccountNumber = "ACC001" }
-            };
-            _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(existing);
-            var dto = new CreateAccountDto { Type = AccountType.Chequing };
-
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _accountService.CreateAccountAsync(dto, userId));
-
-            _mockAccountRepo.Verify(r => r.AddAsync(It.IsAny<Account>()), Times.Never);
-        }
-
-        [Fact]
-        public async Task CreateAccountAsync_ShouldCallGetByUserIdAsync_BeforeAdding()
+        public async Task CreateAccountAsync_ValidRequest_CallsGetByUserIdAsyncOnce()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
@@ -250,7 +178,7 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task GetAccountsByUserIdAsync_ShouldReturnAccounts()
+        public async Task GetAccountsByUserIdAsync_TwoAccountsExist_ReturnsBothAccounts()
         {
             var userId = Guid.NewGuid();
             var accounts = new List<Account>
@@ -262,24 +190,24 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.GetAccountsByUserIdAsync(userId);
 
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Count());
+            result.Should().NotBeNull();
+            result.Should().HaveCount(2);
         }
 
         [Fact]
-        public async Task GetAccountsByUserIdAsync_ShouldReturnEmpty_WhenNoAccounts()
+        public async Task GetAccountsByUserIdAsync_NoAccountsExist_ReturnsEmptyList()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
 
             var result = await _accountService.GetAccountsByUserIdAsync(userId);
 
-            Assert.NotNull(result);
-            Assert.Empty(result);
+            result.Should().NotBeNull();
+            result.Should().BeEmpty();
         }
 
         [Fact]
-        public async Task GetAccountsByUserIdAsync_ShouldCallRepository_Once()
+        public async Task GetAccountsByUserIdAsync_ValidRequest_CallsRepositoryOnce()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
@@ -290,7 +218,7 @@ namespace BankLite.Tests.Services
         }
 
         [Fact]
-        public async Task GetAccountsByUserIdAsync_ShouldReturnCorrectAccountTypes()
+        public async Task GetAccountsByUserIdAsync_TwoAccountsExist_ReturnsBothCorrectTypes()
         {
             var userId = Guid.NewGuid();
             var accounts = new List<Account>
@@ -302,12 +230,12 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.GetAccountsByUserIdAsync(userId);
 
-            Assert.Contains(result, a => a.Type == "Chequing");
-            Assert.Contains(result, a => a.Type == "Savings");
+            result.Should().Contain(a => a.Type == "Chequing");
+            result.Should().Contain(a => a.Type == "Savings");
         }
 
         [Fact]
-        public async Task GetAccountsByUserIdAsync_ShouldReturnSingleAccount()
+        public async Task GetAccountsByUserIdAsync_OneAccountExists_ReturnsSingleAccount()
         {
             var userId = Guid.NewGuid();
             var accounts = new List<Account>
@@ -318,11 +246,11 @@ namespace BankLite.Tests.Services
 
             var result = await _accountService.GetAccountsByUserIdAsync(userId);
 
-            Assert.Single(result);
+            result.Should().HaveCount(1);
         }
 
         [Fact]
-        public async Task GetAccountsByUserIdAsync_ShouldNotCallAddAsync()
+        public async Task GetAccountsByUserIdAsync_ValidRequest_NeverCallsAddAsync()
         {
             var userId = Guid.NewGuid();
             _mockAccountRepo.Setup(r => r.GetByUserIdAsync(userId)).ReturnsAsync(new List<Account>());
