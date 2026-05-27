@@ -289,3 +289,5 @@ app.Lifetime.ApplicationStopping.Register(() =>
     Log.Information("Application is shutting down..."));
 
 await app.RunAsync();
+
+public partial class Program { protected Program() { } }
