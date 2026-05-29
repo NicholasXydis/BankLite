@@ -1,8 +1,10 @@
-﻿namespace BankLite.Domain.Interfaces
+using System.Data;
+
+namespace BankLite.Domain.Interfaces;
+
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        Task SaveAsync();
-        Task ExecuteInTransactionAsync(Func<Task> operation);
-    }
+    Task SaveAsync();
+    Task ExecuteInTransactionAsync(Func<Task> operation);
+    Task ExecuteInTransactionAsync(Func<Task> operation, IsolationLevel isolationLevel);
 }

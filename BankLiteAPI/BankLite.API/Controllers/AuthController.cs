@@ -1,9 +1,12 @@
 ﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
+using BankLite.Application.Options;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace BankLite.API.Controllers
@@ -14,38 +17,47 @@ namespace BankLite.API.Controllers
     public class AuthController : BaseController
     {
         private readonly IAuthService _authService;
-        private readonly IValidator<RegisterUserDto> _registerValidator;
-        private readonly IValidator<LoginUserDto> _loginValidator;
-        private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
-        private readonly IConfiguration _configuration;
-        private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
         private readonly IWebHostEnvironment _environment;
+        private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
+        private readonly FrontendSettings _frontendSettings;
+        private readonly JwtSettings _jwtSettings;
+        private readonly IValidator<LoginUserDto> _loginValidator;
+        private readonly IValidator<RegisterUserDto> _registerValidator;
+        private readonly IValidator<ResetPasswordDto> _resetPasswordValidator;
 
 
-        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator, IValidator<LoginUserDto> loginValidator, IConfiguration configuration, IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator, IWebHostEnvironment environment)
+        public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator,
+            IValidator<LoginUserDto> loginValidator,
+            IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator,
+            IWebHostEnvironment environment, IOptions<JwtSettings> jwtSettings,
+            IOptions<FrontendSettings> frontendSettings)
         {
             _authService = authService;
             _registerValidator = registerValidator;
             _loginValidator = loginValidator;
-            _configuration = configuration;
             _forgotPasswordValidator = forgotPasswordValidator;
             _resetPasswordValidator = resetPasswordValidator;
             _environment = environment;
+            _jwtSettings = jwtSettings.Value;
+            _frontendSettings = frontendSettings.Value;
         }
 
         [HttpPost("register")]
         [EnableRateLimiting("register")]
-        [SwaggerOperation(Summary = "Register a new user", Description = "Creates a new user account and returns a JWT access token via HttpOnly cookie.")]
+        [SwaggerOperation(Summary = "Register a new user",
+            Description = "Creates a new user account and returns a JWT access token via HttpOnly cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
-            var validation = await _registerValidator.ValidateAsync(dto);
+            ValidationResult? validation = await _registerValidator.ValidateAsync(dto);
             if (!validation.IsValid)
+            {
                 return BadRequest(validation.Errors);
+            }
 
-            var (token, refreshToken, result) = await _authService.RegisterAsync(dto);
+            (string token, string refreshToken, AuthResponseDto result) = await _authService.RegisterAsync(dto);
             Response.Cookies.Append("accessToken", token, AccessTokenCookieOptions());
             Response.Cookies.Append("refreshToken", refreshToken, RefreshTokenCookieOptions());
             return Ok(result);
@@ -53,17 +65,20 @@ namespace BankLite.API.Controllers
 
         [HttpPost("login")]
         [EnableRateLimiting("login")]
-        [SwaggerOperation(Summary = "Login", Description = "Authenticates a user and returns a JWT access token via HttpOnly cookie.")]
+        [SwaggerOperation(Summary = "Login",
+            Description = "Authenticates a user and returns a JWT access token via HttpOnly cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Login([FromBody] LoginUserDto dto)
         {
-            var validation = await _loginValidator.ValidateAsync(dto);
+            ValidationResult? validation = await _loginValidator.ValidateAsync(dto);
             if (!validation.IsValid)
+            {
                 return BadRequest(validation.Errors);
+            }
 
-            var (token, refreshToken, result) = await _authService.LoginAsync(dto);
+            (string token, string refreshToken, AuthResponseDto result) = await _authService.LoginAsync(dto);
             Response.Cookies.Append("accessToken", token, AccessTokenCookieOptions());
             Response.Cookies.Append("refreshToken", refreshToken, RefreshTokenCookieOptions());
             return Ok(result);
@@ -71,17 +86,21 @@ namespace BankLite.API.Controllers
 
         [HttpPost("refresh")]
         [EnableRateLimiting("refresh")]
-        [SwaggerOperation(Summary = "Refresh access token", Description = "Issues a new JWT access token using the HttpOnly refresh token cookie.")]
+        [SwaggerOperation(Summary = "Refresh access token",
+            Description = "Issues a new JWT access token using the HttpOnly refresh token cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> Refresh()
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            string? refreshToken = Request.Cookies["refreshToken"];
             if (string.IsNullOrEmpty(refreshToken))
+            {
                 return Unauthorized(new { message = "No refresh token provided." });
+            }
 
-            var (token, newRefreshToken, result) = await _authService.RefreshAsync(refreshToken);
+            (string token, string newRefreshToken, AuthResponseDto result) =
+                await _authService.RefreshAsync(refreshToken);
             Response.Cookies.Append("accessToken", token, AccessTokenCookieOptions());
             Response.Cookies.Append("refreshToken", newRefreshToken, RefreshTokenCookieOptions());
             return Ok(result);
@@ -90,34 +109,36 @@ namespace BankLite.API.Controllers
 
         [HttpPost("forgot-password")]
         [EnableRateLimiting("forgotpassword")]
-        [SwaggerOperation(Summary = "Request password reset", Description = "Sends a password reset email if the provided email exists in the system.")]
+        [SwaggerOperation(Summary = "Request password reset",
+            Description = "Sends a password reset email if the provided email exists in the system.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
-
-            var validation = await _forgotPasswordValidator.ValidateAsync(dto);
+            ValidationResult? validation = await _forgotPasswordValidator.ValidateAsync(dto);
             if (!validation.IsValid)
+            {
                 return BadRequest(validation.Errors);
+            }
 
-            var resetBaseUrl = _configuration["Frontend:ResetPasswordUrl"]
-            ?? throw new InvalidOperationException("Reset password URL not configured");
-            await _authService.ForgotPasswordAsync(dto.Email, resetBaseUrl, dto.Lang);
+            await _authService.ForgotPasswordAsync(dto.Email, _frontendSettings.ResetPasswordUrl, dto.Lang);
             return Ok(new { message = "If that email exists, a reset link has been sent." });
         }
 
         [HttpPost("reset-password")]
         [EnableRateLimiting("forgotpassword")]
-        [SwaggerOperation(Summary = "Reset password", Description = "Resets the user's password using a valid reset token.")]
+        [SwaggerOperation(Summary = "Reset password",
+            Description = "Resets the user's password using a valid reset token.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
-
-            var validation = await _resetPasswordValidator.ValidateAsync(dto);
+            ValidationResult? validation = await _resetPasswordValidator.ValidateAsync(dto);
             if (!validation.IsValid)
+            {
                 return BadRequest(validation.Errors);
+            }
 
             await _authService.ResetPasswordAsync(dto.Token, dto.NewPassword);
             return Ok(new { message = "Password reset successfully." });
@@ -131,30 +152,58 @@ namespace BankLite.API.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Logout()
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            string? refreshToken = Request.Cookies["refreshToken"];
             if (!string.IsNullOrEmpty(refreshToken))
+            {
                 await _authService.RevokeRefreshTokenAsync(refreshToken);
+            }
 
-            Response.Cookies.Delete("accessToken");
-            Response.Cookies.Delete("refreshToken");
+            Response.Cookies.Delete("accessToken", AccessTokenDeleteCookieOptions());
+            Response.Cookies.Delete("refreshToken", RefreshTokenDeleteCookieOptions());
             return Ok();
         }
 
-        private CookieOptions AccessTokenCookieOptions() => new CookieOptions
+        private CookieOptions AccessTokenCookieOptions()
         {
-            HttpOnly = true,
-            Secure = !_environment.IsEnvironment("Testing"),
-            SameSite = _environment.IsEnvironment("Testing") ? SameSiteMode.Lax : SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
-        };
+            return CreateAuthCookieOptions("/", DateTimeOffset.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes));
+        }
 
-        private CookieOptions RefreshTokenCookieOptions() => new CookieOptions
+        private CookieOptions RefreshTokenCookieOptions()
         {
-            HttpOnly = true,
-            Secure = !_environment.IsEnvironment("Testing"),
-            SameSite = _environment.IsEnvironment("Testing") ? SameSiteMode.Lax : SameSiteMode.None,
-            Expires = DateTimeOffset.UtcNow.AddDays(1),
-            Path = "/api/auth/refresh"
-        };
+            return CreateAuthCookieOptions("/api/auth/refresh", DateTimeOffset.UtcNow.AddDays(1));
+        }
+
+        private CookieOptions RefreshTokenDeleteCookieOptions()
+        {
+            return CreateAuthCookieOptions("/api/auth/refresh");
+        }
+
+        private CookieOptions AccessTokenDeleteCookieOptions()
+        {
+            return CreateAuthCookieOptions("/");
+        }
+
+        private CookieOptions CreateAuthCookieOptions(string path, DateTimeOffset? expires = null)
+        {
+            bool secure = UseSecureCookies();
+            return new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = secure,
+                SameSite = secure ? SameSiteMode.None : SameSiteMode.Lax,
+                Path = path,
+                Expires = expires
+            };
+        }
+
+        private bool UseSecureCookies()
+        {
+            if (_environment.IsEnvironment("Testing"))
+            {
+                return false;
+            }
+
+            return !_environment.IsDevelopment() || Request.IsHttps;
+        }
     }
 }

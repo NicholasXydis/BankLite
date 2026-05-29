@@ -7,12 +7,13 @@ namespace BankLite.API.Controllers
     {
         protected IActionResult? TryGetUserId(out Guid userId)
         {
-            var claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? claim = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (claim == null || !Guid.TryParse(claim, out userId))
             {
                 userId = Guid.Empty;
                 return Unauthorized(new { message = "Invalid or missing user claim." });
             }
+
             return null;
         }
     }

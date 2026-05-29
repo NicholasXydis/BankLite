@@ -1,19 +1,20 @@
 ﻿using BankLite.Application.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
-namespace BankLiteAPI.Hubs;
-
-public class SignalRBalanceNotifier : IBalanceNotifier
+namespace BankLite.API.Hubs
 {
-    private readonly IHubContext<BankHub> _hubContext;
-
-    public SignalRBalanceNotifier(IHubContext<BankHub> hubContext)
+    public class SignalRBalanceNotifier : IBalanceNotifier
     {
-        _hubContext = hubContext;
-    }
+        private readonly IHubContext<BankHub> _hubContext;
 
-    public async Task NotifyBalanceUpdatedAsync(Guid userId, Guid accountId, decimal newBalance)
-    {
-        await _hubContext.Clients.Group(userId.ToString()).SendAsync("BalanceUpdated", accountId, newBalance);
+        public SignalRBalanceNotifier(IHubContext<BankHub> hubContext)
+        {
+            _hubContext = hubContext;
+        }
+
+        public async Task NotifyBalanceUpdatedAsync(Guid userId, Guid accountId, decimal newBalance)
+        {
+            await _hubContext.Clients.Group(userId.ToString()).SendAsync("BalanceUpdated", accountId, newBalance);
+        }
     }
 }

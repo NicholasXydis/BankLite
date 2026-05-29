@@ -1,57 +1,39 @@
-﻿using BankLite.Domain.Interfaces;
-using BankLite.Infrastructure.Data;
+using System.Data;
+using BankLite.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace BankLite.Infrastructure.Data
+namespace BankLite.Infrastructure.Data;
+
+public class UnitOfWork(BankLiteDbContext context) : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public async Task SaveAsync()
     {
-        private readonly BankLiteDbContext _context;
-
-        public UnitOfWork(BankLiteDbContext context)
-        {
-            _context = context;
-        }
-        public async Task BeginTransactionAsync()
-        {
-            await _context.Database.BeginTransactionAsync();
-        }
-
-        public async Task CommitAsync()
-        {
-            await _context.SaveChangesAsync();
-            await _context.Database.CommitTransactionAsync();
-        }
-
-        public async Task RollbackAsync()
-        {
-            await _context.Database.RollbackTransactionAsync();
-        }
-
-        public async Task SaveAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task ExecuteInTransactionAsync(Func<Task> operation)
-        {
-            var strategy = _context.Database.CreateExecutionStrategy();
-            await strategy.ExecuteAsync(async () =>
-            {
-                await using var transaction = await _context.Database.BeginTransactionAsync();
-                try
-                {
-                    await operation();
-                    await _context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                }
-                catch
-                {
-                    await transaction.RollbackAsync();
-                    throw;
-                }
-            });
-        }
+        await context.SaveChangesAsync();
     }
 
+    public async Task ExecuteInTransactionAsync(Func<Task> operation)
+    {
+        await ExecuteInTransactionAsync(operation, IsolationLevel.Serializable);
+    }
+
+    public async Task ExecuteInTransactionAsync(Func<Task> operation, IsolationLevel isolationLevel)
+    {
+        var strategy = context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await using var transaction = await context.Database.BeginTransactionAsync(isolationLevel);
+            try
+            {
+                await operation();
+                await context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                context.ChangeTracker.Clear();
+                throw;
+            }
+        }).ConfigureAwait(false);
+    }
 }

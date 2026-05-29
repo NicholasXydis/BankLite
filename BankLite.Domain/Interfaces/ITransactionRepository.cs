@@ -1,13 +1,15 @@
 ﻿using BankLite.Domain.Entities;
 
-namespace BankLite.Domain.Interfaces
+namespace BankLite.Domain.Interfaces;
+
+public interface ITransactionRepository
 {
-    public interface ITransactionRepository
-    {
-        Task<IEnumerable<Transaction>> GetByAccountIdAsync(Guid accountId, int page, int pageSize, string? type = null);
-        Task<int> GetTotalCountAsync(Guid accountId, string? type = null);
-        Task AddAsync(Transaction transaction);
-        Task<IEnumerable<Transaction>> GetByAccountIdAndDateRangeAsync(Guid accountId, DateTime startDate, DateTime endDate);
-        Task<Transaction?> GetByIdempotencyKeyAsync(string key);
-    }
+    Task<IEnumerable<Transaction>> GetByAccountIdAsync(Guid accountId, int page, int pageSize, string? type = null);
+    Task<int> GetTotalCountAsync(Guid accountId, string? type = null);
+    Task AddAsync(Transaction transaction);
+
+    Task<IEnumerable<Transaction>>
+        GetByAccountIdAndDateRangeAsync(Guid accountId, DateTime startDate, DateTime endDate);
+
+    Task<Transaction?> GetByIdempotencyKeyAsync(string key);
 }

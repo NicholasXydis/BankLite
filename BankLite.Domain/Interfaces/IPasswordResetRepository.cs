@@ -1,11 +1,10 @@
 ﻿using BankLite.Domain.Entities;
 
-namespace BankLite.Domain.Interfaces
+namespace BankLite.Domain.Interfaces;
+
+public interface IPasswordResetRepository
 {
-    public interface IPasswordResetRepository
-    {
-        Task AddAsync(PasswordResetToken token);
-        Task<PasswordResetToken?> GetByTokenAsync(string token);
-        Task UpdateAsync(PasswordResetToken token);
-    }
+    Task AddAsync(PasswordResetToken token);
+    Task<PasswordResetToken?> GetByTokenAsync(string token);
+    Task UpdateAsync(PasswordResetToken token);
 }

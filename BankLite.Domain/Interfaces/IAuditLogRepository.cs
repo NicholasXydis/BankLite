@@ -1,9 +1,8 @@
 ﻿using BankLite.Domain.Entities;
 
-namespace BankLite.Domain.Interfaces
+namespace BankLite.Domain.Interfaces;
+
+public interface IAuditLogRepository
 {
-    public interface IAuditLogRepository
-    {
-        Task LogAsync(AuditLog auditlog);
-    }
+    Task LogAsync(AuditLog auditlog);
 }

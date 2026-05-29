@@ -1,10 +1,10 @@
 <Solution>
-  <Folder Name="/Solution Items/">
-    <File Path=".editorconfig" />
-  </Folder>
-  <Project Path="../BankLite.Application/BankLite.Application.csproj" />
-  <Project Path="../BankLite.Domain/BankLite.Domain.csproj" />
-  <Project Path="../BankLite.Infrastructure/BankLite.Infrastructure.csproj" />
-  <Project Path="../BankLite.Tests/BankLite.Tests.csproj" />
-  <Project Path="BankLite.API/BankLite.API.csproj" />
+    <Folder Name="/Solution Items/">
+        <File Path=".editorconfig"/>
+    </Folder>
+    <Project Path="../BankLite.Application/BankLite.Application.csproj"/>
+    <Project Path="../BankLite.Domain/BankLite.Domain.csproj"/>
+    <Project Path="../BankLite.Infrastructure/BankLite.Infrastructure.csproj"/>
+    <Project Path="../BankLite.Tests/BankLite.Tests.csproj"/>
+    <Project Path="BankLite.API/BankLite.API.csproj"/>
 </Solution>

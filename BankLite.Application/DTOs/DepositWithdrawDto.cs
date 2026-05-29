@@ -1,10 +1,10 @@
-﻿namespace BankLite.Application.DTOs
+﻿namespace BankLite.Application.DTOs;
+
+public class DepositWithdrawDto
 {
-    public class DepositWithdrawDto
-    {
-        /// <summary>The unique identifier of the account to deposit into or withdraw from.</summary>
-        public Guid AccountId { get; set; }
-        /// <summary>The amount to deposit or withdraw. Must be greater than 0.</summary>
-        public decimal Amount { get; set; }
-    }
+    /// <summary>The unique identifier of the account to deposit into or withdraw from.</summary>
+    public Guid AccountId { get; init; }
+
+    /// <summary>The amount to deposit or withdraw. Must be greater than 0.</summary>
+    public decimal Amount { get; init; }
 }

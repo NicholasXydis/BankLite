@@ -1,17 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
-namespace BankLiteAPI.Hubs;
-
-[Authorize]
-public class BankHub : Hub
+namespace BankLite.API.Hubs
 {
-    public override async Task OnConnectedAsync()
+    [Authorize]
+    public class BankHub : Hub
     {
-        var userId = Context.User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (!string.IsNullOrEmpty(userId))
-            await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+        public override async Task OnConnectedAsync()
+        {
+            string? userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, userId);
+            }
 
-        await base.OnConnectedAsync();
+            await base.OnConnectedAsync();
+        }
     }
 }

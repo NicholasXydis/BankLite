@@ -1,7 +1,6 @@
-﻿namespace BankLite.Application.Interfaces
+﻿namespace BankLite.Application.Interfaces;
+
+public interface IGroqService
 {
-    public interface IGroqService
-    {
-        Task<string> GetChatResponseAsync(string userMessage);
-    }
+    Task<string> GetChatResponseAsync(string userMessage);
 }

@@ -1,18 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BankLite.Domain.Entities
+namespace BankLite.Domain.Entities;
+
+public class PasswordResetToken
 {
-    public class PasswordResetToken
-    {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public User User { get; set; } = null!;
+    public Guid Id { get; init; }
+    public Guid UserId { get; init; }
+    public User User { get; init; } = null!;
 
-        [MaxLength(256)]
-        public string Token { get; set; } = string.Empty;
+    [MaxLength(256)] public string Token { get; init; } = string.Empty;
 
-        public DateTime ExpiresAt { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public bool IsUsed { get; set; } = false;
-    }
+    public DateTime ExpiresAt { get; init; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public bool IsUsed { get; set; }
 }

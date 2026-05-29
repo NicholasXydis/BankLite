@@ -1,90 +1,104 @@
-﻿using BankLite.Application.DTOs;
+using System.Security.Cryptography;
+using System.Text;
+using BankLite.Application.DTOs;
+using BankLite.Application.Exceptions;
 using BankLite.Application.Interfaces;
 using BankLite.Domain.Entities;
 using BankLite.Domain.Interfaces;
-using Microsoft.Extensions.Configuration;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
 
-namespace BankLite.Application.Services
-{
-    public class AuthService : IAuthService
-    {
-        private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
-        private readonly IAuditLogRepository _auditLogRepository;
-        private readonly IRefreshTokenRepository _refreshTokenRepository;
-        private readonly ILogger<AuthService> _logger;
-        private readonly IPasswordResetRepository _passwordResetRepository;
-        private readonly IEmailService _emailService;
-        private readonly IUnitOfWork _unitOfWork;
+namespace BankLite.Application.Services;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration, IAuditLogRepository auditLogRepository, ILogger<AuthService> logger, IRefreshTokenRepository refreshTokenRepository, IPasswordResetRepository passwordResetRepository, IEmailService emailService, IUnitOfWork unitOfWork)
+public class AuthService : IAuthService
+{
+    private readonly IAuditLogRepository _auditLogRepository;
+    private readonly IEmailService _emailService;
+    private readonly ILogger<AuthService> _logger;
+    private readonly IPasswordResetRepository _passwordResetRepository;
+    private readonly IRefreshTokenRepository _refreshTokenRepository;
+    private readonly ITokenService _tokenService;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
+
+    public AuthService(IUserRepository userRepository, ITokenService tokenService,
+        IAuditLogRepository auditLogRepository, ILogger<AuthService> logger,
+        IRefreshTokenRepository refreshTokenRepository, IPasswordResetRepository passwordResetRepository,
+        IEmailService emailService, IUnitOfWork unitOfWork)
+    {
+        _userRepository = userRepository;
+        _tokenService = tokenService;
+        _auditLogRepository = auditLogRepository;
+        _logger = logger;
+        _refreshTokenRepository = refreshTokenRepository;
+        _passwordResetRepository = passwordResetRepository;
+        _emailService = emailService;
+        _unitOfWork = unitOfWork;
+    }
+
+    public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
+    {
+        var normalizedEmail = dto.Email.ToLower();
+        if (await _userRepository.ExistsAsync(normalizedEmail))
         {
-            _userRepository = userRepository;
-            _configuration = configuration;
-            _auditLogRepository = auditLogRepository;
-            _logger = logger;
-            _refreshTokenRepository = refreshTokenRepository;
-            _passwordResetRepository = passwordResetRepository;
-            _emailService = emailService;
-            _unitOfWork = unitOfWork;
+            _logger.LogWarning("Registration failed because the email is already registered");
+            throw new BadRequestException("Email already registered");
         }
 
-        public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        var user = new User
         {
-            if (await _userRepository.ExistsAsync(dto.Email.ToLower()))
-            {
-                _logger.LogWarning("Registration failed - email already exists: {Email}", dto.Email);
-                throw new InvalidOperationException("Email already registered");
-            }
+            Id = Guid.NewGuid(),
+            FullName = dto.FullName,
+            Email = normalizedEmail,
+            PasswordHash = passwordHash
+        };
 
-            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
-            var user = new User
-            {
-                FullName = dto.FullName,
-                Email = dto.Email.ToLower(),
-                PasswordHash = passwordHash
-            };
+        var refreshToken = string.Empty;
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
             await _userRepository.AddAsync(user);
-            await _unitOfWork.SaveAsync();
-            _logger.LogInformation("User Registered Successfully: {Email}", dto.Email);
-
             await _auditLogRepository.LogAsync(new AuditLog
             {
                 UserId = user.Id,
                 Action = "Register",
-                Details = $"User {user.Email} registered",
-                PerformedAt = DateTime.UtcNow,
+                Details = $"User {user.Id} registered",
+                PerformedAt = DateTime.UtcNow
             });
-            await _unitOfWork.SaveAsync();
+            refreshToken = await GenerateRefreshTokenAsync(user.Id, false);
+        });
 
-            var token = GenerateToken(user);
-            var refreshToken = await GenerateRefreshTokenAsync(user.Id);
-            return (token, refreshToken, new AuthResponseDto
-            {
-                UserId = user.Id,
-                FullName = user.FullName,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
-            });
-        }
-        public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> LoginAsync(LoginUserDto dto)
+        _logger.LogInformation("User registered successfully: {UserId}", user.Id);
+
+        var token = _tokenService.GenerateAccessToken(user);
+        return (token, refreshToken, new AuthResponseDto
         {
-            var user = await _userRepository.GetByEmailAsync(dto.Email.ToLower());
+            UserId = user.Id,
+            FullName = user.FullName,
+            ExpiresAt = _tokenService.GetAccessTokenExpiry()
+        });
+    }
+
+    public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> LoginAsync(LoginUserDto dto)
+    {
+        User? user = null;
+        var refreshToken = string.Empty;
+        string? rejectionMessage = null;
+
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            user = await _userRepository.GetByEmailAsync(dto.Email.ToLower());
             if (user == null)
             {
-                _logger.LogWarning("Login failed - user not found: {Email}", dto.Email.ToLower());
-                throw new InvalidOperationException("Invalid Credentials");
+                _logger.LogWarning("Login failed because the user was not found");
+                rejectionMessage = "Invalid Credentials";
+                return;
             }
 
             if (user.LockoutEnd.HasValue && user.LockoutEnd > DateTime.UtcNow)
             {
-                _logger.LogWarning("Login attempt on locked account: {Email}", dto.Email.ToLower());
-                throw new InvalidOperationException("Account is locked. Please try again later.");
+                _logger.LogWarning("Login attempt rejected for locked user {UserId}", user.Id);
+                rejectionMessage = "Account is locked. Please try again later.";
+                return;
             }
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
@@ -94,149 +108,145 @@ namespace BankLite.Application.Services
                 {
                     user.LockoutEnd = DateTime.UtcNow.AddMinutes(15);
                     user.FailedLoginAttempts = 0;
-                    _logger.LogWarning("Account locked due to failed attempts: {Email}", dto.Email.ToLower());
+                    _logger.LogWarning("User {UserId} locked due to failed login attempts", user.Id);
                 }
+
                 await _userRepository.UpdateAsync(user);
-                await _unitOfWork.SaveAsync();
-                throw new InvalidOperationException("Invalid Credentials");
+                rejectionMessage = "Invalid Credentials";
+                return;
             }
 
             user.FailedLoginAttempts = 0;
             user.LockoutEnd = null;
-
             user.LastLoginAt = DateTime.UtcNow;
             await _userRepository.UpdateAsync(user);
-            await _unitOfWork.SaveAsync();
 
             await _auditLogRepository.LogAsync(new AuditLog
             {
                 UserId = user.Id,
                 Action = "Login",
-                Details = $"User {user.Email} logged in",
-                PerformedAt = DateTime.UtcNow,
+                Details = $"User {user.Id} logged in",
+                PerformedAt = DateTime.UtcNow
             });
-            await _unitOfWork.SaveAsync();
+            refreshToken = await GenerateRefreshTokenAsync(user.Id, false);
+        });
 
-            _logger.LogInformation("User logged in successfully: {Email}", user.Email);
+        if (rejectionMessage != null || user == null)
+            throw new BadRequestException(rejectionMessage ?? "Invalid Credentials");
 
-            var token = GenerateToken(user);
-            var refreshToken = await GenerateRefreshTokenAsync(user.Id);
-            return (token, refreshToken, new AuthResponseDto
-            {
-                UserId = user.Id,
-                FullName = user.FullName,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
-            });
-        }
+        _logger.LogInformation("User logged in successfully: {UserId}", user.Id);
 
-        private string GenerateToken(User user)
+        var token = _tokenService.GenerateAccessToken(user);
+        return (token, refreshToken, new AuthResponseDto
         {
-            var jwtsettings = _configuration.GetSection("JwtSettings");
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtsettings["Secret"]!));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            UserId = user.Id,
+            FullName = user.FullName,
+            ExpiresAt = _tokenService.GetAccessTokenExpiry()
+        });
+    }
 
-            var claims = new[]
-            {
-                new Claim (ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
-            var token = new JwtSecurityToken(
-                issuer: jwtsettings["Issuer"],
-                audience: jwtsettings["Audience"],
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtsettings["ExpiryMinutes"]!)),
-                signingCredentials: creds
-                );
+    public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RefreshAsync(string refreshToken)
+    {
+        User? refreshedUser = null;
+        var newRefreshToken = string.Empty;
+        var isInvalid = false;
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
-
-        public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RefreshAsync(string refreshToken)
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
             if (existing == null || existing.IsRevoked || existing.ExpiresAt < DateTime.UtcNow)
-                throw new UnauthorizedAccessException("Invalid or expired refresh token.");
+            {
+                isInvalid = true;
+                return;
+            }
 
             await _refreshTokenRepository.RevokeAsync(existing);
+            newRefreshToken = await GenerateRefreshTokenAsync(existing.UserId, false);
+            refreshedUser = existing.User;
+        });
 
-            var token = GenerateToken(existing.User);
-            var newRefreshToken = await GenerateRefreshTokenAsync(existing.UserId);
-            return (token, newRefreshToken, new AuthResponseDto
-            {
-                UserId = existing.User.Id,
-                FullName = existing.User.FullName,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(double.Parse(_configuration["JwtSettings:ExpiryMinutes"]!))
-            });
-        }
+        if (isInvalid || refreshedUser == null) throw new UnauthorizedAppException("Invalid or expired refresh token.");
 
-        public async Task RevokeRefreshTokenAsync(string refreshToken)
+        var token = _tokenService.GenerateAccessToken(refreshedUser);
+        return (token, newRefreshToken, new AuthResponseDto
         {
-            var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
-            if (existing != null && !existing.IsRevoked)
-            {
-                await _refreshTokenRepository.RevokeAsync(existing);
-                await _unitOfWork.SaveAsync();
-            }
-        }
+            UserId = refreshedUser.Id,
+            FullName = refreshedUser.FullName,
+            ExpiresAt = _tokenService.GetAccessTokenExpiry()
+        });
+    }
 
-        private async Task<string> GenerateRefreshTokenAsync(Guid userId)
+    public async Task RevokeRefreshTokenAsync(string refreshToken)
+    {
+        var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
+        if (existing is { IsRevoked: false })
         {
-            var token = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64));
-            var refreshToken = new BankLite.Domain.Entities.RefreshToken
-            {
-                UserId = userId,
-                Token = HashToken(token),
-                ExpiresAt = DateTime.UtcNow.AddDays(1)
-            };
-            await _refreshTokenRepository.AddAsync(refreshToken);
+            await _refreshTokenRepository.RevokeAsync(existing);
             await _unitOfWork.SaveAsync();
-            return token;
         }
+    }
 
-        public async Task ForgotPasswordAsync(string email, string resetBaseUrl, string lang = "en")
+    public async Task ForgotPasswordAsync(string email, string resetBaseUrl, string lang = "en")
+    {
+        var user = await _userRepository.GetByEmailAsync(email.ToLower());
+        if (user == null) return;
+
+        var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        var resetToken = new PasswordResetToken
         {
-            var user = await _userRepository.GetByEmailAsync(email.ToLower());
-            if (user == null) return;
+            UserId = user.Id,
+            Token = HashToken(token),
+            ExpiresAt = DateTime.UtcNow.AddMinutes(15)
+        };
 
-            var token = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(64));
-            var resetToken = new BankLite.Domain.Entities.PasswordResetToken
-            {
-                UserId = user.Id,
-                Token = HashToken(token),
-                ExpiresAt = DateTime.UtcNow.AddMinutes(15)
-            };
+        await _passwordResetRepository.AddAsync(resetToken);
+        await _unitOfWork.SaveAsync();
 
-            await _passwordResetRepository.AddAsync(resetToken);
-            await _unitOfWork.SaveAsync();
+        var resetLink = $"{resetBaseUrl}?token={Uri.EscapeDataString(token)}";
+        await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink, lang);
 
-            var resetLink = $"{resetBaseUrl}?token={Uri.EscapeDataString(token)}";
-            await _emailService.SendPasswordResetEmailAsync(user.Email, resetLink, lang);
+        _logger.LogInformation("Password reset email queued for user {UserId}", user.Id);
+    }
 
-            _logger.LogInformation("Password reset email sent to {Email}", user.Email);
-        }
+    public async Task ResetPasswordAsync(string token, string newPassword)
+    {
+        var hashedToken = HashToken(token);
+        var userId = Guid.Empty;
 
-        public async Task ResetPasswordAsync(string token, string newPassword)
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            var resetToken = await _passwordResetRepository.GetByTokenAsync(HashToken(token));
+            var resetToken = await _passwordResetRepository.GetByTokenAsync(hashedToken);
             if (resetToken == null || resetToken.IsUsed || resetToken.ExpiresAt < DateTime.UtcNow)
-                throw new InvalidOperationException("Invalid or expired reset token.");
+                throw new BadRequestException("Invalid or expired reset token.");
 
-            await _unitOfWork.ExecuteInTransactionAsync(async () =>
-            {
-                resetToken.IsUsed = true;
-                await _passwordResetRepository.UpdateAsync(resetToken);
-                resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-                await _userRepository.UpdateAsync(resetToken.User);
-            });
+            resetToken.IsUsed = true;
+            await _passwordResetRepository.UpdateAsync(resetToken);
+            resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            await _userRepository.UpdateAsync(resetToken.User);
+            userId = resetToken.UserId;
+        });
 
-            _logger.LogInformation("Password reset successful for user {UserId}", resetToken.UserId);
-        }
+        _logger.LogInformation("Password reset successful for user {UserId}", userId);
+    }
 
-        private static string HashToken(string token)
+    private async Task<string> GenerateRefreshTokenAsync(Guid userId, bool saveImmediately = true)
+    {
+        var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+        var refreshToken = new RefreshToken
         {
-            var bytes = System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(token));
-            return Convert.ToBase64String(bytes);
-        }
+            UserId = userId,
+            Token = HashToken(token),
+            ExpiresAt = DateTime.UtcNow.AddDays(1)
+        };
+        await _refreshTokenRepository.AddAsync(refreshToken);
+        if (saveImmediately) await _unitOfWork.SaveAsync();
 
+        return token;
+    }
+
+    private static string HashToken(string token)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(token));
+        return Convert.ToBase64String(bytes);
     }
 }

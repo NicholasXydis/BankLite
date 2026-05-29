@@ -1,44 +1,44 @@
 ﻿using BankLite.Application.Interfaces;
-using Microsoft.Extensions.Configuration;
+using BankLite.Application.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace BankLite.Infrastructure.Services
+namespace BankLite.Infrastructure.Services;
+
+public class EmailService : IEmailService
 {
-    public class EmailService : IEmailService
+    private readonly ISendGridClient _client;
+    private readonly string _fromEmail;
+    private readonly string _fromName;
+    private readonly ILogger<EmailService> _logger;
+
+    public EmailService(ISendGridClient client, IOptions<SendGridSettings> settings, ILogger<EmailService> logger)
     {
-        private readonly string _apiKey;
-        private readonly string _fromEmail;
-        private readonly string _fromName;
-        private readonly ILogger<EmailService> _logger;
+        _client = client;
+        _fromEmail = settings.Value.FromEmail;
+        _fromName = settings.Value.FromName;
+        _logger = logger;
+    }
 
-        public EmailService(IConfiguration configuration, ILogger<EmailService> logger)
-        {
-            _apiKey = configuration["SendGrid:ApiKey"] ?? throw new InvalidOperationException("SendGrid API key not configured");
-            _fromEmail = configuration["SendGrid:FromEmail"] ?? throw new InvalidOperationException("SendGrid from email not configured");
-            _fromName = configuration["SendGrid:FromName"] ?? "BankLite";
-            _logger = logger;
-        }
+    public async Task SendPasswordResetEmailAsync(string toEmail, string resetLink, string lang = "en")
+    {
+        var from = new EmailAddress(_fromEmail, _fromName);
+        var to = new EmailAddress(toEmail);
 
-        public async Task SendPasswordResetEmailAsync(string toEmail, string resetLink, string lang = "en")
-        {
+        var isFrench = lang == "fr";
 
-            var client = new SendGridClient(_apiKey);
-            var from = new EmailAddress(_fromEmail, _fromName);
-            var to = new EmailAddress(toEmail);
+        var subject = isFrench
+            ? "BankLite — Réinitialisation de votre mot de passe"
+            : "BankLite — Reset Your Password";
 
-            var isFrench = lang == "fr";
+        var plainText = isFrench
+            ? $"Cliquez sur le lien pour réinitialiser votre mot de passe : {resetLink}"
+            : $"Click the link to reset your password: {resetLink}";
 
-            var subject = isFrench
-                ? "BankLite — Réinitialisation de votre mot de passe"
-                : "BankLite — Reset Your Password";
-
-            var plainText = isFrench
-                ? $"Cliquez sur le lien pour réinitialiser votre mot de passe : {resetLink}"
-                : $"Click the link to reset your password: {resetLink}";
-
-            var html = isFrench ? $@"
+        var html = isFrench
+            ? $@"
                 <div style='font-family: Inter, sans-serif; max-width: 480px; margin: 0 auto; text-align:center;'>
                      <h2 style='color: #1a3a5c;'>Réinitialisation du mot de passe</h2>
                      <p>Nous avons reçu une demande de réinitialisation de votre mot de passe BankLite.</p>
@@ -53,14 +53,14 @@ namespace BankLite.Infrastructure.Services
                     <p style='color:#6b7280; font-size:0.85rem;'>This link expires in 15 minutes. If you didn't request this, ignore this email.</p>
                 </div>";
 
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainText, html);
-            var response = await client.SendEmailAsync(msg);
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogError("SendGrid failed to send email to {Email}. Status: {Status}", toEmail, response.StatusCode);
-                throw new InvalidOperationException("Failed to send reset email. Please try again later.");
-            }
-            _logger.LogInformation("Password reset email sent successfully to {Email}", toEmail);
+        var msg = MailHelper.CreateSingleEmail(from, to, subject, plainText, html);
+        var response = await _client.SendEmailAsync(msg);
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("SendGrid failed to send password reset email. Status: {Status}", response.StatusCode);
+            throw new InvalidOperationException("Failed to send reset email. Please try again later.");
         }
+
+        _logger.LogInformation("Password reset email sent successfully");
     }
 }

@@ -1,14 +1,13 @@
 ﻿using BankLite.Application.DTOs;
 using FluentValidation;
 
-namespace BankLite.Application.Validators
+namespace BankLite.Application.Validators;
+
+public class LoginUserValidator : AbstractValidator<LoginUserDto>
 {
-    public class LoginUserValidator : AbstractValidator<LoginUserDto>
+    public LoginUserValidator()
     {
-        public LoginUserValidator()
-        {
-            RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(256);
-            RuleFor(x => x.Password).NotEmpty().MinimumLength(8).MaximumLength(100);
-        }
+        RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(256);
+        RuleFor(x => x.Password).NotEmpty().MinimumLength(8).MaximumLength(100);
     }
 }

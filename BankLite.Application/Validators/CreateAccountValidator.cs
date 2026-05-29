@@ -1,13 +1,12 @@
 ﻿using BankLite.Application.DTOs;
 using FluentValidation;
 
-namespace BankLite.Application.Validators
+namespace BankLite.Application.Validators;
+
+public class CreateAccountValidator : AbstractValidator<CreateAccountDto>
 {
-    public class CreateAccountValidator : AbstractValidator<CreateAccountDto>
+    public CreateAccountValidator()
     {
-        public CreateAccountValidator()
-        {
-            RuleFor(x => x.Type).IsInEnum();
-        }
+        RuleFor(x => x.Type).IsInEnum();
     }
 }

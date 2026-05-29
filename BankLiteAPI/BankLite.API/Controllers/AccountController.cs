@@ -1,6 +1,7 @@
 ﻿using BankLite.Application.DTOs;
 using BankLite.Application.Interfaces;
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -26,35 +27,45 @@ namespace BankLite.API.Controllers
 
 
         [HttpPost("create")]
-        [SwaggerOperation(Summary = "Create account", Description = "Creates a new chequing or savings account for the authenticated user.")]
+        [SwaggerOperation(Summary = "Create account",
+            Description = "Creates a new chequing or savings account for the authenticated user.")]
         [ProducesResponseType(typeof(AccountResponseDto), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> CreateAccount([FromBody] CreateAccountDto dto)
         {
-            var validation = await _accountValidator.ValidateAsync(dto);
+            ValidationResult? validation = await _accountValidator.ValidateAsync(dto);
             if (!validation.IsValid)
+            {
                 return BadRequest(validation.Errors);
+            }
 
-            var error = TryGetUserId(out var userId);
-            if (error != null) return error;
+            IActionResult? error = TryGetUserId(out Guid userId);
+            if (error != null)
+            {
+                return error;
+            }
 
-            var result = await _accountService.CreateAccountAsync(dto, userId);
+            AccountResponseDto result = await _accountService.CreateAccountAsync(dto, userId);
             return StatusCode(201, result);
         }
 
         [HttpGet]
-        [SwaggerOperation(Summary = "Get accounts", Description = "Returns all accounts belonging to the authenticated user.")]
+        [SwaggerOperation(Summary = "Get accounts",
+            Description = "Returns all accounts belonging to the authenticated user.")]
         [ProducesResponseType(typeof(IEnumerable<AccountResponseDto>), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> GetAccounts()
         {
-            var error = TryGetUserId(out var userId);
-            if (error != null) return error;
+            IActionResult? error = TryGetUserId(out Guid userId);
+            if (error != null)
+            {
+                return error;
+            }
 
-            var result = await _accountService.GetAccountsByUserIdAsync(userId);
+            IEnumerable<AccountResponseDto> result = await _accountService.GetAccountsByUserIdAsync(userId);
             return Ok(result);
         }
     }

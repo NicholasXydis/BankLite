@@ -1,21 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BankLite.Domain.Entities
+namespace BankLite.Domain.Entities;
+
+public enum AccountType
 {
-    public enum AccountType { Chequing, Savings }
+    Chequing,
+    Savings
+}
 
-    public class Account
-    {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public User User { get; set; } = null!;
+public class Account
+{
+    public Guid Id { get; init; }
+    public Guid UserId { get; init; }
+    public User User { get; init; } = null!;
 
-        [MaxLength(20)]
-        public required string AccountNumber { get; set; }
+    [MaxLength(20)] public required string AccountNumber { get; init; }
 
-        public AccountType Type { get; set; }
-        public decimal Balance { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public List<Transaction> Transactions { get; set; } = new();
-    }
+    public AccountType Type { get; init; }
+    public decimal Balance { get; set; }
+    public DateTime CreatedAt { get; init; } = DateTime.UtcNow;
+    public List<Transaction> Transactions { get; init; } = [];
 }

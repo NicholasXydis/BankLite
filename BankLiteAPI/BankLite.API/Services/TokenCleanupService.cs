@@ -1,12 +1,12 @@
-﻿using BankLite.Infrastructure.Data;
+using BankLite.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace BankLite.API.Services
 {
     public class TokenCleanupService : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<TokenCleanupService> _logger;
+        private readonly IServiceProvider _serviceProvider;
 
         public TokenCleanupService(IServiceProvider serviceProvider, ILogger<TokenCleanupService> logger)
         {
@@ -16,42 +16,41 @@ namespace BankLite.API.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    await CleanupExpiredTokensAsync();
+                    await CleanupExpiredTokensAsync(stoppingToken);
+                    await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Token cleanup failed");
                 }
-                await Task.Delay(TimeSpan.FromHours(24), stoppingToken);
             }
         }
 
-        private async Task CleanupExpiredTokensAsync()
+        private async Task CleanupExpiredTokensAsync(CancellationToken stoppingToken)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<BankLiteDbContext>();
+            using IServiceScope scope = _serviceProvider.CreateScope();
+            BankLiteDbContext context = scope.ServiceProvider.GetRequiredService<BankLiteDbContext>();
 
-            var now = DateTime.UtcNow;
+            DateTime now = DateTime.UtcNow;
 
-            var expiredRefreshTokens = await context.RefreshTokens
+            int expiredRefreshTokenCount = await context.RefreshTokens
                 .Where(rt => rt.ExpiresAt < now || rt.IsRevoked)
-                .ToListAsync();
+                .ExecuteDeleteAsync(stoppingToken);
 
-            var expiredResetTokens = await context.PasswordResetTokens
+            int expiredResetTokenCount = await context.PasswordResetTokens
                 .Where(pt => pt.ExpiresAt < now || pt.IsUsed)
-                .ToListAsync();
+                .ExecuteDeleteAsync(stoppingToken);
 
-            context.RefreshTokens.RemoveRange(expiredRefreshTokens);
-            context.PasswordResetTokens.RemoveRange(expiredResetTokens);
-
-            await context.SaveChangesAsync();
             _logger.LogInformation("Token cleanup: removed {RefreshCount} refresh tokens and {ResetCount} reset tokens",
-                expiredRefreshTokens.Count, expiredResetTokens.Count);
+                expiredRefreshTokenCount, expiredResetTokenCount);
         }
     }
 }

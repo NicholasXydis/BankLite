@@ -1,344 +1,351 @@
 async function loadDashboard() {
-  requireAuth();
-  document.body.style.visibility = "visible";
+    requireAuth();
+    document.body.style.visibility = "visible";
 
-  const userName = sessionStorage.getItem("fullName");
-  if (userName) {
-    const firstName = userName.split(" ")[0];
-    document.getElementById("welcome-msg").textContent =
-      `${t("dashboard_welcome")} ${firstName}!`;
-    document.getElementById("welcome-msg").style.display = "block";
-  }
+    const userName = sessionStorage.getItem("fullName");
+    if (userName) {
+        const firstName = userName.split(" ")[0];
+        document.getElementById("welcome-msg").textContent =
+            `${t("dashboard_welcome")} ${firstName}!`;
+        document.getElementById("welcome-msg").style.display = "block";
+    }
 
-  const errorMsg = document.getElementById("error-msg");
-  const accountsContainer = document.getElementById("accounts-container");
+    const errorMsg = document.getElementById("error-msg");
+    const accountsContainer = document.getElementById("accounts-container");
 
-  try {
-    const accounts = await getAccounts();
-    accountsContainer.innerHTML = "";
+    try {
+        const accounts = await getAccounts();
+        accountsContainer.innerHTML = "";
 
-    accounts.forEach((account) => {
-      const card = document.createElement("div");
-      card.className = "account-card";
-      card.dataset.accountId = account.id;
-      card.addEventListener("click", function (e) {
-        if (e.target.closest(".copy-btn")) return;
-        window.location.href = `transactions.html?accountId=${account.id}`;
-      });
-      const cardHeader = document.createElement("div");
-      cardHeader.className = "card-header";
-      const accountIcon = document.createElement("div");
-      accountIcon.className = "account-icon";
-      accountIcon.innerHTML =
-        account.type === "Chequing"
-          ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/><circle cx="17" cy="15" r="1.5" fill="#1a3a5c"/></svg>`
-          : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M4 7v5c0 1.657 3.582 3 8 3s8-1.343 8-3V7"/><path d="M4 12v5c0 1.657 3.582 3 8 3s8-1.343 8-3v-5"/></svg>`;
-      const accountTitle = document.createElement("h2");
-      accountTitle.textContent =
-        account.type === "Chequing"
-          ? t("dashboard_chequing")
-          : t("dashboard_savings");
-      cardHeader.appendChild(accountIcon);
-      cardHeader.appendChild(accountTitle);
-      const accountNumberRow = document.createElement("div");
-      accountNumberRow.className = "account-number-row";
-      const accountNumberEl = document.createElement("p");
-      accountNumberEl.className = "account-number";
-      accountNumberEl.textContent = account.accountNumber;
-      const copyBtn = document.createElement("button");
-      copyBtn.className = "copy-btn";
-      copyBtn.dataset.number = account.accountNumber;
-      copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
-      accountNumberRow.appendChild(accountNumberEl);
-      accountNumberRow.appendChild(copyBtn);
-      const balanceEl = document.createElement("p");
-      balanceEl.className = "account-balance-amount";
-      balanceEl.dataset.balance = account.balance;
-      balanceEl.textContent = "$0.00";
-      card.appendChild(cardHeader);
-      card.appendChild(accountNumberRow);
-      card.appendChild(balanceEl);
-      accountsContainer.appendChild(card);
-    });
+        accounts.forEach((account) => {
+            const card = document.createElement("div");
+            card.className = "account-card";
+            card.dataset.accountId = account.id;
+            card.addEventListener("click", function (e) {
+                if (e.target.closest(".copy-btn")) return;
+                window.location.href = `transactions.html?accountId=${account.id}`;
+            });
+            const cardHeader = document.createElement("div");
+            cardHeader.className = "card-header";
+            const accountIcon = document.createElement("div");
+            accountIcon.className = "account-icon";
+            accountIcon.innerHTML =
+                account.type === "Chequing"
+                    ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/><circle cx="17" cy="15" r="1.5" fill="#1a3a5c"/></svg>`
+                    : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="7" rx="8" ry="3"/><path d="M4 7v5c0 1.657 3.582 3 8 3s8-1.343 8-3V7"/><path d="M4 12v5c0 1.657 3.582 3 8 3s8-1.343 8-3v-5"/></svg>`;
+            const accountTitle = document.createElement("h2");
+            accountTitle.textContent =
+                account.type === "Chequing"
+                    ? t("dashboard_chequing")
+                    : t("dashboard_savings");
+            cardHeader.appendChild(accountIcon);
+            cardHeader.appendChild(accountTitle);
+            const accountNumberRow = document.createElement("div");
+            accountNumberRow.className = "account-number-row";
+            const accountNumberEl = document.createElement("p");
+            accountNumberEl.className = "account-number";
+            accountNumberEl.textContent = account.accountNumber;
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "copy-btn";
+            copyBtn.dataset.number = account.accountNumber;
+            copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+            accountNumberRow.appendChild(accountNumberEl);
+            accountNumberRow.appendChild(copyBtn);
+            const balanceEl = document.createElement("p");
+            balanceEl.className = "account-balance-amount";
+            balanceEl.dataset.balance = account.balance;
+            balanceEl.textContent = "$0.00";
+            card.appendChild(cardHeader);
+            card.appendChild(accountNumberRow);
+            card.appendChild(balanceEl);
+            accountsContainer.appendChild(card);
+        });
 
-    let delay = 400;
-    document.querySelectorAll(".account-balance-amount").forEach((el) => {
-      const target = parseFloat(el.dataset.balance);
-      setTimeout(() => countUp(el, target, 1100), delay);
-      delay += 400;
-    });
+        let delay = 400;
+        document.querySelectorAll(".account-balance-amount").forEach((el) => {
+            const target = parseFloat(el.dataset.balance);
+            setTimeout(() => countUp(el, target, 1100), delay);
+            delay += 400;
+        });
 
-    if (accounts.length > 0) {
-      const totalBalance = accounts.reduce(
-        (sum, account) => sum + account.balance,
-        0,
-      );
-      const totalEl = document.createElement("div");
-      totalEl.className = "total-balance";
-      totalEl.innerHTML = `
+        if (accounts.length > 0) {
+            const totalBalance = accounts.reduce(
+                (sum, account) => sum + account.balance,
+                0,
+            );
+            const totalEl = document.createElement("div");
+            totalEl.className = "total-balance";
+            totalEl.innerHTML = `
         <p>${t("dashboard_total_balance")}</p>
         <h2 id="total-balance-amount">$0.00</h2>
       `;
-      accountsContainer.insertBefore(totalEl, accountsContainer.firstChild);
-      countUp(
-        document.getElementById("total-balance-amount"),
-        totalBalance,
-        1100,
-      );
-    }
+            accountsContainer.insertBefore(totalEl, accountsContainer.firstChild);
+            countUp(
+                document.getElementById("total-balance-amount"),
+                totalBalance,
+                1100,
+            );
+        }
 
-    const hasChequing = accounts.some((a) => a.type === "Chequing");
-    const hasSavings = accounts.some((a) => a.type === "Savings");
+        const hasChequing = accounts.some((a) => a.type === "Chequing");
+        const hasSavings = accounts.some((a) => a.type === "Savings");
 
-    if (hasChequing && hasSavings) {
-      document.getElementById("create-account-section").style.display = "none";
-    } else {
-      document.getElementById("create-account-section").style.display = "block";
+        if (hasChequing && hasSavings) {
+            document.getElementById("create-account-section").style.display = "none";
+        } else {
+            document.getElementById("create-account-section").style.display = "block";
+        }
+    } catch (error) {
+        errorMsg.textContent = error.message;
+        errorMsg.style.display = "block";
     }
-  } catch (error) {
-    errorMsg.textContent = error.message;
-    errorMsg.style.display = "block";
-  }
 }
 
 document
-  .getElementById("create-account-btn")
-  .addEventListener("click", async function () {
-    requireAuth();
+    .getElementById("create-account-btn")
+    .addEventListener("click", async function () {
+        requireAuth();
 
-    const accountType = parseInt(
-      document.getElementById("account-type-select").value,
-    );
-    const errorMsg = document.getElementById("create-error-msg");
-    const successMsg = document.getElementById("create-success-msg");
-    const btn = document.getElementById("create-account-btn");
+        const accountType = parseInt(
+            document.getElementById("account-type-select").value,
+        );
+        const errorMsg = document.getElementById("create-error-msg");
+        const successMsg = document.getElementById("create-success-msg");
+        const btn = document.getElementById("create-account-btn");
 
-    errorMsg.style.display = "none";
-    successMsg.style.display = "none";
+        errorMsg.style.display = "none";
+        successMsg.style.display = "none";
 
-    btn.disabled = true;
-    btn.classList.add("btn-loading");
+        btn.disabled = true;
+        btn.classList.add("btn-loading");
 
-    try {
-      await createAccount(accountType);
-      successMsg.textContent = t("success_account_created");
-      successMsg.style.display = "block";
-      await getAccounts(true);
-      await loadDashboard();
-      await loadSpendingChart();
-    } catch (error) {
-      errorMsg.textContent = error.message;
-      errorMsg.style.display = "block";
-    } finally {
-      btn.disabled = false;
-      btn.classList.remove("btn-loading");
-    }
-  });
+        try {
+            await createAccount(accountType);
+            successMsg.textContent = t("success_account_created");
+            successMsg.style.display = "block";
+            await getAccounts(true);
+            await loadDashboard();
+            await loadSpendingChart();
+        } catch (error) {
+            errorMsg.textContent = error.message;
+            errorMsg.style.display = "block";
+        } finally {
+            btn.disabled = false;
+            btn.classList.remove("btn-loading");
+        }
+    });
 
 function typeText(elementId, text, speed = 180) {
-  const el = document.getElementById(elementId);
-  let i = 0;
-  el.textContent = "";
-  el.classList.add("typing-cursor");
-  const interval = setInterval(() => {
-    el.textContent += text[i];
-    i++;
-    if (i >= text.length) {
-      clearInterval(interval);
-      el.classList.remove("typing-cursor");
-    }
-  }, speed);
+    const el = document.getElementById(elementId);
+    let i = 0;
+    el.textContent = "";
+    el.classList.add("typing-cursor");
+    const interval = setInterval(() => {
+        el.textContent += text[i];
+        i++;
+        if (i >= text.length) {
+            clearInterval(interval);
+            el.classList.remove("typing-cursor");
+        }
+    }, speed);
 }
 
 function countUp(element, target, duration = 1000) {
-  const start = 0;
-  const increment = target / (duration / 16);
-  let current = start;
-  const timer = setInterval(() => {
-    current += increment;
-    if (current >= target) {
-      current = target;
-      clearInterval(timer);
-    }
-    element.textContent = `$${current.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  }, 16);
+    const start = 0;
+    const increment = target / (duration / 16);
+    let current = start;
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        element.textContent = `$${current.toLocaleString("en-CA", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })}`;
+    }, 16);
 }
 
 loadDashboard();
 typeText("dashboard-title", t("dashboard_title"));
 
 let spendingChartInstance = null;
+
 async function loadSpendingChart() {
-  requireAuth();
+    requireAuth();
 
-  try {
-    const accounts = await getAccounts();
-    if (accounts.length === 0) return;
-    document.getElementById("chart-card").style.display = "block";
+    try {
+        const accounts = await getAccounts();
+        if (accounts.length === 0) return;
+        document.getElementById("chart-card").style.display = "block";
 
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 30);
+        const endDate = new Date();
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - 30);
 
-    let totalDeposits = 0;
-    let totalWithdrawals = 0;
+        let totalDeposits = 0;
+        let totalWithdrawals = 0;
 
-    for (const account of accounts) {
-      const transactions = await getTransactionsByDateRange(
-        account.id,
-        startDate,
-        endDate,
-      );
-      transactions.forEach((tx) => {
-        const isInternalTransfer =
-          tx.description &&
-          tx.description.toLowerCase().includes("internal transfer");
-        if (tx.type === "Deposit" && !isInternalTransfer)
-          totalDeposits += tx.amount;
-        else if (tx.type === "Withdrawal" && !isInternalTransfer)
-          totalWithdrawals += tx.amount;
-      });
-    }
-    const hasData = totalDeposits > 0 || totalWithdrawals > 0;
-    const ctx = document.getElementById("spending-chart").getContext("2d");
-    if (spendingChartInstance) {
-      spendingChartInstance.destroy();
-    }
-    spendingChartInstance = new Chart(ctx, {
-      type: "doughnut",
-      data: {
-        labels: [t("dashboard_deposits"), t("dashboard_withdrawals")],
-        datasets: [
-          {
-            data: hasData
-              ? [totalDeposits || 0.001, totalWithdrawals || 0.001]
-              : [1],
-            backgroundColor: hasData ? ["#059669", "#dc3545"] : ["#e2e8f0"],
-            borderWidth: 0,
-            borderRadius: 10,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: "75%",
-        animation: {
-          animateRotate: true,
-        },
-        events: [],
-        plugins: {
-          legend: {
-            display: false,
-            labels: {
-              padding: 20,
-              usePointStyle: true,
-              pointStyle: "circle",
-              font: { size: 14, weight: "600", family: "Inter, sans-serif" },
-              color: "#6b7280",
+        for (const account of accounts) {
+            const transactions = await getTransactionsByDateRange(
+                account.id,
+                startDate,
+                endDate,
+            );
+            transactions.forEach((tx) => {
+                const isInternalTransfer =
+                    tx.description &&
+                    tx.description.toLowerCase().includes("internal transfer");
+                if (tx.type === "Deposit" && !isInternalTransfer)
+                    totalDeposits += tx.amount;
+                else if (tx.type === "Withdrawal" && !isInternalTransfer)
+                    totalWithdrawals += tx.amount;
+            });
+        }
+        const hasData = totalDeposits > 0 || totalWithdrawals > 0;
+        const ctx = document.getElementById("spending-chart").getContext("2d");
+        if (spendingChartInstance) {
+            spendingChartInstance.destroy();
+        }
+        spendingChartInstance = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: [t("dashboard_deposits"), t("dashboard_withdrawals")],
+                datasets: [
+                    {
+                        data: hasData
+                            ? [totalDeposits || 0.001, totalWithdrawals || 0.001]
+                            : [1],
+                        backgroundColor: hasData ? ["#059669", "#dc3545"] : ["#e2e8f0"],
+                        borderWidth: 0,
+                        borderRadius: 10,
+                    },
+                ],
             },
-          },
-        },
-      },
-      plugins: [
-        {
-          id: "centerText",
-          beforeDraw(chart) {
-            const { width, height, ctx } = chart;
-            ctx.restore();
-            const net = hasData
-              ? chart.data.datasets[0].data[0] - chart.data.datasets[0].data[1]
-              : 0;
-            const text = `${net >= 0 ? "+" : ""}$${Math.abs(net).toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-            ctx.font = "700 1.2rem Inter, sans-serif";
-            ctx.fillStyle = document.body.classList.contains("dark-mode")
-              ? "#ffffff"
-              : "#0f2340";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            const centerX = width / 2;
-            const centerY = height / 2 + 4;
-            ctx.fillText(text, centerX, centerY - 10);
-            ctx.font = "600 0.8rem Inter, sans-serif";
-            ctx.fillStyle = document.body.classList.contains("dark-mode")
-              ? "#8b949e"
-              : "#6b7280";
-            ctx.fillText(t("dashboard_net_flow"), centerX, centerY + 12);
-            ctx.save();
-          },
-        },
-      ],
-    });
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "75%",
+                animation: {
+                    animateRotate: true,
+                },
+                events: [],
+                plugins: {
+                    legend: {
+                        display: false,
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: "circle",
+                            font: {size: 14, weight: "600", family: "Inter, sans-serif"},
+                            color: "#6b7280",
+                        },
+                    },
+                },
+            },
+            plugins: [
+                {
+                    id: "centerText",
+                    beforeDraw(chart) {
+                        const {width, height, ctx} = chart;
+                        ctx.restore();
+                        const net = hasData
+                            ? chart.data.datasets[0].data[0] - chart.data.datasets[0].data[1]
+                            : 0;
+                        const text = `${net >= 0 ? "+" : ""}$${Math.abs(net).toLocaleString("en-CA", {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 0
+                        })}`;
+                        ctx.font = "700 1.2rem Inter, sans-serif";
+                        ctx.fillStyle = document.body.classList.contains("dark-mode")
+                            ? "#ffffff"
+                            : "#0f2340";
+                        ctx.textAlign = "center";
+                        ctx.textBaseline = "middle";
+                        const centerX = width / 2;
+                        const centerY = height / 2 + 4;
+                        ctx.fillText(text, centerX, centerY - 10);
+                        ctx.font = "600 0.8rem Inter, sans-serif";
+                        ctx.fillStyle = document.body.classList.contains("dark-mode")
+                            ? "#8b949e"
+                            : "#6b7280";
+                        ctx.fillText(t("dashboard_net_flow"), centerX, centerY + 12);
+                        ctx.save();
+                    },
+                },
+            ],
+        });
 
-    const total = totalDeposits + totalWithdrawals;
-    document.getElementById("deposit-amount").textContent =
-      `$${totalDeposits.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-    document.getElementById("deposit-percent").textContent =
-      total > 0 ? `${((totalDeposits / total) * 100).toFixed(1)}%` : "0%";
-    document.getElementById("withdrawal-amount").textContent =
-      `$${totalWithdrawals.toLocaleString("en-CA", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
-    document.getElementById("withdrawal-percent").textContent =
-      total > 0 ? `${((totalWithdrawals / total) * 100).toFixed(1)}%` : "0%";
-  } catch (error) {
-    document.getElementById("chart-card").style.display = "none";
-  }
+        const total = totalDeposits + totalWithdrawals;
+        document.getElementById("deposit-amount").textContent =
+            `$${totalDeposits.toLocaleString("en-CA", {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+        document.getElementById("deposit-percent").textContent =
+            total > 0 ? `${((totalDeposits / total) * 100).toFixed(1)}%` : "0%";
+        document.getElementById("withdrawal-amount").textContent =
+            `$${totalWithdrawals.toLocaleString("en-CA", {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+        document.getElementById("withdrawal-percent").textContent =
+            total > 0 ? `${((totalWithdrawals / total) * 100).toFixed(1)}%` : "0%";
+    } catch (error) {
+        document.getElementById("chart-card").style.display = "none";
+    }
 }
 
 loadSpendingChart();
 
 function connectSignalR() {
-  if (typeof signalR === "undefined") return;
-  const connection = new signalR.HubConnectionBuilder()
-    .withUrl(`${API_URL}/hubs/bank`, { withCredentials: true })
-    .withAutomaticReconnect()
-    .build();
+    if (typeof signalR === "undefined") return;
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl(`${API_URL}/hubs/bank`, {withCredentials: true})
+        .withAutomaticReconnect()
+        .build();
 
-  connection.on("BalanceUpdated", (accountId, newBalance) => {
-    const cached = sessionStorage.getItem("cachedAccounts");
-    if (cached) {
-      const accounts = JSON.parse(cached);
-      const account = accounts.find((a) => a.id === accountId);
-      if (account) {
-        account.balance = newBalance;
-        sessionStorage.setItem("cachedAccounts", JSON.stringify(accounts));
-      }
-      const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
-      const totalEl = document.getElementById("total-balance-amount");
-      if (totalEl) countUp(totalEl, totalBalance, 600);
-    }
+    connection.on("BalanceUpdated", (accountId, newBalance) => {
+        const cached = sessionStorage.getItem("cachedAccounts");
+        if (cached) {
+            const accounts = JSON.parse(cached);
+            const account = accounts.find((a) => a.id === accountId);
+            if (account) {
+                account.balance = newBalance;
+                sessionStorage.setItem("cachedAccounts", JSON.stringify(accounts));
+            }
+            const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+            const totalEl = document.getElementById("total-balance-amount");
+            if (totalEl) countUp(totalEl, totalBalance, 600);
+        }
 
-    const balanceEl = document.querySelector(
-      `[data-account-id="${accountId}"] .account-balance-amount`,
-    );
-    if (balanceEl) {
-      countUp(balanceEl, newBalance, 600);
-    }
-  });
+        const balanceEl = document.querySelector(
+            `[data-account-id="${accountId}"] .account-balance-amount`,
+        );
+        if (balanceEl) {
+            countUp(balanceEl, newBalance, 600);
+        }
+    });
 
-  connection
-    .start()
-    .catch((err) => console.warn("SignalR connection failed:", err));
+    connection
+        .start()
+        .catch((err) => console.warn("SignalR connection failed:", err));
 }
 
 connectSignalR();
 
 document
-  .getElementById("accounts-container")
-  .addEventListener("click", function (e) {
-    const btn = e.target.closest(".copy-btn");
-    if (!btn) return;
+    .getElementById("accounts-container")
+    .addEventListener("click", function (e) {
+        const btn = e.target.closest(".copy-btn");
+        if (!btn) return;
 
-    const number = btn.dataset.number;
-    navigator.clipboard.writeText(number).then(() => {
-      if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
-      if (!btn._originalHTML) btn._originalHTML = btn.innerHTML;
-      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-      btn.style.background = "#dcfce7";
-      btn._copyTimeout = setTimeout(() => {
-        btn.innerHTML = btn._originalHTML;
-        btn.style.background = "";
-        btn._originalHTML = null;
-        btn._copyTimeout = null;
-      }, 1200);
+        const number = btn.dataset.number;
+        navigator.clipboard.writeText(number).then(() => {
+            if (btn._copyTimeout) clearTimeout(btn._copyTimeout);
+            if (!btn._originalHTML) btn._originalHTML = btn.innerHTML;
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+            btn.style.background = "#dcfce7";
+            btn._copyTimeout = setTimeout(() => {
+                btn.innerHTML = btn._originalHTML;
+                btn.style.background = "";
+                btn._originalHTML = null;
+                btn._copyTimeout = null;
+            }, 1200);
+        });
     });
-  });
