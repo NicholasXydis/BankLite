@@ -14,9 +14,11 @@ Banking REST API built with ASP.NET Core 8 and Clean Architecture.
 
 ## Purpose / Objectif
 
-Built to demonstrate a structured backend API with authentication, financial transactions, and separation of concerns across multiple layers.
+Built to demonstrate a structured backend API with authentication, financial transactions, and separation of concerns
+across multiple layers.
 
-*Conçu pour démontrer une API backend structurée avec authentification, transactions financières et séparation des responsabilités sur plusieurs couches.*
+*Conçu pour démontrer une API backend structurée avec authentification, transactions financières et séparation des
+responsabilités sur plusieurs couches.*
 
 ---
 
@@ -47,38 +49,42 @@ Built to demonstrate a structured backend API with authentication, financial tra
 
 BankLiteAPI follows Clean Architecture with separation of concerns across four layers:
 
-**Domain** — Core entities (`User`, `Account`, `Transaction`, `AuditLog`) and repository/service interfaces. Zero dependencies on other layers.
+**Domain** — Core entities (`User`, `Account`, `Transaction`, `AuditLog`) and repository/service interfaces. Zero
+dependencies on other layers.
 
-**Application** — Business logic, DTOs, FluentValidation validators, and service implementations (`AuthService`, `AccountService`, `TransactionService`).
+**Application** — Business logic, DTOs, FluentValidation validators, and service implementations (`AuthService`,
+`AccountService`, `TransactionService`).
 
 **Infrastructure** — EF Core repository implementations, `BankLiteDbContext`, `UnitOfWork`, and `SeedData`.
 
 **API** — ASP.NET Core controllers, `ExceptionMiddleware`, and `Program.cs` configuration.
 
-*BankLiteAPI applique une Clean Architecture avec une séparation des responsabilités sur quatre couches : Domain, Application, Infrastructure et API.*
+*BankLiteAPI applique une Clean Architecture avec une séparation des responsabilités sur quatre couches : Domain,
+Application, Infrastructure et API.*
 
 ---
 
 ## Tech Stack / Technologies
 
-| Layer | Technology |
-|---|---|
-| Framework | ASP.NET Core 8 |
-| Database | SQL Server + Entity Framework Core 8 |
-| Authentication | JWT Bearer + BCrypt.Net |
-| Validation | FluentValidation |
-| Testing | xUnit + Moq |
-| Logging | Serilog (Console + File) |
-| API Documentation | Swagger / Swashbuckle |
-| CI/CD | GitHub Actions |
-| Security | Rate Limiting + BCrypt + JWT |
-| Architecture | Clean Architecture + Repository Pattern + Unit of Work |
+| Layer             | Technology                                             |
+|-------------------|--------------------------------------------------------|
+| Framework         | ASP.NET Core 8                                         |
+| Database          | SQL Server + Entity Framework Core 8                   |
+| Authentication    | JWT Bearer + BCrypt.Net                                |
+| Validation        | FluentValidation                                       |
+| Testing           | xUnit + Moq                                            |
+| Logging           | Serilog (Console + File)                               |
+| API Documentation | Swagger / Swashbuckle                                  |
+| CI/CD             | GitHub Actions                                         |
+| Security          | Rate Limiting + BCrypt + JWT                           |
+| Architecture      | Clean Architecture + Repository Pattern + Unit of Work |
 
 ---
 
 ## Getting Started / Démarrage
 
 ### Prerequisites / Prérequis
+
 - .NET 8 SDK
 - SQL Server or SQL Server Express
 - EF Core CLI (dotnet-ef)
@@ -86,12 +92,14 @@ BankLiteAPI follows Clean Architecture with separation of concerns across four l
 ### Setup / Configuration
 
 **1. Clone the repository / Cloner le dépôt**
+
 ```bash
 git clone https://github.com/NicholasXydis/BankLiteAPI.git
 cd BankLiteAPI/BankLiteAPI
 ```
 
 **2. Install EF Core CLI / Installer EF Core CLI**
+
 ```bash
 dotnet tool install --global dotnet-ef
 ```
@@ -122,11 +130,13 @@ Copy `appsettings.example.json` to `appsettings.json` and fill in your values:
 ```
 
 **4. Apply migrations / Appliquer les migrations**
+
 ```bash
 dotnet ef database update --project BankLite.Infrastructure --startup-project BankLite.API
 ```
 
 **5. Run the API / Lancer l'API**
+
 ```bash
 dotnet run --project BankLite.API
 ```
@@ -144,6 +154,7 @@ dotnet test
 ```
 
 13 tests covering:
+
 - Authentication — login and register success and failure paths
 - Transactions — deposit, withdraw and transfer
 - Authorization — account ownership checks on all transaction operations
@@ -154,13 +165,16 @@ dotnet test
 ## Example Requests / Exemples de requêtes
 
 **POST /api/auth/login**
+
 ```json
 {
   "email": "test@banklite.com",
   "password": "Password123"
 }
 ```
+
 Response:
+
 ```json
 {
   "token": "eyJhbGci...",
@@ -171,6 +185,7 @@ Response:
 ---
 
 **POST /api/transaction/transfer**
+
 ```json
 {
   "fromAccountId": "3fa85f64-...",
@@ -180,40 +195,46 @@ Response:
 ```
 
 Response:
+
 ```json
 {
   "message": "Transfer successful",
   "amount": 250.00
 }
 ```
+
 ---
 
 ## API Endpoints
 
 ### Auth — `/api/auth`
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| POST | `/register` | Register a new user | No |
-| POST | `/login` | Login and receive JWT token | No |
+
+| Method | Endpoint    | Description                 | Auth Required |
+|--------|-------------|-----------------------------|---------------|
+| POST   | `/register` | Register a new user         | No            |
+| POST   | `/login`    | Login and receive JWT token | No            |
 
 ### Accounts — `/api/account`
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| POST | `/create` | Create a chequing or savings account | Yes |
-| GET | `/` | Get all accounts for authenticated user | Yes |
+
+| Method | Endpoint  | Description                             | Auth Required |
+|--------|-----------|-----------------------------------------|---------------|
+| POST   | `/create` | Create a chequing or savings account    | Yes           |
+| GET    | `/`       | Get all accounts for authenticated user | Yes           |
 
 ### Transactions — `/api/transaction`
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| POST | `/deposit` | Deposit funds — returns transaction receipt | Yes |
-| POST | `/withdraw` | Withdraw funds — returns transaction receipt | Yes |
-| POST | `/transfer` | Atomic transfer between accounts | Yes |
-| GET | `/{accountId}?page=1&pageSize=10` | Get paginated transaction history | Yes |
+
+| Method | Endpoint                          | Description                                  | Auth Required |
+|--------|-----------------------------------|----------------------------------------------|---------------|
+| POST   | `/deposit`                        | Deposit funds — returns transaction receipt  | Yes           |
+| POST   | `/withdraw`                       | Withdraw funds — returns transaction receipt | Yes           |
+| POST   | `/transfer`                       | Atomic transfer between accounts             | Yes           |
+| GET    | `/{accountId}?page=1&pageSize=10` | Get paginated transaction history            | Yes           |
 
 ### Health
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/health` | Returns API health status |
+
+| Method | Endpoint  | Description               |
+|--------|-----------|---------------------------|
+| GET    | `/health` | Returns API health status |
 
 ---
 
@@ -221,12 +242,12 @@ Response:
 
 On first run, the database is automatically seeded with a test user and two accounts:
 
-| Field | Value |
-|---|---|
-| Email | test@banklite.com |
-| Password | Password123 |
-| Chequing Balance | $1,000.00 |
-| Savings Balance | $5,000.00 |
+| Field            | Value             |
+|------------------|-------------------|
+| Email            | test@banklite.com |
+| Password         | Password123       |
+| Chequing Balance | $1,000.00         |
+| Savings Balance  | $5,000.00         |
 
 ---
 
@@ -244,6 +265,7 @@ On first run, the database is automatically seeded with a test user and two acco
 ---
 
 ## Project Structure / Structure du projet
+
 ```
 BankLiteAPI/
 ├── BankLite.Domain/
