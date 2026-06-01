@@ -111,16 +111,16 @@ const i18n = {
             "BankLite collects your full name, email address and encrypted password when you register. We also collect transaction data including deposits, withdrawals and transfers you make within the app.",
         privacy_h2: "2. How We Use Your Information",
         privacy_p2:
-            "Your information is used solely to provide BankLite services such as managing your accounts and processing transactions. We do not sell, share or distribute your personal data to any third parties.",
+            "Your information is used to provide BankLite services such as account management, authentication and transaction processing. We do not sell personal data. We use third-party service providers only when required to operate the app, such as sending password reset emails.",
         privacy_h3: "3. Data Security",
         privacy_p3:
-            "All passwords are hashed using BCrypt. Authentication is handled via JWT tokens. Your data is stored securely and never transmitted without encryption.",
+            "Passwords are hashed using BCrypt before storage. Authentication uses JWT-based access and refresh tokens delivered in HttpOnly cookies. Client-side session metadata such as session expiry and display name is stored in sessionStorage, and user preferences such as language and dark mode are stored in localStorage.",
         privacy_h4: "4. Data Retention",
         privacy_p4:
             "Your data is retained as long as your account is active. You may delete your account at any time from the Settings panel, which permanently removes all your data.",
         privacy_h5: "5. Cookies",
         privacy_p5:
-            "BankLite uses session storage for authentication tokens and local storage for user preferences such as dark mode. No third party cookies are used.",
+            "BankLite uses first-party HttpOnly cookies for authentication tokens. The app also uses sessionStorage for session metadata and localStorage for user preferences. BankLite does not use third-party advertising or tracking cookies.",
         terms_title: "Terms of Service",
         terms_updated: "Last updated: May 2026",
         terms_h1: "1. Acceptance of Terms",
@@ -337,16 +337,16 @@ const i18n = {
             "BankLite collecte votre nom complet, votre adresse e-mail et votre mot de passe crypté lors de votre inscription. Nous collectons également des données relatives aux transactions, notamment les dépôts, les retraits et les virements que vous effectuez au sein de l'application.",
         privacy_h2: "2. Comment nous utilisons vos informations",
         privacy_p2:
-            "Vos informations sont utilisées uniquement pour fournir les services BankLite, tels que la gestion de vos comptes et le traitement des transactions. Nous ne vendons, ne partageons ni ne distribuons vos données personnelles à des tiers.",
+            "Vos informations sont utilisées pour vous fournir les services BankLite, tels que la gestion de compte, l'authentification et le traitement des transactions. Nous ne vendons pas de données personnelles. Nous faisons appel à des prestataires de services tiers uniquement lorsque cela est nécessaire au bon fonctionnement de l'application (par exemple, pour l'envoi d'e-mails de réinitialisation de mot de passe).",
         privacy_h3: "3. Sécurité des données",
         privacy_p3:
-            "Tous les mots de passe sont hachés à l'aide de BCrypt. L'authentification est gérée via des jetons JWT. Vos données sont stockées en toute sécurité et ne sont jamais transmises sans être cryptées.",
+            "Les mots de passe sont hachés à l'aide de BCrypt avant d'être stockés. L'authentification s'effectue à l'aide de jetons d'accès et de rafraîchissement JWT transmis dans des cookies HttpOnly. Les métadonnées de session côté client (telles que la durée de validité de la session et le nom d'affichage) sont stockées dans sessionStorage, tandis que les préférences de l'utilisateur (telles que la langue et le mode sombre) sont stockées dans localStorage.",
         privacy_h4: "4. Conservation des données",
         privacy_p4:
             "Vos données sont conservées tant que votre compte est actif. Vous pouvez supprimer votre compte à tout moment depuis le panneau Paramètres, ce qui supprime définitivement toutes vos données.",
         privacy_h5: "5. Cookies",
         privacy_p5:
-            "BankLite utilise le stockage de session pour les jetons d'authentification et le stockage local pour les préférences utilisateur, telles que le mode sombre. Aucun cookie tiers n'est utilisé.",
+            "BankLite utilise des cookies HttpOnly propriétaires à des fins d'authentification (jetons d'accès et de rafraîchissement). L'application utilise également sessionStorage pour les métadonnées de session et localStorage pour les préférences de l'interface utilisateur. BankLite n'utilise pas de cookies publicitaires ou de suivi tiers.",
         terms_title: "Conditions d'utilisation",
         terms_updated: "Dernière mise à jour : mai 2026",
         terms_h1: "1. Acceptation des conditions",

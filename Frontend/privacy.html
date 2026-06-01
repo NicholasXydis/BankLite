@@ -46,15 +46,20 @@
             </p>
             <h2 data-i18n="privacy_h2">2. How We Use Your Information</h2>
             <p data-i18n="privacy_p2">
-                Your information is used solely to provide BankLite services such as
-                managing your accounts and processing transactions. We do not sell,
-                share or distribute your personal data to any third parties.
+                Your information is used to provide BankLite services such as
+                account management, authentication and transaction processing. We
+                do not sell personal data. We use third-party service providers
+                only when required to operate the app, such as sending password
+                reset emails.
             </p>
             <h2 data-i18n="privacy_h3">3. Data Security</h2>
             <p data-i18n="privacy_p3">
-                All passwords are hashed using BCrypt. Authentication is handled via
-                JWT tokens. Your data is stored securely and never transmitted
-                without encryption.
+                Passwords are hashed using BCrypt before storage.
+                Authentication uses JWT-based access and refresh tokens delivered
+                in HttpOnly cookies. Client-side session metadata such as session
+                expiry and display name is stored in sessionStorage and user
+                preferences such as language and dark mode are stored in
+                localStorage.
             </p>
             <h2 data-i18n="privacy_h4">4. Data Retention</h2>
             <p data-i18n="privacy_p4">
@@ -64,9 +69,10 @@
             </p>
             <h2 data-i18n="privacy_h5">5. Cookies</h2>
             <p data-i18n="privacy_p5">
-                BankLite uses session storage for authentication tokens and local
-                storage for user preferences such as dark mode. No third party
-                cookies are used.
+                BankLite uses first-party HttpOnly cookies for authentication
+                tokens. The app also uses sessionStorage for session metadata and
+                localStorage for user preferences. BankLite does not use
+                third-party advertising or tracking cookies.
             </p>
         </div>
         <div class="static-page-back">
