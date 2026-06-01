@@ -1,8 +1,15 @@
 let currentPage = 1;
 const pageSize = 10;
 let currentFilter = "all";
+let transactionsAbortController = null;
 
 async function loadTransactions(accountId, page, type = null) {
+    if (transactionsAbortController) {
+        transactionsAbortController.abort();
+    }
+    const abortController = new AbortController();
+    transactionsAbortController = abortController;
+
     const errorMsg = document.getElementById("error-msg");
     const transactionsList = document.getElementById("transactions-list");
     const pageInfo = document.getElementById("page-info");
@@ -16,7 +23,15 @@ async function loadTransactions(accountId, page, type = null) {
     nextBtn.style.opacity = "0";
     transactionsList.style.opacity = "0";
     try {
-        const result = await getTransactions(accountId, page, pageSize, type);
+        const result = await getTransactions(
+            accountId,
+            page,
+            pageSize,
+            type,
+            abortController.signal,
+        );
+        if (abortController.signal.aborted) return;
+
         transactionsList.innerHTML = "";
         document.getElementById("no-filter-results").style.display = "none";
 
@@ -111,10 +126,15 @@ async function loadTransactions(accountId, page, type = null) {
         nextBtn.style.opacity = "1";
         transactionsList.style.opacity = "1";
     } catch (error) {
+        if (error.name === "AbortError") return;
         transactionsList.innerHTML = "";
         document.querySelector(".pagination").style.display = "flex";
         errorMsg.textContent = error.message;
         errorMsg.style.display = "block";
+    } finally {
+        if (transactionsAbortController === abortController) {
+            transactionsAbortController = null;
+        }
     }
 }
 

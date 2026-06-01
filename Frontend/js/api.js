@@ -220,6 +220,7 @@ async function getTransactions(
     page = 1,
     pageSize = 10,
     type = null,
+    signal = null,
 ) {
     const typeParam = type && type !== "all" ? `&type=${type}` : "";
     const response = await fetch(
@@ -228,6 +229,7 @@ async function getTransactions(
         {
             method: "GET",
             credentials: "include",
+            signal,
         },
     );
 
@@ -402,7 +404,14 @@ async function resetPassword(token, newPassword) {
         body: JSON.stringify({token, newPassword}),
     });
     const data = await readJsonSafe(response);
+    handleServerError(response);
     if (!response.ok) {
+        if (Array.isArray(data)) {
+            throw new Error(
+                data.map((error) => error.errorMessage).join(" ") ||
+                t("error_occurred"),
+            );
+        }
         const msg = data.message || "";
         if (msg.includes("Invalid") || msg.includes("expired"))
             throw new Error(t("error_invalid_token"));
