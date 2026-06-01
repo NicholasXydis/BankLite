@@ -1,11 +1,14 @@
 let _sessionTimerInterval = null;
 
 async function logout() {
-  await logoutApi();
-  sessionStorage.removeItem("expiresAt");
-  sessionStorage.removeItem("fullName");
-  sessionStorage.removeItem("userId");
-  sessionStorage.removeItem("cachedAccounts");
+  try {
+    await logoutApi();
+  } finally {
+    sessionStorage.removeItem("expiresAt");
+    sessionStorage.removeItem("fullName");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("cachedAccounts");
+  }
 }
 
 function getTokenExpiry() {
@@ -543,7 +546,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  if (chatbotBtn) chatbotBtn.addEventListener("click", openChatbot);
+  if (chatbotBtn)
+    chatbotBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      openChatbot();
+    });
   if (chatbotClose) chatbotClose.addEventListener("click", closeChatbot);
   if (chatbotOverlay) chatbotOverlay.addEventListener("click", closeChatbot);
   if (chatbotSend) chatbotSend.addEventListener("click", sendMessage);

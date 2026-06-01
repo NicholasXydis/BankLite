@@ -3,7 +3,6 @@ async function loadWithdraw() {
 
   const accountSelect = document.getElementById("account-select");
   const errorMsg = document.getElementById("error-msg");
-  const successMsg = document.getElementById("success-msg");
   let accounts = [];
 
   try {

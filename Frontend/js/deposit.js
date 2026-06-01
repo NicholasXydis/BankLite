@@ -3,7 +3,6 @@ async function loadDeposit() {
 
   const accountSelect = document.getElementById("account-select");
   const errorMsg = document.getElementById("error-msg");
-  const successMsg = document.getElementById("success-msg");
   let accounts = [];
 
   try {
@@ -32,6 +31,7 @@ async function loadDeposit() {
     errorMsg.textContent = error.message.includes("entity")
       ? t("error_occurred")
       : error.message;
+    errorMsg.style.display = "block";
   }
 }
 
@@ -104,32 +104,34 @@ document
         const centerX =
           (sidebarWidth + (window.innerWidth - sidebarWidth) / 2) /
           window.innerWidth;
-        confetti({
-          particleCount: 150,
-          spread: 100,
-          origin: { x: centerX, y: 0.6 },
-          colors: ["#1a3a5c", "#4f86c6", "#ffffff", "#FFD700", "#e2e8f0"],
-        });
-        setTimeout(
-          () =>
-            confetti({
-              particleCount: 80,
-              angle: 60,
-              spread: 80,
-              origin: { x: 0, y: 0.6 },
-            }),
-          200,
-        );
-        setTimeout(
-          () =>
-            confetti({
-              particleCount: 80,
-              angle: 120,
-              spread: 80,
-              origin: { x: 1, y: 0.6 },
-            }),
-          400,
-        );
+        if (typeof confetti === "function") {
+          confetti({
+            particleCount: 150,
+            spread: 100,
+            origin: { x: centerX, y: 0.6 },
+            colors: ["#1a3a5c", "#4f86c6", "#ffffff", "#FFD700", "#e2e8f0"],
+          });
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 80,
+                angle: 60,
+                spread: 80,
+                origin: { x: 0, y: 0.6 },
+              }),
+            200,
+          );
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 80,
+                angle: 120,
+                spread: 80,
+                origin: { x: 1, y: 0.6 },
+              }),
+            400,
+          );
+        }
       }
 
       document.getElementById("amount").value = "";

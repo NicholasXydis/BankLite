@@ -4,7 +4,6 @@ async function loadTransfer() {
   const accountSelect = document.getElementById("account-select");
   const toAccountSelect = document.getElementById("to-account-select");
   const errorMsg = document.getElementById("error-msg");
-  const successMsg = document.getElementById("success-msg");
   let accounts = [];
 
   try {
