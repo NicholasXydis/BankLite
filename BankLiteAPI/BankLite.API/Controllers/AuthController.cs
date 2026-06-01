@@ -198,11 +198,6 @@ namespace BankLite.API.Controllers
 
         private bool UseSecureCookies()
         {
-            if (_environment.IsEnvironment("Testing"))
-            {
-                return false;
-            }
-
             return !_environment.IsDevelopment() || Request.IsHttps;
         }
     }
