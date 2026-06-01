@@ -51,7 +51,7 @@ async function loadTransactions(accountId, page, type = null) {
 
         let lastDate = null;
         result.items.forEach((transaction) => {
-            const txDate = new Date(transaction.createdAt + "Z");
+            const txDate = new Date(/(?:Z|[+-]\d{2}:\d{2})$/.test(transaction.createdAt) ? transaction.createdAt : transaction.createdAt + "Z");
             const today = new Date();
             const yesterday = new Date();
             yesterday.setDate(today.getDate() - 1);
@@ -237,7 +237,7 @@ document
 
             result.items.forEach((tx) => {
                 const lang = localStorage.getItem("language") || "en";
-                const date = new Date(tx.createdAt + "Z").toLocaleString(
+                const date = new Date(/(?:Z|[+-]\d{2}:\d{2})$/.test(tx.createdAt) ? tx.createdAt : tx.createdAt + "Z").toLocaleString(
                     lang === "fr" ? "fr-CA" : "en-CA",
                     {
                         month: "short",
