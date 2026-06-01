@@ -66,6 +66,7 @@ async function loadTransactions(accountId, page, type = null) {
                 transactionsList.appendChild(header);
             }
             const row = document.createElement("div");
+            row.dataset.testid = "transaction-row";
             const isTransfer = transaction.description
                 .toLowerCase()
                 .includes("transfer");

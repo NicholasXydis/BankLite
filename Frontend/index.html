@@ -25,7 +25,7 @@
 </head>
 <body class="auth-page">
 <div class="lang-toggle-wrap">
-    <button class="lang-toggle-btn" id="lang-toggle-btn">
+    <button aria-label="Change language" class="lang-toggle-btn" data-testid="language-toggle" id="lang-toggle-btn">
         <span id="lang-flag"></span>
         <span id="lang-label"></span>
     </button>
@@ -195,6 +195,7 @@
             <input
                     autocomplete="email"
                     class="no-icon-input"
+                    data-testid="forgot-email-input"
                     data-i18n="placeholder_email"
                     data-i18n-attr="placeholder"
                     id="forgot-email"

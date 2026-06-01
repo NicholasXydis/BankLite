@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="chatbot-status" id="chatbot-status-text">BankLite Assistant</div>
       </div>
     </div>
-    <button class="chatbot-close" id="chatbot-close">
+    <button aria-label="Close chat" class="chatbot-close" id="chatbot-close">
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
   <div class="chatbot-input-area">
    <input type="text" class="chatbot-input" id="chatbot-input" maxlength="200" />
-    <button class="chatbot-send" id="chatbot-send">
+    <button class="chatbot-send" data-testid="chat-send" id="chatbot-send">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
       </svg>

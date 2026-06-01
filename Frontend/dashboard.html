@@ -233,7 +233,7 @@
                     <option data-i18n="dashboard_savings" value="1">Savings</option>
                 </select>
             </div>
-            <button data-i18n="dashboard_create_account" id="create-account-btn">
+            <button data-i18n="dashboard_create_account" data-testid="create-account-btn" id="create-account-btn">
                 Create Account
             </button>
         </div>
@@ -350,7 +350,7 @@
 <div class="settings-panel" id="settings-panel">
     <div class="settings-header">
         <h2 class="settings-title" data-i18n="settings_title">Settings</h2>
-        <button class="settings-close-btn" id="settings-close-btn">
+        <button aria-label="Close settings" class="settings-close-btn" id="settings-close-btn">
             <svg
                     fill="none"
                     height="20"
@@ -494,8 +494,8 @@
           <span class="settings-label" data-i18n="settings_dark_mode"
           >Dark Mode</span
           >
-            <label class="toggle-switch">
-                <input id="dark-mode-toggle" type="checkbox"/>
+            <label aria-label="Dark Mode" class="toggle-switch" data-testid="dark-mode-control">
+                <input data-testid="dark-mode-toggle" id="dark-mode-toggle" type="checkbox"/>
                 <span class="toggle-slider"></span>
             </label>
         </div>
