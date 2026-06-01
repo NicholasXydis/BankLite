@@ -1,5 +1,18 @@
 const API_URL = "https://localhost:7205";
 
+async function readJsonSafe(response) {
+    const text = await response.text();
+    if (!text) return {};
+    try {
+        return JSON.parse(text);
+    } catch {
+        if (response.ok) {
+            throw new Error("Invalid JSON response.");
+        }
+        return {};
+    }
+}
+
 function handleServerError(response) {
     if (response.status === 404) {
         window.location.href = "404.html";
@@ -20,7 +33,7 @@ async function login(email, password) {
     });
 
     if (response.status === 429) throw new Error(t("error_too_many_login"));
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -57,7 +70,7 @@ async function register(fullName, email, password) {
     });
 
     if (response.status === 429) throw new Error(t("error_too_many_register"));
-    const data = await response.json();
+    const data = await readJsonSafe(response);
     handleServerError(response);
     if (!response.ok) {
         if (Array.isArray(data)) {
@@ -94,7 +107,7 @@ async function getAccounts(forceRefresh = false) {
         credentials: "include",
     });
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -114,7 +127,7 @@ async function deposit(accountId, amount) {
         body: JSON.stringify({accountId, amount}),
     });
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -138,7 +151,7 @@ async function withdraw(accountId, amount) {
         body: JSON.stringify({accountId, amount}),
     });
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -162,7 +175,7 @@ async function transfer(fromAccountId, toAccountId, amount) {
         body: JSON.stringify({fromAccountId, toAccountId, amount}),
     });
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -186,7 +199,7 @@ async function transferExternal(fromAccountId, toAccountNumber, amount) {
         body: JSON.stringify({fromAccountId, toAccountNumber, amount}),
     });
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -218,7 +231,7 @@ async function getTransactions(
         },
     );
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -239,7 +252,7 @@ async function getTransactionsByDateRange(accountId, startDate, endDate) {
         },
     );
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -259,7 +272,7 @@ async function createAccount(accountType) {
         body: JSON.stringify({type: accountType}),
     });
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -277,7 +290,7 @@ async function getUserProfile() {
         method: "GET",
         credentials: "include",
     });
-    const data = await response.json();
+    const data = await readJsonSafe(response);
     handleServerError(response);
     if (!response.ok) throw new Error(data.message || t("error_load_profile"));
     return data;
@@ -294,7 +307,7 @@ async function changePassword(currentPassword, newPassword) {
     });
 
     if (response.status === 429) throw new Error(t("error_too_many_attempts"));
-    const data = await response.json();
+    const data = await readJsonSafe(response);
     handleServerError(response);
     if (!response.ok) {
         if (Array.isArray(data)) {
@@ -323,7 +336,7 @@ async function deleteAccount() {
         method: "DELETE",
         credentials: "include",
     });
-    const data = await response.json();
+    const data = await readJsonSafe(response);
     handleServerError(response);
     if (!response.ok) throw new Error(data.message || t("error_occurred"));
 }
@@ -338,7 +351,7 @@ async function sendChatMessage(message) {
         body: JSON.stringify({content: message}),
     });
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
 
     handleServerError(response);
     if (!response.ok) {
@@ -363,7 +376,7 @@ async function refreshToken() {
 
     if (!response.ok) return null;
 
-    const data = await response.json();
+    const data = await readJsonSafe(response);
     return data;
 }
 
@@ -376,7 +389,7 @@ async function forgotPassword(email) {
         body: JSON.stringify({email, lang}),
     });
     if (response.status === 429) throw new Error(t("error_too_many_attempts"));
-    const data = await response.json();
+    const data = await readJsonSafe(response);
     if (!response.ok) throw new Error(data.message || t("error_occurred"));
     return data;
 }
@@ -388,7 +401,7 @@ async function resetPassword(token, newPassword) {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({token, newPassword}),
     });
-    const data = await response.json();
+    const data = await readJsonSafe(response);
     if (!response.ok) {
         const msg = data.message || "";
         if (msg.includes("Invalid") || msg.includes("expired"))
