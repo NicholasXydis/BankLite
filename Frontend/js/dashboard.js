@@ -48,6 +48,7 @@ async function loadDashboard() {
             accountNumberEl.textContent = account.accountNumber;
             const copyBtn = document.createElement("button");
             copyBtn.className = "copy-btn";
+            copyBtn.setAttribute("aria-label", "Copy account number");
             copyBtn.dataset.number = account.accountNumber;
             copyBtn.dataset.testid = "copy-account-number";
             copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#1a3a5c" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;

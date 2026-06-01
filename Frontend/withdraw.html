@@ -1,351 +1,351 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta
-            content="BankLite withdraw page | Securely remove funds from your account with ease."
-            name="description"
+      content="BankLite withdraw page | Securely remove funds from your account with ease."
+      name="description"
     />
-    <meta content="index, follow" name="robots"/>
-    <meta content="BankLite | Withdraw" property="og:title"/>
+    <meta content="index, follow" name="robots" />
+    <meta content="BankLite | Withdraw" property="og:title" />
     <meta
-            content="A modern personal banking app to manage your accounts, deposits, withdrawals and transfers."
-            property="og:description"
+      content="A modern personal banking app to manage your accounts, deposits, withdrawals and transfers."
+      property="og:description"
     />
-    <meta content="website" property="og:type"/>
-    <meta content="#1a3a5c" name="theme-color"/>
+    <meta content="website" property="og:type" />
+    <meta content="#1a3a5c" name="theme-color" />
     <title>BankLite | Withdraw</title>
-    <link href="css/styles.css" rel="stylesheet"/>
+    <link href="css/styles.css" rel="stylesheet" />
     <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
     />
-    <link href="favicon.ico?v=1" rel="icon" type="image/x-icon"/>
-</head>
-<body class="dashboard-body">
-<div class="dashboard-layout">
-    <button
-            aria-label="Toggle navigation"
-            class="hamburger-btn"
-            id="hamburger-btn"
-    >
+    <link href="favicon.ico?v=1" rel="icon" type="image/x-icon" />
+  </head>
+  <body class="dashboard-body">
+    <div class="dashboard-layout">
+      <button
+        aria-label="Toggle navigation"
+        class="hamburger-btn"
+        id="hamburger-btn"
+      >
         <span></span>
         <span></span>
         <span></span>
-    </button>
-    <aside class="sidebar">
+      </button>
+      <aside class="sidebar">
         <div class="sidebar-brand">
-            <svg
-                    fill="none"
-                    height="24"
-                    stroke="#fff"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.75"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <rect height="14" rx="3" width="20" x="2" y="5"/>
-                <line x1="2" x2="22" y1="10" y2="10"/>
-                <line x1="6" x2="10" y1="15" y2="15"/>
-                <circle cx="17" cy="15" fill="#fff" r="1.5"/>
-            </svg>
-            <span>BankLite</span>
+          <svg
+            fill="none"
+            height="24"
+            stroke="#fff"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.75"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect height="14" rx="3" width="20" x="2" y="5" />
+            <line x1="2" x2="22" y1="10" y2="10" />
+            <line x1="6" x2="10" y1="15" y2="15" />
+            <circle cx="17" cy="15" fill="#fff" r="1.5" />
+          </svg>
+          <span>BankLite</span>
         </div>
         <nav class="sidebar-nav">
-            <a href="dashboard.html">
-                <svg
-                        fill="none"
-                        height="18"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <rect height="7" width="7" x="3" y="3"/>
-                    <rect height="7" width="7" x="14" y="3"/>
-                    <rect height="7" width="7" x="3" y="14"/>
-                    <rect height="7" width="7" x="14" y="14"/>
-                </svg>
-                <span data-i18n="nav_dashboard">Dashboard</span>
-            </a>
-            <a href="deposit.html">
-                <svg
-                        fill="none"
-                        height="18"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <line x1="12" x2="12" y1="19" y2="5"/>
-                    <polyline points="5 12 12 5 19 12"/>
-                </svg>
-                <span data-i18n="nav_deposit">Deposit</span>
-            </a>
-            <a class="active" href="withdraw.html">
-                <svg
-                        fill="none"
-                        height="18"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <line x1="12" x2="12" y1="5" y2="19"/>
-                    <polyline points="19 12 12 19 5 12"/>
-                </svg>
-                <span data-i18n="nav_withdraw">Withdraw</span>
-            </a>
-            <a href="transfer.html">
-                <svg
-                        fill="none"
-                        height="18"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <polyline points="17 1 21 5 17 9"/>
-                    <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
-                    <polyline points="7 23 3 19 7 15"/>
-                    <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
-                </svg>
-                <span data-i18n="nav_transfer">Transfer</span>
-            </a>
-            <a href="transactions.html">
-                <svg
-                        fill="none"
-                        height="18"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <line x1="8" x2="21" y1="6" y2="6"/>
-                    <line x1="8" x2="21" y1="12" y2="12"/>
-                    <line x1="8" x2="21" y1="18" y2="18"/>
-                    <line x1="3" x2="3.01" y1="6" y2="6"/>
-                    <line x1="3" x2="3.01" y1="12" y2="12"/>
-                    <line x1="3" x2="3.01" y1="18" y2="18"/>
-                </svg>
-                <span data-i18n="nav_transactions">Transactions</span>
-            </a>
-            <a href="#" id="settings-btn">
-                <svg
-                        fill="none"
-                        height="18"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <circle cx="12" cy="12" r="3"/>
-                    <path
-                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
-                    />
-                </svg>
-                <span data-i18n="nav_settings">Settings</span>
-            </a>
-            <a href="#" id="chatbot-btn">
-                <svg
-                        fill="none"
-                        height="18"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="18"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                            d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
-                    />
-                </svg>
-                <span data-i18n="nav_chat">AI Chat</span>
-            </a>
+          <a href="dashboard.html">
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <rect height="7" width="7" x="3" y="3" />
+              <rect height="7" width="7" x="14" y="3" />
+              <rect height="7" width="7" x="3" y="14" />
+              <rect height="7" width="7" x="14" y="14" />
+            </svg>
+            <span data-i18n="nav_dashboard">Dashboard</span>
+          </a>
+          <a href="deposit.html">
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line x1="12" x2="12" y1="19" y2="5" />
+              <polyline points="5 12 12 5 19 12" />
+            </svg>
+            <span data-i18n="nav_deposit">Deposit</span>
+          </a>
+          <a class="active" href="withdraw.html">
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line x1="12" x2="12" y1="5" y2="19" />
+              <polyline points="19 12 12 19 5 12" />
+            </svg>
+            <span data-i18n="nav_withdraw">Withdraw</span>
+          </a>
+          <a href="transfer.html">
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <polyline points="17 1 21 5 17 9" />
+              <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+              <polyline points="7 23 3 19 7 15" />
+              <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+            </svg>
+            <span data-i18n="nav_transfer">Transfer</span>
+          </a>
+          <a href="transactions.html">
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <line x1="8" x2="21" y1="6" y2="6" />
+              <line x1="8" x2="21" y1="12" y2="12" />
+              <line x1="8" x2="21" y1="18" y2="18" />
+              <line x1="3" x2="3.01" y1="6" y2="6" />
+              <line x1="3" x2="3.01" y1="12" y2="12" />
+              <line x1="3" x2="3.01" y1="18" y2="18" />
+            </svg>
+            <span data-i18n="nav_transactions">Transactions</span>
+          </a>
+          <a href="#" id="settings-btn">
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+              />
+            </svg>
+            <span data-i18n="nav_settings">Settings</span>
+          </a>
+          <a href="#" id="chatbot-btn">
+            <svg
+              fill="none"
+              height="18"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="18"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+              />
+            </svg>
+            <span data-i18n="nav_chat">AI Chat</span>
+          </a>
         </nav>
         <button data-i18n="nav_logout" id="logout-btn">Logout</button>
-    </aside>
-    <main class="dashboard-main">
+      </aside>
+      <main class="dashboard-main">
         <h1 class="dashboard-title" data-i18n="withdraw_title">
-            Withdraw Funds
+          Withdraw Funds
         </h1>
         <div class="empty-state" id="empty-state" style="display: none">
-            <div class="empty-state-icon">
-                <svg
-                        fill="none"
-                        height="36"
-                        stroke="#1a3a5c"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="1.75"
-                        viewBox="0 0 24 24"
-                        width="36"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <rect height="14" rx="3" width="20" x="2" y="5"/>
-                    <line x1="2" x2="22" y1="10" y2="10"/>
-                    <line x1="6" x2="10" y1="15" y2="15"/>
-                    <circle cx="17" cy="15" fill="#1a3a5c" r="1.5"/>
-                </svg>
-            </div>
-            <h3 class="empty-state-title" data-i18n="empty_title">
-                Your financial journey starts here
-            </h3>
-            <p class="empty-state-text" data-i18n="empty_text">
-                Create your first account
-            </p>
-            <a class="empty-state-btn" data-i18n="empty_btn" href="dashboard.html"
-            >Create Account</a
+          <div class="empty-state-icon">
+            <svg
+              fill="none"
+              height="36"
+              stroke="#1a3a5c"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.75"
+              viewBox="0 0 24 24"
+              width="36"
+              xmlns="http://www.w3.org/2000/svg"
             >
+              <rect height="14" rx="3" width="20" x="2" y="5" />
+              <line x1="2" x2="22" y1="10" y2="10" />
+              <line x1="6" x2="10" y1="15" y2="15" />
+              <circle cx="17" cy="15" fill="#1a3a5c" r="1.5" />
+            </svg>
+          </div>
+          <h2 class="empty-state-title" data-i18n="empty_title">
+            Your financial journey starts here
+          </h2>
+          <p class="empty-state-text" data-i18n="empty_text">
+            Create your first account
+          </p>
+          <a class="empty-state-btn" data-i18n="empty_btn" href="dashboard.html"
+            >Create Account</a
+          >
         </div>
         <div class="form-card" style="display: none">
-            <div
-                    aria-live="polite"
-                    class="error-msg"
-                    id="error-msg"
-                    role="alert"
-            ></div>
-            <div
-                    aria-live="polite"
-                    class="success-msg"
-                    id="success-msg"
-                    role="status"
-            ></div>
-            <div class="form-group">
-                <label data-i18n="deposit_select_account" for="account-select"
-                >Select Account</label
-                >
-                <select id="account-select">
-                    <option value="">Loading accounts...</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label data-i18n="deposit_amount" for="amount">Amount</label>
-                <input
-                        class="no-icon-input"
-                        id="amount"
-                        inputmode="decimal"
-                        placeholder="$0.00"
-                        type="text"
-                />
-            </div>
-            <button data-i18n="withdraw_btn" id="withdraw-btn">Withdraw</button>
+          <div
+            aria-live="polite"
+            class="error-msg"
+            id="error-msg"
+            role="alert"
+          ></div>
+          <div
+            aria-live="polite"
+            class="success-msg"
+            id="success-msg"
+            role="status"
+          ></div>
+          <div class="form-group">
+            <label data-i18n="deposit_select_account" for="account-select"
+              >Select Account</label
+            >
+            <select id="account-select">
+              <option value="">Loading accounts...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="deposit_amount" for="amount">Amount</label>
+            <input
+              class="no-icon-input"
+              id="amount"
+              inputmode="decimal"
+              placeholder="$0.00"
+              type="text"
+            />
+          </div>
+          <button data-i18n="withdraw_btn" id="withdraw-btn">Withdraw</button>
         </div>
-    </main>
-</div>
-<script src="js/i18n.js"></script>
-<script src="js/api.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/withdraw.js"></script>
+      </main>
+    </div>
+    <script src="js/i18n.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/withdraw.js"></script>
 
-<div id="session-warning" style="display: none">
-    <span id="session-countdown"></span>
-    <button data-i18n="session_stay" id="session-stay-btn">
+    <div id="session-warning" style="display: none">
+      <span id="session-countdown"></span>
+      <button data-i18n="session_stay" id="session-stay-btn">
         Stay Logged In
-    </button>
-</div>
+      </button>
+    </div>
 
-<div class="modal-overlay" id="logout-modal" style="display: none">
-    <div class="modal">
+    <div class="modal-overlay" id="logout-modal" style="display: none">
+      <div class="modal">
         <h3 class="modal-title" data-i18n="logout_title">Log Out</h3>
         <p class="modal-text" data-i18n="logout_confirm_text">
-            Are you sure you want to log out?
+          Are you sure you want to log out?
         </p>
         <div class="modal-actions">
-            <button
-                    class="modal-cancel"
-                    data-i18n="logout_cancel"
-                    id="modal-cancel-btn"
-            >
-                Cancel
-            </button>
-            <button
-                    class="modal-confirm"
-                    data-i18n="logout_confirm"
-                    id="modal-confirm-btn"
-            >
-                Log Out
-            </button>
+          <button
+            class="modal-cancel"
+            data-i18n="logout_cancel"
+            id="modal-cancel-btn"
+          >
+            Cancel
+          </button>
+          <button
+            class="modal-confirm"
+            data-i18n="logout_confirm"
+            id="modal-confirm-btn"
+          >
+            Log Out
+          </button>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="modal-overlay hidden" id="delete-modal">
-    <div class="modal">
+    <div class="modal-overlay hidden" id="delete-modal">
+      <div class="modal">
         <h3 class="modal-title" data-i18n="delete_title">Delete Account</h3>
         <p class="modal-text" data-i18n="delete_account_text">
-            This will permanently delete your account and all data.
+          This will permanently delete your account and all data.
         </p>
         <div class="modal-actions">
-            <button
-                    class="modal-cancel"
-                    data-i18n="logout_cancel"
-                    id="delete-cancel-btn"
-            >
-                Cancel
-            </button>
-            <button
-                    class="modal-confirm btn-danger"
-                    data-i18n="delete_confirm"
-                    id="delete-confirm-btn"
-            >
-                Delete
-            </button>
+          <button
+            class="modal-cancel"
+            data-i18n="logout_cancel"
+            id="delete-cancel-btn"
+          >
+            Cancel
+          </button>
+          <button
+            class="modal-confirm btn-danger"
+            data-i18n="delete_confirm"
+            id="delete-confirm-btn"
+          >
+            Delete
+          </button>
         </div>
+      </div>
     </div>
-</div>
 
-<div
-        class="settings-overlay"
-        id="settings-overlay"
-        style="display: none"
-></div>
-<div class="settings-panel" id="settings-panel">
-    <div class="settings-header">
+    <div
+      class="settings-overlay"
+      id="settings-overlay"
+      style="display: none"
+    ></div>
+    <div class="settings-panel" id="settings-panel">
+      <div class="settings-header">
         <h2 class="settings-title" data-i18n="settings_title">Settings</h2>
-        <button class="settings-close-btn" id="settings-close-btn">
-            <svg
-                    fill="none"
-                    height="20"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="20"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <line x1="18" x2="6" y1="6" y2="18"/>
-                <line x1="6" x2="18" y1="6" y2="18"/>
-            </svg>
+        <button aria-label="Close settings" class="settings-close-btn" id="settings-close-btn">
+          <svg
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line x1="18" x2="6" y1="6" y2="18" />
+            <line x1="6" x2="18" y1="6" y2="18" />
+          </svg>
         </button>
-    </div>
-    <div class="settings-section">
+      </div>
+      <div class="settings-section">
         <h3 class="settings-section-title" data-i18n="settings_profile">
-            Profile
+          Profile
         </h3>
         <div class="settings-info-row">
           <span class="settings-label" data-i18n="settings_name">Name</span
@@ -357,167 +357,170 @@
         </div>
         <div class="settings-info-row">
           <span class="settings-label" data-i18n="settings_member_since"
-          >Member Since</span
+            >Member Since</span
           ><span class="settings-value" id="settings-since">—</span>
         </div>
         <div class="settings-info-row">
           <span class="settings-label" data-i18n="settings_last_login"
-          >Last Login</span
+            >Last Login</span
           ><span class="settings-value" id="settings-last-login">—</span>
         </div>
-    </div>
-    <div class="settings-section">
+      </div>
+      <div class="settings-section">
         <h3 class="settings-section-title" data-i18n="settings_security">
-            Security
+          Security
         </h3>
         <div
-                aria-live="polite"
-                class="success-msg"
-                id="change-password-success"
-                role="status"
+          aria-live="polite"
+          class="success-msg"
+          id="change-password-success"
+          role="status"
         ></div>
         <div
-                aria-live="polite"
-                class="error-msg"
-                id="change-password-error"
-                role="alert"
+          aria-live="polite"
+          class="error-msg"
+          id="change-password-error"
+          role="alert"
         ></div>
         <div class="form-group">
-            <label data-i18n="settings_current_password" for="current-password"
+          <label data-i18n="settings_current_password" for="current-password"
             >Current Password</label
+          >
+          <div class="input-wrap">
+            <input
+              autocomplete="current-password"
+              class="no-icon-input"
+              data-i18n="placeholder_current_password"
+              data-i18n-attr="placeholder"
+              id="current-password"
+              placeholder="Current Password"
+              type="password"
+            />
+            <button
+              aria-label="Toggle password visibility"
+              class="toggle-password"
+              id="toggle-current-password"
+              type="button"
             >
-            <div class="input-wrap">
-                <input
-                        autocomplete="current-password"
-                        class="no-icon-input"
-                        data-i18n="placeholder_current_password"
-                        data-i18n-attr="placeholder"
-                        id="current-password"
-                        placeholder="Current Password"
-                        type="password"
-                />
-                <button
-                        aria-label="Toggle password visibility"
-                        class="toggle-password"
-                        id="toggle-current-password"
-                        type="button"
-                >
-                    <svg
-                            fill="none"
-                            height="16"
-                            id="eye-icon-current"
-                            stroke="#9ca3af"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                </button>
-            </div>
+              <svg
+                fill="none"
+                height="16"
+                id="eye-icon-current"
+                stroke="#9ca3af"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
         </div>
         <div class="form-group">
-            <label data-i18n="settings_new_password" for="new-password"
+          <label data-i18n="settings_new_password" for="new-password"
             >New Password</label
+          >
+          <div class="input-wrap">
+            <input
+              autocomplete="new-password"
+              class="no-icon-input"
+              data-i18n="placeholder_min_8"
+              data-i18n-attr="placeholder"
+              id="new-password"
+              placeholder="Min 8 Characters"
+              type="password"
+            />
+            <button
+              aria-label="Toggle password visibility"
+              class="toggle-password"
+              id="toggle-new-password-settings"
+              type="button"
             >
-            <div class="input-wrap">
-                <input
-                        autocomplete="new-password"
-                        class="no-icon-input"
-                        data-i18n="placeholder_min_8"
-                        data-i18n-attr="placeholder"
-                        id="new-password"
-                        placeholder="Min 8 Characters"
-                        type="password"
-                />
-                <button
-                        aria-label="Toggle password visibility"
-                        class="toggle-password"
-                        id="toggle-new-password-settings"
-                        type="button"
-                >
-                    <svg
-                            fill="none"
-                            height="16"
-                            id="eye-icon-new-settings"
-                            stroke="#9ca3af"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            viewBox="0 0 24 24"
-                            width="16"
-                            xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                        <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                </button>
-            </div>
+              <svg
+                fill="none"
+                height="16"
+                id="eye-icon-new-settings"
+                stroke="#9ca3af"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
         </div>
         <button data-i18n="settings_change_password" id="change-password-btn">
-            Change Password
+          Change Password
         </button>
-    </div>
-    <div class="settings-section">
+      </div>
+      <div class="settings-section">
         <h3 class="settings-section-title" data-i18n="settings_preferences">
-            Preferences
+          Preferences
         </h3>
         <div class="settings-toggle-row">
           <span class="settings-label" data-i18n="settings_dark_mode">
             Dark Mode
           </span>
-            <label class="toggle-switch"
-            ><input id="dark-mode-toggle" type="checkbox"/><span
-                    class="toggle-slider"
+          <label class="toggle-switch"
+            ><input aria-label="Toggle dark mode" id="dark-mode-toggle" type="checkbox" /><span
+              class="toggle-slider"
             ></span
-            ></label>
+          ></label>
         </div>
         <div class="settings-toggle-row">
           <span class="settings-label" data-i18n="settings_language">
             Français
           </span>
-            <label class="toggle-switch"
-            ><input id="language-toggle" type="checkbox"/><span
-                    class="toggle-slider"
+          <label class="toggle-switch"
+            ><input
+              id="language-toggle"
+              type="checkbox"
+              aria-label="Toggle French language" /><span
+              class="toggle-slider"
             ></span
-            ></label>
+          ></label>
         </div>
-    </div>
-    <div class="settings-section">
+      </div>
+      <div class="settings-section">
         <h3 class="settings-section-title" data-i18n="settings_legal">Legal</h3>
         <a
-                class="settings-link"
-                data-i18n="settings_privacy"
-                href="privacy.html"
+          class="settings-link"
+          data-i18n="settings_privacy"
+          href="privacy.html"
         >
-            Privacy Policy
+          Privacy Policy
         </a>
         <a class="settings-link" data-i18n="settings_terms" href="terms.html">
-            Terms of Service
+          Terms of Service
         </a>
-    </div>
-    <div class="settings-section settings-danger">
+      </div>
+      <div class="settings-section settings-danger">
         <h3
-                class="settings-section-title settings-danger-title"
-                data-i18n="settings_danger_zone"
+          class="settings-section-title settings-danger-title"
+          data-i18n="settings_danger_zone"
         >
-            Danger Zone
+          Danger Zone
         </h3>
         <p class="settings-danger-text" data-i18n="settings_danger_text">
-            Permanently delete your account and all data.
+          Permanently delete your account and all data.
         </p>
         <button
-                class="btn-danger"
-                data-i18n="settings_delete_account"
-                id="delete-account-btn"
+          class="btn-danger"
+          data-i18n="settings_delete_account"
+          id="delete-account-btn"
         >
-            Delete Account
+          Delete Account
         </button>
+      </div>
     </div>
-</div>
-</body>
+  </body>
 </html>
