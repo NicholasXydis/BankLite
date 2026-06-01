@@ -1,253 +1,253 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta
-            content="Banklite create your account | Secure online banking with instant account setup."
-            name="description"
+      content="Banklite create your account | Secure online banking with instant account setup."
+      name="description"
     />
-    <meta content="index, follow" name="robots"/>
-    <meta content="BankLite | Register" property="og:title"/>
+    <meta content="index, follow" name="robots" />
+    <meta content="BankLite | Register" property="og:title" />
     <meta
-            content="A modern personal banking app to manage your accounts, deposits, withdrawals and transfers."
-            property="og:description"
+      content="A modern personal banking app to manage your accounts, deposits, withdrawals and transfers."
+      property="og:description"
     />
-    <meta content="website" property="og:type"/>
-    <meta content="#1a3a5c" name="theme-color"/>
+    <meta content="website" property="og:type" />
+    <meta content="#1a3a5c" name="theme-color" />
     <title>BankLite | Register</title>
-    <link href="css/styles.css" rel="stylesheet"/>
+    <link href="css/styles.css" rel="stylesheet" />
     <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
     />
-    <link href="favicon.ico?v=1" rel="icon" type="image/x-icon"/>
-</head>
-<body class="auth-page">
-<div class="lang-toggle-wrap">
-    <button class="lang-toggle-btn" id="lang-toggle-btn">
+    <link href="favicon.ico?v=1" rel="icon" type="image/x-icon" />
+  </head>
+  <body class="auth-page">
+    <div class="lang-toggle-wrap">
+      <button class="lang-toggle-btn" id="lang-toggle-btn">
         <span id="lang-flag"></span>
         <span id="lang-label"></span>
-    </button>
-</div>
-<main>
-    <form id="register-form" novalidate>
+      </button>
+    </div>
+    <main>
+      <form id="register-form" novalidate>
         <div class="logo">
-            <svg
-                    aria-hidden="true"
-                    fill="none"
-                    focusable="false"
-                    height="30"
-                    stroke="#1a3a5c"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.75"
-                    viewBox="0 0 24 24"
-                    width="30"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <rect height="14" rx="3" width="20" x="2" y="5"/>
-                <line x1="2" x2="22" y1="10" y2="10"/>
-                <line x1="6" x2="10" y1="15" y2="15"/>
-                <circle cx="17" cy="15" fill="#1a3a5c" r="1.5"/>
-            </svg>
+          <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height="30"
+            stroke="#1a3a5c"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.75"
+            viewBox="0 0 24 24"
+            width="30"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect height="14" rx="3" width="20" x="2" y="5" />
+            <line x1="2" x2="22" y1="10" y2="10" />
+            <line x1="6" x2="10" y1="15" y2="15" />
+            <circle cx="17" cy="15" fill="#1a3a5c" r="1.5" />
+          </svg>
         </div>
         <h1>BankLite</h1>
         <p data-i18n="register_subtitle">Create your account</p>
         <div
-                aria-live="polite"
-                class="error-msg"
-                id="error-msg"
-                role="alert"
+          aria-live="polite"
+          class="error-msg"
+          id="error-msg"
+          role="alert"
         ></div>
 
         <label data-i18n="register_fullname" for="fullName">Full Name</label>
         <div class="input-wrap">
-            <svg
-                    aria-hidden="true"
-                    class="input-icon"
-                    fill="none"
-                    focusable="false"
-                    height="16"
-                    stroke="#9ca3af"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                <circle cx="12" cy="7" r="4"/>
-            </svg>
-            <input
-                    autocomplete="name"
-                    data-i18n="placeholder_fullname"
-                    data-i18n-attr="placeholder"
-                    id="fullName"
-                    name="fullName"
-                    placeholder="Full Name"
-                    required
-                    type="text"
-            />
+          <svg
+            aria-hidden="true"
+            class="input-icon"
+            fill="none"
+            focusable="false"
+            height="16"
+            stroke="#9ca3af"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <input
+            autocomplete="name"
+            data-i18n="placeholder_fullname"
+            data-i18n-attr="placeholder"
+            id="fullName"
+            name="fullName"
+            placeholder="Full Name"
+            required
+            type="text"
+          />
         </div>
 
         <label data-i18n="register_email" for="email">Email</label>
 
         <div class="input-wrap">
-            <svg
-                    aria-hidden="true"
-                    class="input-icon"
-                    fill="none"
-                    focusable="false"
-                    height="16"
-                    stroke="#9ca3af"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                />
-                <polyline points="22,6 12,13 2,6"/>
-            </svg>
-            <input
-                    autocomplete="email"
-                    data-i18n="placeholder_email"
-                    data-i18n-attr="placeholder"
-                    id="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    required
-                    type="email"
+          <svg
+            aria-hidden="true"
+            class="input-icon"
+            fill="none"
+            focusable="false"
+            height="16"
+            stroke="#9ca3af"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
             />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          <input
+            autocomplete="email"
+            data-i18n="placeholder_email"
+            data-i18n-attr="placeholder"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+            type="email"
+          />
         </div>
 
         <label data-i18n="register_password" for="password">Password</label>
 
         <div class="input-wrap">
-            <svg
-                    aria-hidden="true"
-                    class="input-icon"
-                    fill="none"
-                    focusable="false"
-                    height="16"
-                    stroke="#9ca3af"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <rect height="11" rx="2" ry="2" width="18" x="3" y="11"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <input
-                    autocomplete="new-password"
-                    id="password"
-                    name="password"
-                    placeholder="••••••••"
-                    required
-                    type="password"
-            />
+          <svg
+            aria-hidden="true"
+            class="input-icon"
+            fill="none"
+            focusable="false"
+            height="16"
+            stroke="#9ca3af"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect height="11" rx="2" ry="2" width="18" x="3" y="11" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <input
+            autocomplete="new-password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+            type="password"
+          />
 
-            <button
-                    aria-label="Toggle password visibility"
-                    class="toggle-password"
-                    id="toggle-password"
-                    type="button"
+          <button
+            aria-label="Toggle password visibility"
+            class="toggle-password"
+            id="toggle-password"
+            type="button"
+          >
+            <svg
+              fill="none"
+              height="16"
+              id="eye-icon"
+              stroke="#9ca3af"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
             >
-                <svg
-                        fill="none"
-                        height="16"
-                        id="eye-icon"
-                        stroke="#9ca3af"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
-            </button>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
         </div>
 
         <label data-i18n="register_confirm_password" for="confirmPassword"
-        >Confirm Password</label
+          >Confirm Password</label
         >
         <div class="input-wrap">
-            <svg
-                    aria-hidden="true"
-                    class="input-icon"
-                    fill="none"
-                    focusable="false"
-                    height="16"
-                    stroke="#9ca3af"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <rect height="11" rx="2" ry="2" width="18" x="3" y="11"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <input
-                    autocomplete="new-password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    placeholder="••••••••"
-                    required
-                    type="password"
-            />
+          <svg
+            aria-hidden="true"
+            class="input-icon"
+            fill="none"
+            focusable="false"
+            height="16"
+            stroke="#9ca3af"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect height="11" rx="2" ry="2" width="18" x="3" y="11" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <input
+            autocomplete="new-password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="••••••••"
+            required
+            type="password"
+          />
 
-            <button
-                    aria-label="Toggle password visibility"
-                    class="toggle-password"
-                    id="toggle-password-confirm"
-                    type="button"
+          <button
+            aria-label="Toggle password visibility"
+            class="toggle-password"
+            id="toggle-password-confirm"
+            type="button"
+          >
+            <svg
+              fill="none"
+              height="16"
+              id="eye-icon-confirm"
+              stroke="#9ca3af"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
             >
-                <svg
-                        fill="none"
-                        height="16"
-                        id="eye-icon-confirm"
-                        stroke="#9ca3af"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
-            </button>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
         </div>
 
         <button data-i18n="register_btn" id="register-btn" type="submit">
-            Register
+          Register
         </button>
         <p class="auth-footer">
           <span class="muted" data-i18n="register_have_account"
-          >Already have an account?</span
+            >Already have an account?</span
           >
-            <a class="link-accent" data-i18n="register_signin" href="index.html"
+          <a class="link-accent" data-i18n="register_signin" href="index.html"
             >Sign in</a
-            >
+          >
         </p>
-    </form>
-</main>
-<script src="js/i18n.js"></script>
-<script src="js/api.js"></script>
-<script src="js/auth.js"></script>
-</body>
+      </form>
+    </main>
+    <script src="js/i18n.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
 </html>

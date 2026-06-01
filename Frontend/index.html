@@ -1,225 +1,230 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta
-            content="BankLite secure online banking | Manage your accounts, deposits, withdrawals and transfers."
-            name="description"
+      content="BankLite secure online banking | Manage your accounts, deposits, withdrawals and transfers."
+      name="description"
     />
-    <meta content="index, follow" name="robots"/>
-    <meta content="BankLite | Login" property="og:title"/>
+    <meta content="index, follow" name="robots" />
+    <meta content="BankLite | Login" property="og:title" />
     <meta
-            content="A modern personal banking app to manage your accounts, deposits, withdrawals and transfers."
-            property="og:description"
+      content="A modern personal banking app to manage your accounts, deposits, withdrawals and transfers."
+      property="og:description"
     />
-    <meta content="website" property="og:type"/>
-    <meta content="#1a3a5c" name="theme-color"/>
+    <meta content="website" property="og:type" />
+    <meta content="#1a3a5c" name="theme-color" />
     <title>BankLite | Login</title>
-    <link href="css/styles.css" rel="stylesheet"/>
+    <link href="css/styles.css" rel="stylesheet" />
     <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-            rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
     />
-    <link href="favicon.ico?v=1" rel="icon" type="image/x-icon"/>
-</head>
-<body class="auth-page">
-<div class="lang-toggle-wrap">
-    <button aria-label="Change language" class="lang-toggle-btn" data-testid="language-toggle" id="lang-toggle-btn">
+    <link href="favicon.ico?v=1" rel="icon" type="image/x-icon" />
+  </head>
+  <body class="auth-page">
+    <div class="lang-toggle-wrap">
+      <button
+        aria-label="Change language"
+        class="lang-toggle-btn"
+        data-testid="language-toggle"
+        id="lang-toggle-btn"
+      >
         <span id="lang-flag"></span>
         <span id="lang-label"></span>
-    </button>
-</div>
-<main>
-    <form id="login-form" novalidate>
+      </button>
+    </div>
+    <main>
+      <form id="login-form" novalidate>
         <div class="logo">
-            <svg
-                    aria-hidden="true"
-                    fill="none"
-                    focusable="false"
-                    height="30"
-                    stroke="#1a3a5c"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="1.75"
-                    viewBox="0 0 24 24"
-                    width="30"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <rect height="14" rx="3" width="20" x="2" y="5"/>
-                <line x1="2" x2="22" y1="10" y2="10"/>
-                <line x1="6" x2="10" y1="15" y2="15"/>
-                <circle cx="17" cy="15" fill="#1a3a5c" r="1.5"/>
-            </svg>
+          <svg
+            aria-hidden="true"
+            fill="none"
+            focusable="false"
+            height="30"
+            stroke="#1a3a5c"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.75"
+            viewBox="0 0 24 24"
+            width="30"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect height="14" rx="3" width="20" x="2" y="5" />
+            <line x1="2" x2="22" y1="10" y2="10" />
+            <line x1="6" x2="10" y1="15" y2="15" />
+            <circle cx="17" cy="15" fill="#1a3a5c" r="1.5" />
+          </svg>
         </div>
         <h1>BankLite</h1>
         <p data-i18n="login_subtitle">Sign in to your account</p>
         <div
-                aria-live="polite"
-                class="error-msg"
-                id="error-msg"
-                role="alert"
+          aria-live="polite"
+          class="error-msg"
+          id="error-msg"
+          role="alert"
         ></div>
         <label data-i18n="login_email" for="email">Email</label>
 
         <div class="input-wrap">
-            <svg
-                    aria-hidden="true"
-                    class="input-icon"
-                    fill="none"
-                    focusable="false"
-                    height="16"
-                    stroke="#9ca3af"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <path
-                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                />
-                <polyline points="22,6 12,13 2,6"/>
-            </svg>
-            <input
-                    autocomplete="email"
-                    data-i18n="placeholder_email"
-                    data-i18n-attr="placeholder"
-                    id="email"
-                    name="email"
-                    placeholder="you@example.com"
-                    required
-                    type="email"
+          <svg
+            aria-hidden="true"
+            class="input-icon"
+            fill="none"
+            focusable="false"
+            height="16"
+            stroke="#9ca3af"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
             />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          <input
+            autocomplete="email"
+            data-i18n="placeholder_email"
+            data-i18n-attr="placeholder"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+            type="email"
+          />
         </div>
 
         <label data-i18n="login_password" for="password">Password</label>
 
         <div class="input-wrap">
-            <svg
-                    aria-hidden="true"
-                    class="input-icon"
-                    fill="none"
-                    focusable="false"
-                    height="16"
-                    stroke="#9ca3af"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                    width="16"
-                    xmlns="http://www.w3.org/2000/svg"
-            >
-                <rect height="11" rx="2" ry="2" width="18" x="3" y="11"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <input
-                    autocomplete="current-password"
-                    id="password"
-                    name="password"
-                    placeholder="••••••••"
-                    required
-                    type="password"
-            />
+          <svg
+            aria-hidden="true"
+            class="input-icon"
+            fill="none"
+            focusable="false"
+            height="16"
+            stroke="#9ca3af"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="16"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect height="11" rx="2" ry="2" width="18" x="3" y="11" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <input
+            autocomplete="current-password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            required
+            type="password"
+          />
 
-            <button
-                    aria-label="Toggle password visibility"
-                    class="toggle-password"
-                    id="toggle-password"
-                    type="button"
+          <button
+            aria-label="Toggle password visibility"
+            class="toggle-password"
+            id="toggle-password"
+            type="button"
+          >
+            <svg
+              fill="none"
+              height="16"
+              id="eye-icon"
+              stroke="#6b7280"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="16"
+              xmlns="http://www.w3.org/2000/svg"
             >
-                <svg
-                        fill="none"
-                        height="16"
-                        id="eye-icon"
-                        stroke="#6b7280"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        viewBox="0 0 24 24"
-                        width="16"
-                        xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
-            </button>
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          </button>
         </div>
 
         <div class="forgot-password">
-            <a
-                    class="link-accent"
-                    data-i18n="login_forgot"
-                    href="#"
-                    id="forgot-password-link"
+          <a
+            class="link-accent"
+            data-i18n="login_forgot"
+            href="#"
+            id="forgot-password-link"
             >Forgot password?</a
-            >
+          >
         </div>
         <button data-i18n="login_btn" id="login-btn" type="submit">
-            Sign in
+          Sign in
         </button>
         <p class="auth-footer">
           <span class="muted" data-i18n="login_no_account"
-          >Don't have an account?</span
+            >Don't have an account?</span
           >
-            <a class="link-accent" data-i18n="login_register" href="register.html"
+          <a class="link-accent" data-i18n="login_register" href="register.html"
             >Register</a
-            >
+          >
         </p>
-    </form>
-</main>
-<script src="js/i18n.js"></script>
-<script src="js/api.js"></script>
-<script src="js/auth.js"></script>
+      </form>
+    </main>
+    <script src="js/i18n.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 
-<div class="modal-overlay hidden forgot-modal" id="forgot-modal">
-    <div class="modal">
+    <div class="modal-overlay hidden forgot-modal" id="forgot-modal">
+      <div class="modal">
         <h3 class="modal-title" data-i18n="forgot_title">Reset Password</h3>
         <p class="modal-text" data-i18n="forgot_text">
-            Enter your email, we'll send you a reset link. Valid for 15 minutes.
+          Enter your email, we'll send you a reset link. Valid for 15 minutes.
         </p>
         <div
-                aria-live="polite"
-                class="error-msg"
-                id="forgot-error"
-                role="alert"
+          aria-live="polite"
+          class="error-msg"
+          id="forgot-error"
+          role="alert"
         ></div>
         <div
-                aria-live="polite"
-                class="success-msg hidden"
-                id="forgot-success"
-                role="status"
+          aria-live="polite"
+          class="success-msg hidden"
+          id="forgot-success"
+          role="status"
         ></div>
         <div class="forgot-email-wrap">
-            <input
-                    autocomplete="email"
-                    class="no-icon-input"
-                    data-testid="forgot-email-input"
-                    data-i18n="placeholder_email"
-                    data-i18n-attr="placeholder"
-                    id="forgot-email"
-                    placeholder="you@example.com"
-                    type="email"
-            />
+          <input
+            autocomplete="email"
+            class="no-icon-input"
+            data-testid="forgot-email-input"
+            data-i18n="placeholder_email"
+            data-i18n-attr="placeholder"
+            id="forgot-email"
+            placeholder="you@example.com"
+            type="email"
+          />
         </div>
         <div class="modal-actions">
-            <button
-                    class="modal-cancel modal-btn-flex"
-                    data-i18n="forgot_cancel"
-                    id="forgot-cancel-btn"
-            >
-                Cancel
-            </button>
-            <button
-                    class="modal-btn-flex"
-                    data-i18n="forgot_submit"
-                    id="forgot-submit-btn"
-            >
-                Send Reset Link
-            </button>
+          <button
+            class="modal-cancel modal-btn-flex"
+            data-i18n="forgot_cancel"
+            id="forgot-cancel-btn"
+          >
+            Cancel
+          </button>
+          <button
+            class="modal-btn-flex"
+            data-i18n="forgot_submit"
+            id="forgot-submit-btn"
+          >
+            Send Reset Link
+          </button>
         </div>
+      </div>
     </div>
-</div>
-</body>
+  </body>
 </html>

@@ -384,7 +384,7 @@ document.addEventListener("DOMContentLoaded", function () {
               minute: "2-digit",
             })
           : t("first_login");
-    } catch (e) {}
+    } catch {}
   }
 
   const changePasswordBtn = document.getElementById("change-password-btn");
@@ -443,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
         await deleteAccount();
         await logout();
         window.location.href = "index.html";
-      } catch (error) {
+      } catch {
         document.getElementById("delete-modal").style.display = "none";
       }
     });
@@ -534,7 +534,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await sendChatMessage(message);
       removeTyping();
       addMessage(response, false);
-    } catch (error) {
+    } catch {
       removeTyping();
       addMessage(t("chatbot_error"), false);
     } finally {

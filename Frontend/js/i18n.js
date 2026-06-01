@@ -515,8 +515,8 @@ function applyTranslations() {
   if (titles[page]) document.title = titles[page][lang] || titles[page].en;
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    const attr = el.getAttribute("data-i18n-attr");
+    const key = el.dataset.i18n;
+    const attr = el.dataset.i18nAttr;
     if (attr) {
       el.setAttribute(attr, t(key));
     } else {
