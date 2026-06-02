@@ -11,3 +11,5 @@
 **/*.user
 appsettings.Development.json
 appsettings.Testing.json
+**/appsettings.Development.json
+**/appsettings.Testing.json

@@ -14,6 +14,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:19be23fe71e885186495d8da1f2d417e
 WORKDIR /app
 
 RUN apt-get update \
+    && apt-get upgrade --yes \
     && apt-get install --no-install-recommends --yes curl \
     && rm -rf /var/lib/apt/lists/*
 
