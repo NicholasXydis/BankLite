@@ -8,7 +8,7 @@ export default defineConfig({
   expect: { timeout: 10000 },
   retries: process.env.CI ? 1 : 0,
   use: {
-    baseURL: 'http://localhost:5500',
+    baseURL: process.env.E2E_FRONTEND_URL ?? 'http://localhost:5500',
     browserName: 'chromium',
     ...devices['Desktop Chrome'],
     trace: 'on-first-retry',

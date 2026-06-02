@@ -95,7 +95,7 @@ Application, Infrastructure et API.*
 
 ```bash
 git clone https://github.com/NicholasXydis/BankLiteAPI.git
-cd BankLiteAPI/BankLiteAPI
+cd BankLiteAPI/backend/BankLiteAPI
 ```
 
 **2. Install EF Core CLI / Installer EF Core CLI**
@@ -132,7 +132,7 @@ Copy `appsettings.example.json` to `appsettings.json` and fill in your values:
 **4. Apply migrations / Appliquer les migrations**
 
 ```bash
-dotnet ef database update --project BankLite.Infrastructure --startup-project BankLite.API
+dotnet ef database update --project ../BankLite.Infrastructure --startup-project BankLite.API
 ```
 
 **5. Run the API / Lancer l'API**
@@ -268,24 +268,28 @@ On first run, the database is automatically seeded with a test user and two acco
 
 ```
 BankLiteAPI/
-├── BankLite.Domain/
-│   ├── Entities/          # User, Account, Transaction, AuditLog
-│   └── Interfaces/        # Repository and service interfaces
-├── BankLite.Application/
-│   ├── DTOs/              # Data transfer objects
-│   ├── Interfaces/        # Service interfaces
-│   ├── Services/          # AuthService, AccountService, TransactionService
-│   └── Validators/        # FluentValidation validators
-├── BankLite.Infrastructure/
-│   ├── Data/              # BankLiteDbContext, UnitOfWork, SeedData
-│   ├── Migrations/        # EF Core migrations
-│   └── Repositories/      # Repository implementations
-├── BankLite.API/
-│   ├── Controllers/       # AuthController, AccountController, TransactionController
-│   ├── Middleware/        # ExceptionMiddleware
-│   └── Program.cs         # App configuration
-└── BankLite.Tests/
-    └── Services/          # AuthServiceTests, TransactionServiceTests
+├── backend/
+│   ├── BankLite.Domain/
+│   │   ├── Entities/          # User, Account, Transaction, AuditLog
+│   │   └── Interfaces/        # Repository and service interfaces
+│   ├── BankLite.Application/
+│   │   ├── DTOs/              # Data transfer objects
+│   │   ├── Interfaces/        # Service interfaces
+│   │   ├── Services/          # AuthService, AccountService, TransactionService
+│   │   └── Validators/        # FluentValidation validators
+│   ├── BankLite.Infrastructure/
+│   │   ├── Data/              # BankLiteDbContext, UnitOfWork, SeedData
+│   │   ├── Migrations/        # EF Core migrations
+│   │   └── Repositories/      # Repository implementations
+│   ├── BankLiteAPI/
+│   │   └── BankLite.API/
+│   │       ├── Controllers/       # AuthController, AccountController, TransactionController
+│   │       ├── Middleware/        # ExceptionMiddleware
+│   │       └── Program.cs         # App configuration
+│   └── BankLite.Tests/
+│       └── Services/          # AuthServiceTests, TransactionServiceTests
+└── Frontend/
+    └── Frontend.Tests/
 ```
 
 ---

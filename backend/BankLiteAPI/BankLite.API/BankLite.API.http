@@ -1,6 +1,6 @@
 @BankLite.API_HostAddress = http://localhost:5028
 
-GET {{BankLite.API_HostAddress}}/weatherforecast/
+GET {{BankLite.API_HostAddress}}/health
 Accept: application/json
 
 ###
