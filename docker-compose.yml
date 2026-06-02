@@ -20,6 +20,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    shm_size: 128mb
     mem_limit: 512m
     cpus: 1.0
     security_opt:
@@ -121,7 +122,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "80:8080"
+      - "127.0.0.1:8080:8080"
     depends_on:
       api:
         condition: service_healthy
