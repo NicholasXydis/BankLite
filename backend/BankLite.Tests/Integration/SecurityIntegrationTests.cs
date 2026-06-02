@@ -270,7 +270,7 @@ public class SecurityIntegrationTests : IAsyncLifetime
         var token = await RegisterAndGetTokenAsync();
         _client.DefaultRequestHeaders.Remove("Cookie");
 
-        var response = await _client.PostAsJsonAsync("/api/auth/logout",
+        var response = await _client.PostAsJsonAsync("/api/auth/refresh/logout",
             new { token });
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

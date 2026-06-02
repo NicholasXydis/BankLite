@@ -144,7 +144,7 @@ namespace BankLite.API.Controllers
             return Ok(new { message = "Password reset successfully." });
         }
 
-        [HttpPost("logout")]
+        [HttpPost("refresh/logout")]
         [Authorize]
         [SwaggerOperation(Summary = "Logout", Description = "Revokes the refresh token and clears all auth cookies.")]
         [ProducesResponseType(200)]

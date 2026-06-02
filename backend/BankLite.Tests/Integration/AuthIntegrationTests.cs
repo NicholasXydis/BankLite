@@ -480,14 +480,14 @@ public class AuthIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Refresh_RevokedToken_Returns401()
+    public async Task Logout_CopiedRefreshTokenReplay_Returns401()
     {
         var email = _faker.Internet.Email();
         var (registerResponse, _) = await RegisterUserAsync(email);
         var accessToken = ExtractCookieValue(registerResponse, "accessToken");
         var refreshToken = ExtractCookieValue(registerResponse, "refreshToken");
 
-        var logoutRequest = new HttpRequestMessage(HttpMethod.Post, "/api/auth/logout");
+        var logoutRequest = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh/logout");
         logoutRequest.Headers.Add("Cookie", $"accessToken={accessToken}; refreshToken={refreshToken}");
         await _client.SendAsync(logoutRequest);
 
@@ -534,9 +534,10 @@ public class AuthIntegrationTests : IAsyncLifetime
         var email = _faker.Internet.Email();
         var (registerResponse, _) = await RegisterUserAsync(email);
         var accessToken = ExtractCookieValue(registerResponse, "accessToken");
+        var refreshToken = ExtractCookieValue(registerResponse, "refreshToken");
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "/api/auth/logout");
-        request.Headers.Add("Cookie", $"accessToken={accessToken}");
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh/logout");
+        request.Headers.Add("Cookie", $"accessToken={accessToken}; refreshToken={refreshToken}");
         var response = await _client.SendAsync(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -548,19 +549,22 @@ public class AuthIntegrationTests : IAsyncLifetime
         var email = _faker.Internet.Email();
         var (registerResponse, _) = await RegisterUserAsync(email);
         var accessToken = ExtractCookieValue(registerResponse, "accessToken");
+        var refreshToken = ExtractCookieValue(registerResponse, "refreshToken");
 
-        var request = new HttpRequestMessage(HttpMethod.Post, "/api/auth/logout");
-        request.Headers.Add("Cookie", $"accessToken={accessToken}");
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh/logout");
+        request.Headers.Add("Cookie", $"accessToken={accessToken}; refreshToken={refreshToken}");
         var response = await _client.SendAsync(request);
 
         var cookies = response.Headers.GetValues("Set-Cookie").ToList();
         cookies.Should().Contain(c => c.Contains("accessToken") && c.Contains("expires="));
+        cookies.Should().Contain(c => c.Contains("refreshToken") && c.Contains("expires=") &&
+                                     c.Contains("path=/api/auth/refresh"));
     }
 
     [Fact]
     public async Task Logout_Unauthenticated_Returns401()
     {
-        var response = await _client.PostAsync("/api/auth/logout", null);
+        var response = await _client.PostAsync("/api/auth/refresh/logout", null);
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
