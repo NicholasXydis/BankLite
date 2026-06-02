@@ -154,6 +154,7 @@ function typeText(elementId, text, speed = 180) {
 }
 
 function countUp(element, target, duration = 1000) {
+  if (element._countUpTimer) clearInterval(element._countUpTimer);
   const start = 0;
   const increment = target / (duration / 16);
   let current = start;
@@ -162,12 +163,14 @@ function countUp(element, target, duration = 1000) {
     if (current >= target) {
       current = target;
       clearInterval(timer);
+      element._countUpTimer = null;
     }
     element.textContent = `$${current.toLocaleString("en-CA", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
   }, 16);
+  element._countUpTimer = timer;
 }
 
 loadDashboard();
@@ -307,25 +310,33 @@ function connectSignalR() {
     .build();
 
   connection.on("BalanceUpdated", (accountId, newBalance) => {
-    const cached = sessionStorage.getItem("cachedAccounts");
-    if (cached) {
-      const accounts = JSON.parse(cached);
-      const account = accounts.find((a) => a.id === accountId);
-      if (account) {
-        account.balance = newBalance;
-        sessionStorage.setItem("cachedAccounts", JSON.stringify(accounts));
-      }
-      const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
-      const totalEl = document.getElementById("total-balance-amount");
-      if (totalEl) countUp(totalEl, totalBalance, 600);
-    }
-
     const balanceEl = document.querySelector(
       `[data-account-id="${accountId}"] .account-balance-amount`,
     );
     if (balanceEl) {
       countUp(balanceEl, newBalance, 600);
     }
+
+    setTimeout(async () => {
+      const accounts = await getAccounts(true);
+      for (const account of accounts) {
+        const accountBalanceEl = document.querySelector(
+          `[data-account-id="${account.id}"] .account-balance-amount`,
+        );
+        if (accountBalanceEl) {
+          countUp(accountBalanceEl, account.balance, 600);
+        }
+      }
+
+      const totalEl = document.getElementById("total-balance-amount");
+      if (totalEl) {
+        const totalBalance = accounts.reduce(
+          (sum, account) => sum + account.balance,
+          0,
+        );
+        countUp(totalEl, totalBalance, 600);
+      }
+    }, 250);
   });
 
   connection

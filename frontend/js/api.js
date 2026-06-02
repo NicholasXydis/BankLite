@@ -364,7 +364,7 @@ async function sendChatMessage(message) {
 }
 
 async function logoutApi() {
-  await fetch(API_URL + "/api/auth/logout", {
+  await fetch(API_URL + "/api/auth/refresh/logout", {
     method: "POST",
     credentials: "include",
   });
