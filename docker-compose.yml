@@ -95,6 +95,7 @@ services:
     networks:
       - api-db-network
       - frontend-api-network
+      - api-egress-network
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://localhost:8080/health"]
       interval: 30s
@@ -157,3 +158,4 @@ networks:
     internal: true
   api-db-network:
     internal: true
+  api-egress-network:
