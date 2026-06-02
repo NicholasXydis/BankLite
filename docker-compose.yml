@@ -1,0 +1,159 @@
+services:
+  db:
+    image: postgres:16-alpine@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229
+    user: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-app-user.sh:/docker-entrypoint-initdb.d/init-app-user.sh:ro
+    networks:
+      - api-db-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username \"$$POSTGRES_USER\" --dbname \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    mem_limit: 512m
+    cpus: 1.0
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql:uid=70,gid=70,mode=3775
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    profiles:
+      - tools
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ConnectionStrings__DefaultConnection: ${DB_MIGRATION_CONNECTION_STRING}
+      Frontend__ResetPasswordUrl: ${RESET_PASSWORD_URL}
+      Groq__ApiKey: ${GROQ_API_KEY}
+      JwtSettings__Audience: ${JWT_AUDIENCE}
+      JwtSettings__Issuer: ${JWT_ISSUER}
+      JwtSettings__Secret: ${JWT_SECRET}
+      AllowedOrigins__Frontend: ${FRONTEND_URL}
+      SendGrid__ApiKey: ${SENDGRID_API_KEY}
+      SendGrid__FromEmail: ${SENDGRID_FROM_EMAIL}
+      SendGrid__FromName: ${SENDGRID_FROM_NAME}
+    command: ["--migrate"]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - api-db-network
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      Frontend__ResetPasswordUrl: ${RESET_PASSWORD_URL}
+      Groq__ApiKey: ${GROQ_API_KEY}
+      JwtSettings__Audience: ${JWT_AUDIENCE}
+      JwtSettings__Issuer: ${JWT_ISSUER}
+      JwtSettings__Secret: ${JWT_SECRET}
+      AllowedOrigins__Frontend: ${FRONTEND_URL}
+      SendGrid__ApiKey: ${SENDGRID_API_KEY}
+      SendGrid__FromEmail: ${SENDGRID_FROM_EMAIL}
+      SendGrid__FromName: ${SENDGRID_FROM_NAME}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - api-db-network
+      - frontend-api-network
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    cpus: 1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - edge-network
+      - frontend-api-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 128m
+    cpus: 0.5
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+
+networks:
+  edge-network:
+  frontend-api-network:
+    internal: true
+  api-db-network:
+    internal: true
