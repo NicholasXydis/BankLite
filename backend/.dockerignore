@@ -1,0 +1,13 @@
+.env
+.git/
+.idea/
+.vs/
+**/bin/
+**/logs/
+**/obj/
+**/TestResults/
+**/test-results/
+**/*.suo
+**/*.user
+appsettings.Development.json
+appsettings.Testing.json

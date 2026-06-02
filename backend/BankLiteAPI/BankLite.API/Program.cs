@@ -31,8 +31,7 @@ builder.Host.UseSerilog((context, config) =>
         .MinimumLevel.Is(context.HostingEnvironment.IsDevelopment()
             ? LogEventLevel.Information
             : LogEventLevel.Warning)
-        .WriteTo.Console()
-        .WriteTo.File("logs/banklite.txt", rollingInterval: RollingInterval.Day);
+        .WriteTo.Console();
 });
 
 builder.Services.AddControllers();
@@ -221,17 +220,17 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-using (IServiceScope scope = app.Services.CreateScope())
+if (args.Contains("--migrate", StringComparer.Ordinal))
 {
+    using IServiceScope scope = app.Services.CreateScope();
     BankLiteDbContext context = scope.ServiceProvider.GetRequiredService<BankLiteDbContext>();
-    if (!app.Environment.IsEnvironment("Testing"))
+    await context.Database.MigrateAsync();
+    if (app.Environment.IsDevelopment())
     {
-        await context.Database.MigrateAsync();
-        if (app.Environment.IsDevelopment())
-        {
-            await SeedData.SeedAsync(context);
-        }
+        await SeedData.SeedAsync(context);
     }
+
+    return;
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
