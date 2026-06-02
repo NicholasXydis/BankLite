@@ -1,0 +1,134 @@
+services:
+  db:
+    image: postgres:16-alpine@sha256:16bc17c64a573ef34162af9298258d1aec548232985b33ed7b1eac33ba35c229
+    user: postgres
+    environment:
+      POSTGRES_APP_PASSWORD: banklite_e2e_app_password
+      POSTGRES_APP_USER: bank_app
+      POSTGRES_DB: banklite_e2e
+      POSTGRES_PASSWORD: banklite_e2e_admin_password
+      POSTGRES_USER: banklite_admin
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres_e2e_data:/var/lib/postgresql/data
+      - ./docker/postgres/init-app-user.sh:/docker-entrypoint-initdb.d/init-app-user.sh:ro
+    networks:
+      - api-db-network
+      - db-host-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username \"$$POSTGRES_USER\" --dbname \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/run/postgresql:uid=70,gid=70,mode=3775
+
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Testing
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=banklite_e2e;Username=banklite_admin;Password=banklite_e2e_admin_password
+      Frontend__ResetPasswordUrl: http://127.0.0.1:5500/reset-password.html
+      Groq__ApiKey: banklite-e2e-groq-key
+      JwtSettings__Audience: BankLiteE2EUsers
+      JwtSettings__Issuer: BankLiteE2E
+      JwtSettings__Secret: banklite-e2e-jwt-secret-at-least-32-characters
+      AllowedOrigins__Frontend: http://127.0.0.1:5500
+      SendGrid__ApiKey: banklite-e2e-sendgrid-key
+      SendGrid__FromEmail: no-reply@banklite.test
+      SendGrid__FromName: BankLite E2E
+    command: ["--migrate"]
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - api-db-network
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Testing
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=banklite_e2e;Username=bank_app;Password=banklite_e2e_app_password
+      Frontend__ResetPasswordUrl: http://127.0.0.1:5500/reset-password.html
+      Groq__ApiKey: banklite-e2e-groq-key
+      JwtSettings__Audience: BankLiteE2EUsers
+      JwtSettings__Issuer: BankLiteE2E
+      JwtSettings__Secret: banklite-e2e-jwt-secret-at-least-32-characters
+      AllowedOrigins__Frontend: http://127.0.0.1:5500
+      SendGrid__ApiKey: banklite-e2e-sendgrid-key
+      SendGrid__FromEmail: no-reply@banklite.test
+      SendGrid__FromName: BankLite E2E
+    ports:
+      - "127.0.0.1:5028:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - api-db-network
+      - frontend-api-network
+      - api-host-network
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--show-error", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "127.0.0.1:5500:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - frontend-api-network
+      - frontend-host-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:8080/"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+
+volumes:
+  postgres_e2e_data:
+
+networks:
+  api-db-network:
+    internal: true
+  frontend-api-network:
+    internal: true
+  db-host-network:
+  api-host-network:
+  frontend-host-network:
