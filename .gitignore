@@ -477,4 +477,5 @@ $RECYCLE.BIN/
 #Extras
 appsettings.Development.json
 appsettings.Testing.json
+!backend/BankLite.Tests/appsettings.Testing.json
 /logs

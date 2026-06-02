@@ -73,6 +73,7 @@ public class BankLiteWebApplicationFactory : WebApplicationFactory<Program>, IAs
             config.AddJsonFile(
                 Path.Combine(AppContext.BaseDirectory, "appsettings.Testing.json"),
                 false);
+            config.AddEnvironmentVariables();
         });
 
         builder.ConfigureServices(services =>
