@@ -8,6 +8,18 @@ updates:
       time: "09:00"
       timezone: America/Toronto
     open-pull-requests-limit: 5
+    groups:
+      routine-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: nuget
     directory: /backend
@@ -17,6 +29,18 @@ updates:
       time: "09:00"
       timezone: America/Toronto
     open-pull-requests-limit: 5
+    groups:
+      routine-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: npm
     directory: /frontend/tests
@@ -26,6 +50,18 @@ updates:
       time: "09:00"
       timezone: America/Toronto
     open-pull-requests-limit: 5
+    groups:
+      routine-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: docker
     directories:
@@ -37,6 +73,18 @@ updates:
       time: "09:00"
       timezone: America/Toronto
     open-pull-requests-limit: 5
+    groups:
+      routine-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: docker-compose
     directory: /
@@ -46,3 +94,15 @@ updates:
       time: "09:00"
       timezone: America/Toronto
     open-pull-requests-limit: 5
+    groups:
+      routine-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - version-update:semver-major
