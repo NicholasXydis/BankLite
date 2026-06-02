@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compose-validation:
+    name: Compose Validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate production Compose
+        run: docker compose --env-file .env.example config --quiet
+
+      - name: Validate E2E Compose
+        run: docker compose --file docker-compose.e2e.yml config --quiet
+
+  backend-tests:
+    name: Backend Tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore backend dependencies
+        run: dotnet restore backend/BankLite.Tests/BankLite.Tests.csproj
+
+      - name: Run backend tests
+        run: dotnet test backend/BankLite.Tests/BankLite.Tests.csproj --configuration Release --no-restore --collect:"XPlat Code Coverage" --results-directory backend/TestResults
+
+      - name: Upload backend test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-results
+          path: backend/TestResults
+          if-no-files-found: error
+          retention-days: 14
+
+  playwright-tests:
+    name: Playwright Tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      E2E_FRONTEND_URL: http://127.0.0.1:5500
+      E2E_API_URL: http://127.0.0.1:5028
+      E2E_DATABASE_URL: postgresql://banklite_admin:banklite_e2e_admin_password@127.0.0.1:5433/banklite_e2e
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/tests/package-lock.json
+
+      - name: Install Playwright dependencies
+        working-directory: frontend/tests
+        run: npm ci
+
+      - name: Install Chromium
+        working-directory: frontend/tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Start E2E stack
+        run: docker compose --file docker-compose.e2e.yml up --build --detach --wait
+
+      - name: Show E2E stack state
+        run: docker compose --file docker-compose.e2e.yml ps
+
+      - name: Run Playwright tests
+        working-directory: frontend/tests
+        run: npm test
+
+      - name: Capture E2E logs
+        if: ${{ failure() }}
+        run: docker compose --file docker-compose.e2e.yml logs --no-color > e2e-docker.log
+
+      - name: Upload Playwright failure artifacts
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-artifacts
+          path: |
+            e2e-docker.log
+            frontend/tests/test-results
+            frontend/tests/playwright-report
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Stop E2E stack
+        if: ${{ always() }}
+        run: docker compose --file docker-compose.e2e.yml down --volumes --remove-orphans
