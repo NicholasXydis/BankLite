@@ -1,10 +1,12 @@
+import { randomBytes } from 'node:crypto';
+
 export function generateEmail() {
-  const random = Math.random().toString(36).slice(2, 8);
+  const random = randomBytes(6).toString('hex');
   return `e2e-${Date.now()}-${random}@banklite.test`;
 }
 
 export function generatePassword() {
-  const random = Math.random().toString(36).slice(2, 8);
+  const random = randomBytes(6).toString('hex');
   return `Test@${random}123!`;
 }
 

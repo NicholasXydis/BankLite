@@ -37,13 +37,13 @@ namespace BankLite.API.Middleware
 
                 if (context.Response.StatusCode >= 500)
                 {
-                    _logger.LogError(ex, "Unhandled exception on {Method} {Path}",
-                        context.Request.Method, context.Request.Path);
+                    _logger.LogError(ex, "Unhandled exception for request {TraceIdentifier}",
+                        context.TraceIdentifier);
                 }
                 else
                 {
-                    _logger.LogWarning("Request rejected with status {StatusCode} on {Method} {Path}",
-                        context.Response.StatusCode, context.Request.Method, context.Request.Path);
+                    _logger.LogWarning("Request {TraceIdentifier} rejected with status {StatusCode}",
+                        context.TraceIdentifier, context.Response.StatusCode);
                 }
 
                 string message = context.Response.StatusCode >= 500
