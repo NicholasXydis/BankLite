@@ -2,7 +2,7 @@
 
 Banking REST API built with ASP.NET Core 8 and Clean Architecture.
 
-*API REST bancaire construite avec ASP.NET Core 8 et Clean Architecture.*
+_API REST bancaire construite avec ASP.NET Core 8 et Clean Architecture._
 
 ![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat&logo=dotnet)
 ![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=flat&logo=microsoftsqlserver)
@@ -17,8 +17,8 @@ Banking REST API built with ASP.NET Core 8 and Clean Architecture.
 Built to demonstrate a structured backend API with authentication, financial transactions, and separation of concerns
 across multiple layers.
 
-*Conçu pour démontrer une API backend structurée avec authentification, transactions financières et séparation des
-responsabilités sur plusieurs couches.*
+_Conçu pour démontrer une API backend structurée avec authentification, transactions financières et séparation des
+responsabilités sur plusieurs couches._
 
 ---
 
@@ -57,17 +57,17 @@ dependencies on other layers.
 
 **Infrastructure** — EF Core repository implementations, `BankLiteDbContext`, `UnitOfWork`, and `SeedData`.
 
-**API** — ASP.NET Core controllers, `ExceptionMiddleware`, and `Program.cs` configuration.
+**API** — ASP.NET Core controllers , `ExceptionMiddleware`, and `Program.cs` configuration.
 
-*BankLiteAPI applique une Clean Architecture avec une séparation des responsabilités sur quatre couches : Domain,
-Application, Infrastructure et API.*
+_BankLiteAPI applique une Clean Architecture avec une séparation des responsabilités sur quatre couches : Domain,
+Application, Infrastructure et API._
 
 ---
 
 ## Tech Stack / Technologies
 
 | Layer             | Technology                                             |
-|-------------------|--------------------------------------------------------|
+| ----------------- | ------------------------------------------------------ |
 | Framework         | ASP.NET Core 8                                         |
 | Database          | SQL Server + Entity Framework Core 8                   |
 | Authentication    | JWT Bearer + BCrypt.Net                                |
@@ -190,7 +190,7 @@ Response:
 {
   "fromAccountId": "3fa85f64-...",
   "toAccountId": "8fb96g75-...",
-  "amount": 250.00
+  "amount": 250.0
 }
 ```
 
@@ -199,7 +199,7 @@ Response:
 ```json
 {
   "message": "Transfer successful",
-  "amount": 250.00
+  "amount": 250.0
 }
 ```
 
@@ -210,21 +210,21 @@ Response:
 ### Auth — `/api/auth`
 
 | Method | Endpoint    | Description                 | Auth Required |
-|--------|-------------|-----------------------------|---------------|
+| ------ | ----------- | --------------------------- | ------------- |
 | POST   | `/register` | Register a new user         | No            |
 | POST   | `/login`    | Login and receive JWT token | No            |
 
 ### Accounts — `/api/account`
 
 | Method | Endpoint  | Description                             | Auth Required |
-|--------|-----------|-----------------------------------------|---------------|
+| ------ | --------- | --------------------------------------- | ------------- |
 | POST   | `/create` | Create a chequing or savings account    | Yes           |
 | GET    | `/`       | Get all accounts for authenticated user | Yes           |
 
 ### Transactions — `/api/transaction`
 
 | Method | Endpoint                          | Description                                  | Auth Required |
-|--------|-----------------------------------|----------------------------------------------|---------------|
+| ------ | --------------------------------- | -------------------------------------------- | ------------- |
 | POST   | `/deposit`                        | Deposit funds — returns transaction receipt  | Yes           |
 | POST   | `/withdraw`                       | Withdraw funds — returns transaction receipt | Yes           |
 | POST   | `/transfer`                       | Atomic transfer between accounts             | Yes           |
@@ -233,7 +233,7 @@ Response:
 ### Health
 
 | Method | Endpoint  | Description               |
-|--------|-----------|---------------------------|
+| ------ | --------- | ------------------------- |
 | GET    | `/health` | Returns API health status |
 
 ---
@@ -243,7 +243,7 @@ Response:
 On first run, the database is automatically seeded with a test user and two accounts:
 
 | Field            | Value             |
-|------------------|-------------------|
+| ---------------- | ----------------- |
 | Email            | test@banklite.com |
 | Password         | Password123       |
 | Chequing Balance | $1,000.00         |
