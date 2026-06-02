@@ -1,0 +1,10 @@
+.auth/
+.env
+.git/
+.idea/
+.vs/
+blob-report/
+node_modules/
+playwright-report/
+test-results/
+tests/

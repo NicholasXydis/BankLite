@@ -1,4 +1,4 @@
-const API_URL = window.ENV_API_URL ?? "https://localhost:7205";
+const API_URL = window.ENV_API_URL ?? "";
 
 async function readJsonSafe(response) {
   const text = await response.text();
