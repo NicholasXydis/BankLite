@@ -22,9 +22,6 @@ namespace BankLite.API.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unhandled exception on {Method} {Path}",
-                    context.Request.Method, context.Request.Path);
-
                 context.Response.ContentType = "application/json";
 
                 context.Response.StatusCode = ex switch
@@ -37,6 +34,17 @@ namespace BankLite.API.Middleware
                     HttpRequestException => 502,
                     _ => 500
                 };
+
+                if (context.Response.StatusCode >= 500)
+                {
+                    _logger.LogError(ex, "Unhandled exception on {Method} {Path}",
+                        context.Request.Method, context.Request.Path);
+                }
+                else
+                {
+                    _logger.LogWarning("Request rejected with status {StatusCode} on {Method} {Path}",
+                        context.Response.StatusCode, context.Request.Method, context.Request.Path);
+                }
 
                 string message = context.Response.StatusCode >= 500
                     ? "An unexpected error occurred."
