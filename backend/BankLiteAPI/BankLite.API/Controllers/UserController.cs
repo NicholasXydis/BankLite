@@ -16,12 +16,15 @@ namespace BankLite.API.Controllers
     public class UserController : BaseController
     {
         private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
+        private readonly IWebHostEnvironment _environment;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService, IValidator<ChangePasswordDto> changePasswordValidator)
+        public UserController(IUserService userService, IValidator<ChangePasswordDto> changePasswordValidator,
+            IWebHostEnvironment environment)
         {
             _userService = userService;
             _changePasswordValidator = changePasswordValidator;
+            _environment = environment;
         }
 
         [HttpGet("profile")]
@@ -90,7 +93,7 @@ namespace BankLite.API.Controllers
 
         private CookieOptions AuthCookieDeleteOptions(string path)
         {
-            bool secure = Request.IsHttps;
+            bool secure = UseSecureCookies();
             return new CookieOptions
             {
                 HttpOnly = true,
@@ -98,6 +101,11 @@ namespace BankLite.API.Controllers
                 SameSite = secure ? SameSiteMode.None : SameSiteMode.Lax,
                 Path = path
             };
+        }
+
+        private bool UseSecureCookies()
+        {
+            return !(_environment.IsDevelopment() || _environment.IsEnvironment("Testing")) || Request.IsHttps;
         }
     }
 }
