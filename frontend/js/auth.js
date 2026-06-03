@@ -250,58 +250,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    const forgotLink = document.getElementById("forgot-password-link");
-    const forgotModal = document.getElementById("forgot-modal");
-    const forgotCancelBtn = document.getElementById("forgot-cancel-btn");
-    const forgotSubmitBtn = document.getElementById("forgot-submit-btn");
-
-    if (forgotLink) {
-      forgotLink.addEventListener("click", function (e) {
-        e.preventDefault();
-        forgotModal.style.display = "flex";
-      });
-    }
-
-    if (forgotCancelBtn) {
-      forgotCancelBtn.addEventListener("click", function () {
-        forgotModal.style.display = "none";
-        document.getElementById("forgot-email").value = "";
-        document.getElementById("forgot-error").style.display = "none";
-        document.getElementById("forgot-success").style.display = "none";
-      });
-    }
-
-    if (forgotSubmitBtn) {
-      forgotSubmitBtn.addEventListener("click", async function () {
-        const email = document.getElementById("forgot-email").value.trim();
-        const errorEl = document.getElementById("forgot-error");
-        const successEl = document.getElementById("forgot-success");
-        errorEl.style.display = "none";
-        successEl.style.display = "none";
-
-        if (!email) {
-          errorEl.textContent = t("error_enter_email");
-          errorEl.style.display = "block";
-          return;
-        }
-
-        forgotSubmitBtn.disabled = true;
-        forgotSubmitBtn.classList.add("btn-loading");
-
-        try {
-          await forgotPassword(email);
-          successEl.textContent = t("success_reset_link");
-          successEl.style.display = "block";
-          document.getElementById("forgot-email").value = "";
-        } catch (error) {
-          errorEl.textContent = error.message;
-          errorEl.style.display = "block";
-        } finally {
-          forgotSubmitBtn.disabled = false;
-          forgotSubmitBtn.classList.remove("btn-loading");
-        }
-      });
-    }
     const hamburgerBtn = document.getElementById("hamburger-btn");
     if (hamburgerBtn) {
       hamburgerBtn.addEventListener("click", function () {
@@ -567,5 +515,58 @@ document.addEventListener("DOMContentLoaded", function () {
         if (e.key === "Enter") sendMessage();
       });
     }
+  }
+
+  const forgotLink = document.getElementById("forgot-password-link");
+  const forgotModal = document.getElementById("forgot-modal");
+  const forgotCancelBtn = document.getElementById("forgot-cancel-btn");
+  const forgotSubmitBtn = document.getElementById("forgot-submit-btn");
+
+  if (forgotLink && forgotModal) {
+    forgotLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      forgotModal.style.display = "flex";
+    });
+  }
+
+  if (forgotCancelBtn && forgotModal) {
+    forgotCancelBtn.addEventListener("click", function () {
+      forgotModal.style.display = "none";
+      document.getElementById("forgot-email").value = "";
+      document.getElementById("forgot-error").style.display = "none";
+      document.getElementById("forgot-success").style.display = "none";
+    });
+  }
+
+  if (forgotSubmitBtn) {
+    forgotSubmitBtn.addEventListener("click", async function () {
+      const email = document.getElementById("forgot-email").value.trim();
+      const errorEl = document.getElementById("forgot-error");
+      const successEl = document.getElementById("forgot-success");
+      errorEl.style.display = "none";
+      successEl.style.display = "none";
+
+      if (!email) {
+        errorEl.textContent = t("error_enter_email");
+        errorEl.style.display = "block";
+        return;
+      }
+
+      forgotSubmitBtn.disabled = true;
+      forgotSubmitBtn.classList.add("btn-loading");
+
+      try {
+        await forgotPassword(email);
+        successEl.textContent = t("success_reset_link");
+        successEl.style.display = "block";
+        document.getElementById("forgot-email").value = "";
+      } catch (error) {
+        errorEl.textContent = error.message;
+        errorEl.style.display = "block";
+      } finally {
+        forgotSubmitBtn.disabled = false;
+        forgotSubmitBtn.classList.remove("btn-loading");
+      }
+    });
   }
 });

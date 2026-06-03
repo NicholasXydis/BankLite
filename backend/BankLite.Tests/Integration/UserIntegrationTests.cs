@@ -686,7 +686,7 @@ public class UserIntegrationTests : IAsyncLifetime
         _client.DefaultRequestHeaders.Remove("Cookie");
         var response = await _client.PostAsJsonAsync("/api/auth/register", new RegisterUserDto
         {
-            FullName = _faker.Name.FullName(),
+            FullName = "Test User",
             Email = email,
             Password = "Password123!"
         });
