@@ -1,0 +1,106 @@
+name: Deploy Production
+
+on:
+  workflow_run:
+    workflows:
+      - Publish Images
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: Commit SHA to deploy
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy Production
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        github.event.workflow_run.event == 'push' &&
+        github.event.workflow_run.head_branch == 'main'
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment:
+      name: production
+      url: https://banklite.ca
+    env:
+      DEPLOY_SHA: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || github.event.workflow_run.head_sha }}
+      VPS_HOST: ${{ secrets.VPS_HOST }}
+      VPS_USER: ${{ secrets.VPS_USER }}
+      VPS_APP_PATH: ${{ secrets.VPS_APP_PATH }}
+    steps:
+      - name: Validate inputs
+        run: |
+          set -euo pipefail
+          test -n "${DEPLOY_SHA}"
+          test -n "${VPS_HOST}"
+          test -n "${VPS_USER}"
+          test -n "${VPS_APP_PATH}"
+          case "${DEPLOY_SHA}" in
+            *[!0-9a-fA-F]*)
+              exit 1
+              ;;
+          esac
+          test "$(printf '%s' "${DEPLOY_SHA}" | wc -c)" -eq 40
+
+      - name: Configure SSH
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${VPS_SSH_KEY}" > ~/.ssh/banklite_deploy
+          chmod 600 ~/.ssh/banklite_deploy
+          ssh-keyscan -H "${VPS_HOST}" >> ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/banklite_deploy "${VPS_USER}@${VPS_HOST}" "DEPLOY_SHA='${DEPLOY_SHA}' VPS_APP_PATH='${VPS_APP_PATH}' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          cd "${VPS_APP_PATH}"
+          unset DB_CONNECTION_STRING
+          unset DB_MIGRATION_CONNECTION_STRING
+
+          test -f .env
+          cp .env ".env.before-deploy-${DEPLOY_SHA:0:12}"
+          chmod 600 ".env.before-deploy-${DEPLOY_SHA:0:12}"
+
+          sed -i "s#^API_IMAGE=.*#API_IMAGE=ghcr.io/nicholasxydis/banklite-api:${DEPLOY_SHA}#" .env
+          sed -i "s#^FRONTEND_IMAGE=.*#FRONTEND_IMAGE=ghcr.io/nicholasxydis/banklite-frontend:${DEPLOY_SHA}#" .env
+          chmod 600 .env
+
+          docker compose -f compose.yml -f compose.production.yml pull api frontend
+          docker compose -f compose.yml -f compose.production.yml config --quiet
+          docker compose -f compose.yml -f compose.production.yml up -d api frontend
+          docker compose -f compose.yml -f compose.production.yml ps
+
+          mkdir -p deploy
+          {
+            printf 'deployed_sha=%s\n' "${DEPLOY_SHA}"
+            printf 'api_image=ghcr.io/nicholasxydis/banklite-api:%s\n' "${DEPLOY_SHA}"
+            printf 'frontend_image=ghcr.io/nicholasxydis/banklite-frontend:%s\n' "${DEPLOY_SHA}"
+            printf 'deployed_at_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            printf 'deployed_by=github-actions\n'
+          } > deploy/current-release.txt
+          REMOTE
+
+      - name: Smoke test production
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location https://banklite.ca/health | grep -F '"Healthy"'
+          curl --fail --silent --show-error --location https://banklite.ca | grep -F 'lp-page'
