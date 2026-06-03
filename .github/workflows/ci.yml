@@ -28,6 +28,13 @@ jobs:
       - name: Validate production Compose
         run: docker compose --env-file .env.example config --quiet
 
+      - name: Validate production connection strings
+        run: |
+          set -euo pipefail
+          config="$(docker compose --env-file .env.example --profile tools config)"
+          printf '%s\n' "${config}" | grep -F "Host=db;Port=5432;Database=banklite;Username=bank_app;Password=replace_with_a_unique_app_password"
+          printf '%s\n' "${config}" | grep -F "Host=db;Port=5432;Database=banklite;Username=banklite_admin;Password=replace_with_a_unique_admin_password"
+
       - name: Validate E2E Compose
         run: docker compose --file docker-compose.e2e.yml config --quiet
 
