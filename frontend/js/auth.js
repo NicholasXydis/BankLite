@@ -274,23 +274,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
 
-    initPasswordToggle("toggle-password", "password", "eye-icon");
-    initPasswordToggle(
-      "toggle-password-confirm",
-      "confirmPassword",
-      "eye-icon-confirm",
-    );
-    initPasswordToggle(
-      "toggle-current-password",
-      "current-password",
-      "eye-icon-current",
-    );
-    initPasswordToggle(
-      "toggle-new-password-settings",
-      "new-password",
-      "eye-icon-new-settings",
-    );
-
     const settingsBtn = document.getElementById("settings-btn");
     const settingsPanel = document.getElementById("settings-panel");
     const settingsOverlay = document.getElementById("settings-overlay");
@@ -516,6 +499,23 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
   }
+
+  initPasswordToggle("toggle-password", "password", "eye-icon");
+  initPasswordToggle(
+    "toggle-password-confirm",
+    "confirmPassword",
+    "eye-icon-confirm",
+  );
+  initPasswordToggle(
+    "toggle-current-password",
+    "current-password",
+    "eye-icon-current",
+  );
+  initPasswordToggle(
+    "toggle-new-password-settings",
+    "new-password",
+    "eye-icon-new-settings",
+  );
 
   const forgotLink = document.getElementById("forgot-password-link");
   const forgotModal = document.getElementById("forgot-modal");
