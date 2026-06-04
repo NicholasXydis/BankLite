@@ -186,14 +186,14 @@ main {
 
 .sidebar {
   width: var(--sidebar-width);
-  min-height: 100vh;
-  height: 100vh;
+  min-height: 100svh;
+  height: 100dvh;
   position: sticky;
   top: 0;
   background: var(--bg-sidebar);
   display: flex;
   flex-direction: column;
-  padding: 4rem 1.25rem 2rem;
+  padding: 4rem 1.25rem calc(2rem + env(safe-area-inset-bottom));
   gap: 3rem;
   flex-shrink: 0;
   overflow-y: auto;
@@ -1210,12 +1210,13 @@ button:active {
   top: 0;
   right: -400px;
   width: 380px;
-  height: 100vh;
+  height: 100dvh;
   background: var(--bg-card);
   z-index: 1040;
   overflow-y: auto;
   transition: right 0.3s ease;
-  padding: 2rem 1.5rem;
+  padding: calc(2rem + env(safe-area-inset-top)) 1.5rem
+    calc(2rem + env(safe-area-inset-bottom));
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -1873,6 +1874,8 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
     top: 0;
     z-index: 1050;
     transition: none;
+    height: 100dvh;
+    padding-bottom: calc(2rem + env(safe-area-inset-bottom));
   }
 
   .sidebar.open {
@@ -1886,6 +1889,16 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 
   .modal-overlay {
     padding-left: 0;
+    padding: calc(1rem + env(safe-area-inset-top)) 1rem
+      calc(1rem + env(safe-area-inset-bottom));
+    align-items: center;
+  }
+
+  .modal {
+    max-height: calc(
+      100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 2rem
+    );
+    overflow-y: auto;
   }
 
   .account-card .account-balance-amount {
@@ -1995,7 +2008,9 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
     width: 80%;
     right: -80%;
     top: 0;
-    padding: 1rem 1rem 2rem;
+    height: 100dvh;
+    padding: calc(1rem + env(safe-area-inset-top)) 1rem
+      calc(2rem + env(safe-area-inset-bottom));
     z-index: 1040;
   }
 
