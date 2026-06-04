@@ -509,11 +509,6 @@ button:active {
   box-shadow: none;
 }
 
-.toggle-password:hover svg {
-  stroke: var(--brand);
-  transition: stroke 0.2s;
-}
-
 .filter-btn,
 .toggle-btn {
   flex: 1;

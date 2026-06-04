@@ -422,18 +422,19 @@ async function resetPassword(token, newPassword) {
 
 function initPasswordToggle(toggleId, inputId, iconId) {
   const toggle = document.getElementById(toggleId);
-  if (!toggle) return;
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if (!toggle || !input || !icon || toggle.dataset.passwordToggleReady) return;
+  const iconStroke = icon.getAttribute("stroke") || "#9ca3af";
+  toggle.dataset.passwordToggleReady = "true";
   toggle.addEventListener("click", function () {
-    const input = document.getElementById(inputId);
-    const icon = document.getElementById(iconId);
     if (input.type === "password") {
       input.type = "text";
       icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`;
-      icon.setAttribute("stroke", "#1a3a5c");
     } else {
       input.type = "password";
       icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
-      icon.setAttribute("stroke", "#9ca3af");
     }
+    icon.setAttribute("stroke", iconStroke);
   });
 }
