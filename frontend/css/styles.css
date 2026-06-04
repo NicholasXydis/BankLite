@@ -2024,9 +2024,14 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
 
 @media (max-height: 500px) {
   .chatbot-panel {
+    top: auto;
+    bottom: -100vh;
+    height: auto;
+  }
+
+  .chatbot-panel.open {
     top: 8px;
     bottom: 8px;
-    height: auto;
   }
 }
 
