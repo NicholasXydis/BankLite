@@ -425,7 +425,6 @@ function initPasswordToggle(toggleId, inputId, iconId) {
   const input = document.getElementById(inputId);
   const icon = document.getElementById(iconId);
   if (!toggle || !input || !icon || toggle.dataset.passwordToggleReady) return;
-  const iconStroke = icon.getAttribute("stroke") || "#9ca3af";
   toggle.dataset.passwordToggleReady = "true";
   toggle.addEventListener("click", function () {
     if (input.type === "password") {
@@ -435,6 +434,6 @@ function initPasswordToggle(toggleId, inputId, iconId) {
       input.type = "password";
       icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
     }
-    icon.setAttribute("stroke", iconStroke);
+    icon.setAttribute("stroke", "#9ca3af");
   });
 }
