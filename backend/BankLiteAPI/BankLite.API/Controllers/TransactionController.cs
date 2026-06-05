@@ -36,9 +36,12 @@ namespace BankLite.API.Controllers
             Description =
                 "Deposits funds into the specified account. Supports idempotency via Idempotency-Key header.")]
         [ProducesResponseType(typeof(TransactionResponseDto), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 403)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Deposit([FromBody] DepositWithdrawDto dto)
         {
             ValidationResult? validation = await _depositWithdrawValidator.ValidateAsync(dto);
@@ -63,9 +66,12 @@ namespace BankLite.API.Controllers
             Description =
                 "Withdraws funds from the specified account. Supports idempotency via Idempotency-Key header.")]
         [ProducesResponseType(typeof(TransactionResponseDto), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 403)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Withdraw([FromBody] DepositWithdrawDto dto)
         {
             ValidationResult? validation = await _depositWithdrawValidator.ValidateAsync(dto);
@@ -89,10 +95,13 @@ namespace BankLite.API.Controllers
         [SwaggerOperation(Summary = "Internal transfer",
             Description =
                 "Transfers funds between two accounts belonging to the authenticated user. Supports idempotency via Idempotency-Key header.")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(TransferResponseDto), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 403)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Transfer([FromBody] TransferDto dto)
         {
             ValidationResult? validation = await _transferValidator.ValidateAsync(dto);
@@ -109,17 +118,20 @@ namespace BankLite.API.Controllers
 
             string? idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             await _transactionService.TransferAsync(dto, userId, idempotencyKey);
-            return Ok(new { message = "Transfer successful", amount = dto.Amount });
+            return Ok(new TransferResponseDto { Message = "Transfer successful", Amount = dto.Amount });
         }
 
         [HttpPost("transferexternal")]
         [SwaggerOperation(Summary = "External transfer",
             Description =
                 "Transfers funds to another user's account by account number. Supports idempotency via Idempotency-Key header.")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(TransferResponseDto), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 403)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> TransferExternal([FromBody] ExternalTransferDto dto)
         {
             ValidationResult? validation = await _externalTransferValidator.ValidateAsync(dto);
@@ -136,15 +148,17 @@ namespace BankLite.API.Controllers
 
             string? idempotencyKey = Request.Headers["Idempotency-Key"].FirstOrDefault();
             await _transactionService.TransferExternalAsync(dto, userId, idempotencyKey);
-            return Ok(new { message = "Transfer successful", amount = dto.Amount });
+            return Ok(new TransferResponseDto { Message = "Transfer successful", Amount = dto.Amount });
         }
 
         [HttpGet("{accountId}")]
         [SwaggerOperation(Summary = "Get transactions",
             Description = "Returns paginated transactions for the specified account. Optionally filter by type.")]
         [ProducesResponseType(typeof(PagedResultDto<TransactionResponseDto>), 200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> GetTransactions(Guid accountId, [FromQuery] int page = 1,
             [FromQuery] int pageSize = 10, [FromQuery] string? type = null)
         {
@@ -173,8 +187,11 @@ namespace BankLite.API.Controllers
         [SwaggerOperation(Summary = "Get transactions by date range",
             Description = "Returns all transactions for the specified account within a date range.")]
         [ProducesResponseType(typeof(IEnumerable<TransactionResponseDto>), 200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> GetTransactionsByDateRange(Guid accountId, [FromQuery] DateTime startDate,
             [FromQuery] DateTime endDate)
         {
@@ -186,12 +203,12 @@ namespace BankLite.API.Controllers
 
             if (endDate < startDate)
             {
-                return BadRequest(new { message = "End date must be after start date." });
+                return BadRequest(new ErrorResponseDto { Message = "End date must be after start date." });
             }
 
             if ((endDate - startDate).TotalDays > 365)
             {
-                return BadRequest(new { message = "Date range cannot exceed 365 days." });
+                return BadRequest(new ErrorResponseDto { Message = "Date range cannot exceed 365 days." });
             }
 
             IEnumerable<TransactionResponseDto> result =

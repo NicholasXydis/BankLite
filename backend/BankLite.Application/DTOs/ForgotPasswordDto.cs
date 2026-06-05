@@ -2,7 +2,7 @@
 
 public class ForgotPasswordDto
 {
-    /// <summary>The email address associated with the account.</summary>
+    /// <summary>The email address associated with the account. Maximum 256 characters.</summary>
     public required string Email { get; init; }
 
     /// <summary>Preferred language for the email. Accepts "en" or "fr". Defaults to "en".</summary>

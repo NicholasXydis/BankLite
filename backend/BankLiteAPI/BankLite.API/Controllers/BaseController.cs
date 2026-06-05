@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using BankLite.Application.DTOs;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace BankLite.API.Controllers
 {
+    [Produces("application/json")]
     public class BaseController : ControllerBase
     {
         protected IActionResult? TryGetUserId(out Guid userId)
@@ -11,7 +13,7 @@ namespace BankLite.API.Controllers
             if (claim == null || !Guid.TryParse(claim, out userId))
             {
                 userId = Guid.Empty;
-                return Unauthorized(new { message = "Invalid or missing user claim." });
+                return Unauthorized(new ErrorResponseDto { Message = "Invalid or missing user claim." });
             }
 
             return null;

@@ -28,10 +28,12 @@ namespace BankLite.API.Controllers
         [HttpPost("message")]
         [SwaggerOperation(Summary = "Send chat message",
             Description = "Sends a message to the AI assistant and returns a response. Max 200 characters.")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ChatResponseDto), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 502)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> SendMessage([FromBody] ChatMessageDto message)
         {
             ValidationResult? validation = await _validator.ValidateAsync(message);
@@ -41,7 +43,7 @@ namespace BankLite.API.Controllers
             }
 
             string response = await _groqService.GetChatResponseAsync(message.Content);
-            return Ok(new { response });
+            return Ok(new ChatResponseDto { Response = response });
         }
     }
 }

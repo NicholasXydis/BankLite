@@ -31,8 +31,9 @@ namespace BankLite.API.Controllers
         [SwaggerOperation(Summary = "Get profile",
             Description = "Returns the authenticated user's profile information.")]
         [ProducesResponseType(typeof(UserProfileDto), 200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 404)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> GetProfile()
         {
             IActionResult? error = TryGetUserId(out Guid userId);
@@ -48,10 +49,11 @@ namespace BankLite.API.Controllers
         [HttpPost("change-password")]
         [EnableRateLimiting("changepassword")]
         [SwaggerOperation(Summary = "Change password", Description = "Changes the authenticated user's password.")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(MessageResponseDto), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
         {
             ValidationResult? validation = await _changePasswordValidator.ValidateAsync(dto);
@@ -67,15 +69,15 @@ namespace BankLite.API.Controllers
             }
 
             await _userService.ChangePasswordAsync(userId, dto);
-            return Ok(new { message = "Password changed successfully" });
+            return Ok(new MessageResponseDto { Message = "Password changed successfully" });
         }
 
         [HttpDelete("delete-account")]
         [SwaggerOperation(Summary = "Delete account",
             Description = "Permanently deletes the authenticated user's account and all associated data.")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(MessageResponseDto), 200)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> DeleteAccount()
         {
             IActionResult? error = TryGetUserId(out Guid userId);
@@ -88,7 +90,7 @@ namespace BankLite.API.Controllers
 
             Response.Cookies.Delete("accessToken", AuthCookieDeleteOptions("/"));
             Response.Cookies.Delete("refreshToken", AuthCookieDeleteOptions("/api/auth/refresh"));
-            return Ok(new { message = "Account deleted successfully" });
+            return Ok(new MessageResponseDto { Message = "Account deleted successfully" });
         }
 
         private CookieOptions AuthCookieDeleteOptions(string path)

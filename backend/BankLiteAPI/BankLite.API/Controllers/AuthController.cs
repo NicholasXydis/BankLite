@@ -47,8 +47,9 @@ namespace BankLite.API.Controllers
         [SwaggerOperation(Summary = "Register a new user",
             Description = "Creates a new user account and returns a JWT access token via HttpOnly cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
             ValidationResult? validation = await _registerValidator.ValidateAsync(dto);
@@ -68,8 +69,9 @@ namespace BankLite.API.Controllers
         [SwaggerOperation(Summary = "Login",
             Description = "Authenticates a user and returns a JWT access token via HttpOnly cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Login([FromBody] LoginUserDto dto)
         {
             ValidationResult? validation = await _loginValidator.ValidateAsync(dto);
@@ -89,14 +91,15 @@ namespace BankLite.API.Controllers
         [SwaggerOperation(Summary = "Refresh access token",
             Description = "Issues a new JWT access token using the HttpOnly refresh token cookie.")]
         [ProducesResponseType(typeof(AuthResponseDto), 200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Refresh()
         {
             string? refreshToken = Request.Cookies["refreshToken"];
             if (string.IsNullOrEmpty(refreshToken))
             {
-                return Unauthorized(new { message = "No refresh token provided." });
+                return Unauthorized(new ErrorResponseDto { Message = "No refresh token provided." });
             }
 
             (string token, string newRefreshToken, AuthResponseDto result) =
@@ -111,8 +114,10 @@ namespace BankLite.API.Controllers
         [EnableRateLimiting("forgotpassword")]
         [SwaggerOperation(Summary = "Request password reset",
             Description = "Sends a password reset email if the provided email exists in the system.")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(MessageResponseDto), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
             ValidationResult? validation = await _forgotPasswordValidator.ValidateAsync(dto);
@@ -122,16 +127,17 @@ namespace BankLite.API.Controllers
             }
 
             await _authService.ForgotPasswordAsync(dto.Email, _frontendSettings.ResetPasswordUrl, dto.Lang);
-            return Ok(new { message = "If that email exists, a reset link has been sent." });
+            return Ok(new MessageResponseDto { Message = "If that email exists, a reset link has been sent." });
         }
 
         [HttpPost("reset-password")]
         [EnableRateLimiting("forgotpassword")]
         [SwaggerOperation(Summary = "Reset password",
             Description = "Resets the user's password using a valid reset token.")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(MessageResponseDto), 200)]
+        [ProducesResponseType(typeof(IEnumerable<ValidationFailure>), 400)]
+        [ProducesResponseType(429)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
             ValidationResult? validation = await _resetPasswordValidator.ValidateAsync(dto);
@@ -141,15 +147,15 @@ namespace BankLite.API.Controllers
             }
 
             await _authService.ResetPasswordAsync(dto.Token, dto.NewPassword);
-            return Ok(new { message = "Password reset successfully." });
+            return Ok(new MessageResponseDto { Message = "Password reset successfully." });
         }
 
         [HttpPost("refresh/logout")]
         [Authorize]
         [SwaggerOperation(Summary = "Logout", Description = "Revokes the refresh token and clears all auth cookies.")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(500)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 401)]
+        [ProducesResponseType(typeof(ErrorResponseDto), 500)]
         public async Task<IActionResult> Logout()
         {
             string? refreshToken = Request.Cookies["refreshToken"];
