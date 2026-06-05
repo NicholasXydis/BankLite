@@ -2,6 +2,12 @@ let currentPage = 1;
 const pageSize = 10;
 let currentFilter = "all";
 let transactionsAbortController = null;
+const transactionTransferIcon =
+  '<span class="transaction-arrow transaction-arrow--transfer"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>';
+const transactionDepositIcon =
+  '<span class="transaction-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="21" x2="12" y2="3"/><polyline points="5 10 12 3 19 10"/></svg></span>';
+const transactionWithdrawalIcon =
+  '<span class="transaction-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="19 14 12 21 5 14"/></svg></span>';
 
 async function loadTransactions(accountId, page, type = null) {
   if (transactionsAbortController) {
@@ -101,10 +107,15 @@ async function loadTransactions(accountId, page, type = null) {
           ? "deposit"
           : "withdrawal"
         : "";
+      const transactionIcon = isTransfer
+        ? transactionTransferIcon
+        : transaction.type === "Deposit"
+          ? transactionDepositIcon
+          : transactionWithdrawalIcon;
       row.className = `transaction-row ${isTransfer ? transferClass : transaction.type.toLowerCase()}${isTransfer ? " transfer" : ""}`;
       row.innerHTML = `
     <div class="transaction-left">
-    <span class="transaction-type">${displayType} ${isTransfer ? '<span class="transaction-arrow transaction-arrow--transfer"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></span>' : transaction.type === "Deposit" ? '<span class="transaction-arrow">↑</span>' : '<span class="transaction-arrow">↓</span>'}</span>
+    <span class="transaction-type">${displayType} ${transactionIcon}</span>
     <span class="transaction-date">${txDate.toLocaleString(
       lang === "fr" ? "fr-CA" : "en-CA",
       {
