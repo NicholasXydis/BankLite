@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /api/
+Disallow: /hubs/
+Disallow: /dashboard.html
+Disallow: /deposit.html
+Disallow: /withdraw.html
+Disallow: /transfer.html
+Disallow: /transactions.html
+
+Sitemap: https://banklite.ca/sitemap.xml
