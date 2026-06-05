@@ -1,0 +1,131 @@
+<svg width="980" height="430" viewBox="0 0 980 430" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">BankLite stack and quality signals</title>
+  <desc id="desc">Quality, backend, frontend, and infrastructure technologies used by BankLite.</desc>
+  <defs>
+    <linearGradient id="panel" x1="80" y1="20" x2="900" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="0.55" stop-color="#111827"/>
+      <stop offset="1" stop-color="#082F49"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="170" y1="60" x2="850" y2="390" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8" stop-opacity="0.34"/>
+      <stop offset="0.55" stop-color="#22C55E" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#6366F1" stop-opacity="0.28"/>
+    </linearGradient>
+    <filter id="shadow" x="20" y="0" width="940" height="450" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#020617" flood-opacity="0.18"/>
+    </filter>
+    <style>
+      .label{font:700 15px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.08em;fill:#94A3B8;text-transform:uppercase}
+      .title{font:800 30px Inter,Segoe UI,Arial,sans-serif;fill:#F8FAFC;letter-spacing:.01em}
+      .sub{font:500 15px Inter,Segoe UI,Arial,sans-serif;fill:#CBD5E1}
+      .pillText{font:700 15px Inter,Segoe UI,Arial,sans-serif;fill:#F8FAFC}
+      .muted{fill:#94A3B8}
+    </style>
+  </defs>
+  <rect width="980" height="430" rx="34" fill="transparent"/>
+  <g filter="url(#shadow)">
+    <rect x="38" y="24" width="904" height="382" rx="30" fill="url(#panel)"/>
+    <rect x="39" y="25" width="902" height="380" rx="29" stroke="#334155" stroke-opacity="0.85"/>
+    <path d="M74 93C187 29 342 45 480 95C631 150 777 125 906 68V374H74V93Z" fill="url(#glow)" opacity="0.68"/>
+    <circle cx="844" cy="92" r="86" fill="#38BDF8" opacity="0.08"/>
+    <circle cx="150" cy="333" r="112" fill="#22C55E" opacity="0.08"/>
+  </g>
+  <text x="82" y="76" class="title">Production Signals</text>
+  <text x="82" y="102" class="sub">Security, testing, performance, and deployment at a glance.</text>
+  <text x="82" y="151" class="label">Quality</text>
+  <g transform="translate(82 170)">
+    <rect width="104" height="40" rx="20" fill="#16A34A" fill-opacity="0.18" stroke="#22C55E" stroke-opacity="0.75"/>
+    <circle cx="22" cy="20" r="8" fill="#22C55E"/>
+    <text x="38" y="25" class="pillText">CI Passing</text>
+  </g>
+  <g transform="translate(196 170)">
+    <rect width="88" height="40" rx="20" fill="#2563EB" fill-opacity="0.18" stroke="#60A5FA" stroke-opacity="0.72"/>
+    <text x="18" y="25" class="pillText">CodeQL</text>
+  </g>
+  <g transform="translate(294 170)">
+    <rect width="78" height="40" rx="20" fill="#0EA5E9" fill-opacity="0.18" stroke="#38BDF8" stroke-opacity="0.72"/>
+    <text x="18" y="25" class="pillText">Trivy</text>
+  </g>
+  <g transform="translate(382 170)">
+    <rect width="102" height="40" rx="20" fill="#22C55E" fill-opacity="0.18" stroke="#4ADE80" stroke-opacity="0.72"/>
+    <text x="18" y="25" class="pillText">460 Tests</text>
+  </g>
+  <g transform="translate(494 170)">
+    <rect width="130" height="40" rx="20" fill="#8B5CF6" fill-opacity="0.2" stroke="#A78BFA" stroke-opacity="0.74"/>
+    <text x="18" y="25" class="pillText">k6 1,184 req/s</text>
+  </g>
+  <g transform="translate(634 170)">
+    <rect width="76" height="40" rx="20" fill="#7C3AED" fill-opacity="0.18" stroke="#A78BFA" stroke-opacity="0.72"/>
+    <text x="18" y="25" class="pillText">xUnit</text>
+  </g>
+  <g transform="translate(720 170)">
+    <rect width="110" height="40" rx="20" fill="#0F766E" fill-opacity="0.22" stroke="#2DD4BF" stroke-opacity="0.72"/>
+    <text x="18" y="25" class="pillText">Integration</text>
+  </g>
+  <g transform="translate(840 170)">
+    <rect width="58" height="40" rx="20" fill="#22C55E" fill-opacity="0.18" stroke="#4ADE80" stroke-opacity="0.72"/>
+    <text x="18" y="25" class="pillText">E2E</text>
+  </g>  <text x="82" y="253" class="label">Backend</text>
+  <g transform="translate(82 272)">
+    <rect width="84" height="40" rx="20" fill="#512BD4"/>
+    <text x="22" y="25" class="pillText">.NET 8</text>
+  </g>
+  <g transform="translate(182 272)">
+    <rect width="146" height="40" rx="20" fill="#512BD4" fill-opacity="0.88"/>
+    <text x="22" y="25" class="pillText">ASP.NET Core</text>
+  </g>
+  <g transform="translate(344 272)">
+    <rect width="56" height="40" rx="20" fill="#239120"/>
+    <text x="20" y="25" class="pillText">C#</text>
+  </g>
+  <g transform="translate(416 272)">
+    <rect width="118" height="40" rx="20" fill="#4169E1"/>
+    <text x="22" y="25" class="pillText">PostgreSQL</text>
+  </g>
+  <g transform="translate(550 272)">
+    <rect width="92" height="40" rx="20" fill="#6D28D9"/>
+    <text x="22" y="25" class="pillText">EF Core</text>
+  </g>
+  <g transform="translate(658 272)">
+    <rect width="96" height="40" rx="20" fill="#020617" stroke="#475569"/>
+    <text x="22" y="25" class="pillText">JWT Auth</text>
+  </g>
+  <g transform="translate(770 272)">
+    <rect width="94" height="40" rx="20" fill="#4F46E5"/>
+    <text x="22" y="25" class="pillText">SignalR</text>
+  </g>
+  <text x="82" y="353" class="label">Frontend + Infra</text>
+  <g transform="translate(82 372)">
+    <rect width="104" height="40" rx="20" fill="#F7DF1E"/>
+    <text x="22" y="25" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="800" fill="#111827">JavaScript</text>
+  </g>
+  <g transform="translate(202 372)">
+    <rect width="72" height="40" rx="20" fill="#E34F26"/>
+    <text x="22" y="25" class="pillText">HTML5</text>
+  </g>
+  <g transform="translate(290 372)">
+    <rect width="62" height="40" rx="20" fill="#1572B6"/>
+    <text x="18" y="25" class="pillText">CSS3</text>
+  </g>
+  <g transform="translate(368 372)">
+    <rect width="82" height="40" rx="20" fill="#2496ED"/>
+    <text x="22" y="25" class="pillText">Docker</text>
+  </g>
+  <g transform="translate(466 372)">
+    <rect width="78" height="40" rx="20" fill="#009639"/>
+    <text x="22" y="25" class="pillText">Nginx</text>
+  </g>
+  <g transform="translate(560 372)">
+    <rect width="104" height="40" rx="20" fill="#F38020"/>
+    <text x="22" y="25" class="pillText">Cloudflare</text>
+  </g>
+  <g transform="translate(680 372)">
+    <rect width="134" height="40" rx="20" fill="#2088FF"/>
+    <text x="22" y="25" class="pillText">GitHub Actions</text>
+  </g>
+  <g transform="translate(830 372)">
+    <rect width="66" height="40" rx="20" fill="#16A34A"/>
+    <text x="22" y="25" class="pillText">VPS</text>
+  </g>
+</svg>

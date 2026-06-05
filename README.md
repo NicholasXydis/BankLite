@@ -1,29 +1,38 @@
+<div align="center">
+
 # BankLite
 
-![CI](https://img.shields.io/github/actions/workflow/status/NicholasXydis/BankLite/ci.yml?branch=main&label=CI&style=flat&color=64748b)
-![Security](https://img.shields.io/github/actions/workflow/status/NicholasXydis/BankLite/security.yml?branch=main&label=CodeQL%20%2B%20Trivy&style=flat&color=64748b)
-![Docker](https://img.shields.io/badge/Docker-GHCR-64748b?style=flat&logo=docker&logoColor=white)
-![.NET](https://img.shields.io/badge/.NET-8-64748b?style=flat&logo=dotnet&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-64748b?style=flat&logo=postgresql&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-64748b?style=flat)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=4A90D9&center=true&vCenter=true&width=700&lines=Production-Grade+Banking+Site;Clean+Architecture+%7C+.NET+8+%7C+PostgreSQL;JWT+Auth+%7C+Docker+%7C+Cloudflare;460+Tests+%7C+1%2C184+req%2Fs+%7C+Live+on+VPS)](https://git.io/typing-svg)
 
-Production-grade full-stack banking demo built with ASP.NET Core, PostgreSQL, Docker, and a responsive vanilla JavaScript frontend.
+A secure, production-deployed banking site built to showcase real-world full-stack engineering.
 
-**Live Demo:** [https://banklite.ca](https://banklite.ca)<br>
-**API Docs:** [https://banklite.ca/swagger](https://banklite.ca/swagger)<br>
-**Postman:** [postman/BankLite.postman_collection.json](postman/BankLite.postman_collection.json)
+<br>
 
-![BankLite demo](docs/demo.gif)
+<img src="docs/readme-stack.svg" alt="BankLite stack and quality signals" width="92%">
+
+<br>
+
+<h2 align="center">Live Production Demo</h2>
+
+<a href="https://banklite.ca">
+  <img src="docs/live-demo-button.svg" alt="Open live BankLite site" width="520">
+</a>
+
+<br>
+
+<img src="docs/demo.gif" alt="BankLite demo" width="92%">
+
+</div>
 
 ## Screenshots
 
 | Dashboard | Alfred Chat |
 |---|---|
-| ![Dashboard](docs/screenshots/dashboard.png) | ![Alfred chat](docs/screenshots/alfred-chat.png) |
+| <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="100%"> | <img src="docs/screenshots/alfred-chat.png" alt="Alfred chat" width="100%"> |
 
 | Mobile Landing | Dark/French Transactions |
 |---|---|
-| ![Mobile landing](docs/screenshots/mobile.png) | ![Dark French transactions](docs/screenshots/transactions-fr-dark.png) |
+| <img src="docs/screenshots/mobile.png" alt="Mobile landing" width="100%"> | <img src="docs/screenshots/transactions-fr-dark.png" alt="Dark French transactions" width="100%"> |
 
 ## About
 
@@ -105,6 +114,12 @@ BankLite/
 | Testing | xUnit, Moq, Bogus, Respawn, Playwright, k6 |
 | Integrations | SendGrid password reset email, Groq AI chat |
 
+<div align="center">
+
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=NicholasXydis&layout=compact&theme=tokyonight&hide_border=true)
+
+</div>
+
 ## Testing
 
 | Suite | Count | Tools |
@@ -124,10 +139,10 @@ BankLite/
 
 ## API Docs
 
-- Swagger UI: [https://banklite.ca/swagger](https://banklite.ca/swagger)
-- OpenAPI export: [docs/openapi.json](docs/openapi.json)
-- Postman collection: [postman/BankLite.postman_collection.json](postman/BankLite.postman_collection.json)
-- Postman environments: [postman/BankLite_Local.postman_environment.json](postman/BankLite_Local.postman_environment.json), [postman/BankLite_Production.postman_environment.json](postman/BankLite_Production.postman_environment.json)
+- Swagger UI: available from the API when enabled
+- OpenAPI export: docs/openapi.json
+- Postman collection: postman/BankLite.postman_collection.json
+- Postman environments: postman/BankLite_Local.postman_environment.json, postman/BankLite_Production.postman_environment.json
 
 ## Quality Gates
 

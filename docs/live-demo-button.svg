@@ -1,0 +1,36 @@
+<svg width="520" height="96" viewBox="0 0 520 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Open live BankLite site</title>
+  <desc id="desc">A call to action button that opens the live BankLite production site.</desc>
+  <defs>
+    <linearGradient id="button" x1="34" y1="10" x2="486" y2="86" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F172A"/>
+      <stop offset="0.58" stop-color="#0B3B5A"/>
+      <stop offset="1" stop-color="#16A34A"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="70" y1="18" x2="430" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8" stop-opacity="0.38"/>
+      <stop offset="0.52" stop-color="#22C55E" stop-opacity="0.2"/>
+      <stop offset="1" stop-color="#F8FAFC" stop-opacity="0.12"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="520" height="112" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#020617" flood-opacity="0.2"/>
+    </filter>
+    <style>
+      .primary{font:800 22px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.08em;fill:#F8FAFC}
+      .domain{font:700 13px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.14em;fill:#BBF7D0}
+    </style>
+  </defs>
+  <g filter="url(#shadow)">
+    <rect x="22" y="14" width="476" height="68" rx="34" fill="url(#button)"/>
+    <rect x="23" y="15" width="474" height="66" rx="33" stroke="#7DD3FC" stroke-opacity="0.34"/>
+    <path d="M52 25C147 8 228 36 307 30C383 25 431 24 476 39V68C391 80 315 61 239 66C151 72 91 70 44 58C42 44 44 33 52 25Z" fill="url(#shine)"/>
+  </g>
+  <g transform="translate(62 31)">
+    <circle cx="17" cy="17" r="17" fill="#F8FAFC" fill-opacity="0.14"/>
+    <path d="M17 6.5C11.2 6.5 6.5 11.2 6.5 17S11.2 27.5 17 27.5 27.5 22.8 27.5 17 22.8 6.5 17 6.5Zm7.5 9.3h-4.1c-.2-2.1-.8-4-1.7-5.3 2.9.7 5.1 2.7 5.8 5.3ZM17 9.1c.8 1.1 1.5 3.5 1.7 6.7h-3.4c.2-3.2.9-5.6 1.7-6.7Zm-7.9 9.1h4.5c.1 1.4.3 2.8.6 4H11c-1-1.1-1.7-2.5-1.9-4Zm4.5-2.4H9.1c.7-2.6 2.9-4.6 5.8-5.3-.8 1.3-1.3 3.2-1.3 5.3Zm1.7 2.4h3.4c-.2 3.2-.9 5.6-1.7 6.7-.8-1.1-1.5-3.5-1.7-6.7Zm3.8 6.1c.6-1.3 1.1-3.4 1.3-6.1h4.5c-.4 2.9-2.7 5.2-5.8 6.1Z" fill="#F8FAFC"/>
+  </g>
+  <text x="114" y="54" class="primary">OPEN LIVE SITE</text>
+  <text x="348" y="54" class="domain">BANKLITE.CA</text>
+  <path d="M454 43h10v-10" stroke="#BBF7D0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M452 45l12-12" stroke="#BBF7D0" stroke-width="3" stroke-linecap="round"/>
+</svg>
