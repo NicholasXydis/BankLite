@@ -1,0 +1,542 @@
+{
+  "info": {
+    "name": "BankLite API",
+    "description": "BankLite banking API. Uses JWT auth via HttpOnly cookies — run Login or Register first, then all authenticated requests work automatically via Postman cookie jar. Enable Postman cookie jar and run Login or Register first. Authenticated requests rely on HttpOnly cookies.\n\nRate limits: 30 req/min global, 5/min login, 3/min register, 10/min chat & refresh, 5/min change-password, 3/min forgot/reset password.",
+    "_postman_id": "banklite-collection-v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "{{baseUrl}}",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "register"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nicholas Xydis\",\n  \"email\": \"nick@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "description": "Creates a new user. Sets accessToken + refreshToken HttpOnly cookies on success. Rate limit: 3/min."
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nick@example.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "description": "Authenticates user. Sets accessToken + refreshToken HttpOnly cookies. Rate limit: 5/min. Lockout after 5 failed attempts."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "refresh"
+              ]
+            },
+            "description": "Issues a new access token using the refreshToken cookie. Rate limit: 10/min."
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/refresh/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "refresh",
+                "logout"
+              ]
+            },
+            "description": "Revokes refresh token in DB and clears all auth cookies."
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/forgot-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "forgot-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nick@example.com\",\n  \"lang\": \"en\"\n}"
+            },
+            "description": "Sends password reset email if account exists. lang: 'en' or 'fr'. Rate limit: 3/min."
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Auth/reset-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Auth",
+                "reset-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"PASTE_TOKEN_FROM_EMAIL_HERE\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+            },
+            "description": "Resets password using token from email. Rate limit: 3/min."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "Get Accounts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Account"
+              ]
+            },
+            "description": "Returns all accounts for the authenticated user."
+          }
+        },
+        {
+          "name": "Create Account",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Account/create",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Account",
+                "create"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": 0\n}"
+            },
+            "description": "Creates a new account. type: 0 = Chequing, 1 = Savings.",
+            "event": [
+              {
+                "listen": "test",
+                "script": {
+                  "type": "text/javascript",
+                  "exec": [
+                    "const res = pm.response.json();",
+                    "pm.environment.set('accountId', res.id);"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Deposit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$guid}}",
+                "description": "Optional — prevents duplicate transactions on retry"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Transaction/deposit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Transaction",
+                "deposit"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{accountId}}\",\n  \"amount\": 500.00\n}"
+            },
+            "description": "Deposits funds. amount: 0.01 – 1,000,000. Supports idempotency via Idempotency-Key header."
+          }
+        },
+        {
+          "name": "Withdraw",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$guid}}",
+                "description": "Optional — prevents duplicate transactions on retry"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Transaction/withdraw",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Transaction",
+                "withdraw"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{accountId}}\",\n  \"amount\": 100.00\n}"
+            },
+            "description": "Withdraws funds. amount: 0.01 – 1,000,000."
+          }
+        },
+        {
+          "name": "Internal Transfer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$guid}}",
+                "description": "Optional — prevents duplicate transactions on retry"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Transaction/transfer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Transaction",
+                "transfer"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromAccountId\": \"{{fromAccountId}}\",\n  \"toAccountId\": \"{{toAccountId}}\",\n  \"amount\": 250.00\n}"
+            },
+            "description": "Transfers between your own accounts. fromAccountId and toAccountId must be different."
+          }
+        },
+        {
+          "name": "External Transfer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "{{$guid}}",
+                "description": "Optional — prevents duplicate transactions on retry"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Transaction/transferexternal",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Transaction",
+                "transferexternal"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromAccountId\": \"{{fromAccountId}}\",\n  \"toAccountNumber\": \"123456789012\",\n  \"amount\": 100.00\n}"
+            },
+            "description": "Transfers to another user by 12-character account number."
+          }
+        },
+        {
+          "name": "Get Transactions (Paginated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Transaction/{{accountId}}?page=1&pageSize=10&type=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Transaction",
+                "{{accountId}}"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "type",
+                  "value": "",
+                  "description": "Optional: Deposit, Withdrawal, Transfer"
+                }
+              ]
+            },
+            "description": "Paginated transactions for an account. Replace {{accountId}} with a real account UUID."
+          }
+        },
+        {
+          "name": "Get Transactions by Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/Transaction/{{accountId}}/range?startDate=2025-01-01T00:00:00Z&endDate=2025-12-31T23:59:59Z",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Transaction",
+                "{{accountId}}",
+                "range"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2025-01-01T00:00:00Z"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2025-12-31T23:59:59Z",
+                  "description": "Max range: 365 days"
+                }
+              ]
+            },
+            "description": "Returns all transactions within a date range. Max 365 days."
+          }
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/User/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "User",
+                "profile"
+              ]
+            },
+            "description": "Returns the authenticated user's profile."
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/User/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "User",
+                "change-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword456!\"\n}"
+            },
+            "description": "Changes password. Both passwords: 8–100 chars. New must differ from current. Rate limit: 5/min."
+          }
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/User/delete-account",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "User",
+                "delete-account"
+              ]
+            },
+            "description": "⚠️ Permanently deletes user account and all data. Irreversible."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Send Message (Alfred)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/Chat/message",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "Chat",
+                "message"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"What is my account balance?\"\n}"
+            },
+            "description": "Sends a message to Alfred (AI assistant). Max 200 characters. Rate limit: 10/min."
+          }
+        }
+      ]
+    }
+  ]
+}
