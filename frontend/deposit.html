@@ -17,10 +17,6 @@
     <meta content="#1a3a5c" name="theme-color" />
     <title>BankLite | Deposit</title>
     <link href="css/styles.css" rel="stylesheet" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <link href="favicon.ico?v=1" rel="icon" type="image/x-icon" />
   </head>
   <body class="dashboard-body">
@@ -190,7 +186,7 @@
       </aside>
       <main class="dashboard-main">
         <h1 class="dashboard-title" data-i18n="deposit_title">Deposit Funds</h1>
-        <div class="empty-state" id="empty-state" style="display: none">
+        <div class="empty-state" id="empty-state" hidden>
           <div class="empty-state-icon">
             <svg
               fill="none"
@@ -219,7 +215,7 @@
             >Create Account</a
           >
         </div>
-        <div class="form-card" style="display: none">
+        <div class="form-card" hidden>
           <div
             aria-live="polite"
             class="error-msg"
@@ -259,14 +255,14 @@
     <script src="js/auth.js"></script>
     <script src="js/deposit.js"></script>
 
-    <div id="session-warning" style="display: none">
+    <div id="session-warning" hidden>
       <span id="session-countdown"></span>
       <button data-i18n="session_stay" id="session-stay-btn">
         Stay Logged In
       </button>
     </div>
 
-    <div class="modal-overlay" id="logout-modal" style="display: none">
+    <div class="modal-overlay" id="logout-modal" hidden>
       <div class="modal">
         <h3 class="modal-title" data-i18n="logout_title">Log Out</h3>
         <p class="modal-text" data-i18n="logout_confirm_text">
@@ -319,7 +315,7 @@
     <div
       class="settings-overlay"
       id="settings-overlay"
-      style="display: none"
+      hidden
     ></div>
     <div class="settings-panel" id="settings-panel">
       <div class="settings-header">

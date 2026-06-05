@@ -33,7 +33,7 @@ async function loadTransactions(accountId, page, type = null) {
     if (abortController.signal.aborted) return;
 
     transactionsList.innerHTML = "";
-    document.getElementById("no-filter-results").style.display = "none";
+    hideElement(document.getElementById("no-filter-results"));
 
     if (result.items.length === 0) {
       document.getElementById("export-csv-btn").style.display = "none";
@@ -41,7 +41,7 @@ async function loadTransactions(accountId, page, type = null) {
       document.getElementById("no-filter-results").textContent = t(
         "label_no_transactions",
       );
-      document.getElementById("no-filter-results").style.display = "block";
+      showElement(document.getElementById("no-filter-results"), "block");
       pageInfo.textContent = "";
       prevBtn.disabled = true;
       nextBtn.disabled = true;
@@ -157,11 +157,12 @@ async function loadAccounts() {
     const accounts = await getAccounts();
 
     if (accounts.length === 0) {
-      document.getElementById("empty-state").style.display = "block";
-      document.querySelector(".form-card").style.display = "none";
+      showElement(document.getElementById("empty-state"), "block");
+      hideElement(document.querySelector(".form-card"));
       return;
     }
-    document.querySelector(".form-card").style.display = "block";
+    showElement(document.querySelector(".form-card"), "block");
+    hideElement(document.getElementById("empty-state"));
     document.querySelector(".pagination").style.display = "none";
     document.getElementById("export-csv-btn").style.display = "none";
 

@@ -9,11 +9,12 @@ async function loadTransfer() {
   try {
     accounts = await getAccounts();
     if (accounts.length === 0) {
-      document.getElementById("empty-state").style.display = "block";
-      document.querySelector(".form-card").style.display = "none";
+      showElement(document.getElementById("empty-state"), "block");
+      hideElement(document.querySelector(".form-card"));
       return;
     }
-    document.querySelector(".form-card").style.display = "block";
+    showElement(document.querySelector(".form-card"), "block");
+    hideElement(document.getElementById("empty-state"));
 
     accountSelect.innerHTML = "";
     accounts.forEach((account) => {
@@ -176,15 +177,15 @@ const externalGroup = document.getElementById("external-account-group");
 toggleMyAccounts.addEventListener("click", function () {
   toggleMyAccounts.classList.add("active");
   toggleExternal.classList.remove("active");
-  toAccountSelectGroup.style.display = "flex";
-  externalGroup.style.display = "none";
+  showElement(toAccountSelectGroup, "flex");
+  hideElement(externalGroup);
 });
 
 toggleExternal.addEventListener("click", function () {
   toggleExternal.classList.add("active");
   toggleMyAccounts.classList.remove("active");
-  toAccountSelectGroup.style.display = "none";
-  externalGroup.style.display = "flex";
+  hideElement(toAccountSelectGroup);
+  showElement(externalGroup, "flex");
 });
 
 loadTransfer();

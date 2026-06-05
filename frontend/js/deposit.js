@@ -8,11 +8,12 @@ async function loadDeposit() {
   try {
     accounts = await getAccounts();
     if (accounts.length === 0) {
-      document.getElementById("empty-state").style.display = "block";
-      document.querySelector(".form-card").style.display = "none";
+      showElement(document.getElementById("empty-state"), "block");
+      hideElement(document.querySelector(".form-card"));
       return;
     }
-    document.querySelector(".form-card").style.display = "block";
+    showElement(document.querySelector(".form-card"), "block");
+    hideElement(document.getElementById("empty-state"));
 
     accountSelect.innerHTML = "";
     accounts.forEach((account) => {

@@ -71,6 +71,10 @@ body {
   min-height: 100vh;
 }
 
+.app-loading {
+  visibility: hidden;
+}
+
 h1 {
   font-size: 1.75rem;
   font-weight: 700;
@@ -1608,6 +1612,10 @@ button:active {
 .static-page-back {
   text-align: center;
   margin-top: 2rem;
+}
+
+[hidden] {
+  display: none !important;
 }
 
 .hidden {

@@ -1,5 +1,18 @@
 let _sessionTimerInterval = null;
 
+function showElement(element, display = "") {
+  if (!element) return;
+  element.hidden = false;
+  element.classList.remove("hidden");
+  element.style.display = display;
+}
+
+function hideElement(element) {
+  if (!element) return;
+  element.hidden = true;
+  element.style.display = "";
+}
+
 async function logout() {
   try {
     await logoutApi();
@@ -40,7 +53,7 @@ function startSessionTimer() {
       const warning = document.getElementById("session-warning");
       const countdown = document.getElementById("session-countdown");
       if (warning && countdown) {
-        warning.style.display = "flex";
+        showElement(warning, "flex");
         countdown.textContent = `${t("session_expires")} ${minutes}:${seconds.toString().padStart(2, "0")}`;
       }
     }
@@ -212,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (logoutBtn) {
       logoutBtn.addEventListener("click", function () {
         const modal = document.getElementById("logout-modal");
-        if (modal) modal.style.display = "flex";
+        showElement(modal, "flex");
         const sidebar = document.querySelector(".sidebar");
         if (sidebar) sidebar.classList.remove("open");
       });
@@ -221,7 +234,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalCancel = document.getElementById("modal-cancel-btn");
     if (modalCancel) {
       modalCancel.addEventListener("click", function () {
-        document.getElementById("logout-modal").style.display = "none";
+        hideElement(document.getElementById("logout-modal"));
       });
     }
 
@@ -241,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const data = await refreshToken();
         if (data) {
           sessionStorage.setItem("expiresAt", data.expiresAt);
-          document.getElementById("session-warning").style.display = "none";
+          hideElement(document.getElementById("session-warning"));
           startSessionTimer();
         } else {
           await logout();
@@ -281,13 +294,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function openSettings() {
       settingsPanel.classList.add("open");
-      settingsOverlay.style.display = "block";
+      showElement(settingsOverlay, "block");
       loadSettingsProfile();
     }
 
     function closeSettings() {
       settingsPanel.classList.remove("open");
-      settingsOverlay.style.display = "none";
+      hideElement(settingsOverlay);
     }
 
     if (settingsBtn)
@@ -368,14 +381,14 @@ document.addEventListener("DOMContentLoaded", function () {
       deleteAccountBtn.addEventListener("click", function () {
         if (!sessionStorage.getItem("expiresAt")) return;
         closeSettings();
-        document.getElementById("delete-modal").style.display = "flex";
+        showElement(document.getElementById("delete-modal"), "flex");
       });
     }
 
     const deleteCancelBtn = document.getElementById("delete-cancel-btn");
     if (deleteCancelBtn) {
       deleteCancelBtn.addEventListener("click", function () {
-        document.getElementById("delete-modal").style.display = "none";
+        hideElement(document.getElementById("delete-modal"));
       });
     }
     const deleteConfirmBtn = document.getElementById("delete-confirm-btn");
@@ -386,7 +399,7 @@ document.addEventListener("DOMContentLoaded", function () {
           await logout();
           window.location.href = "index.html";
         } catch {
-          document.getElementById("delete-modal").style.display = "none";
+          hideElement(document.getElementById("delete-modal"));
         }
       });
     }
@@ -525,13 +538,13 @@ document.addEventListener("DOMContentLoaded", function () {
   if (forgotLink && forgotModal) {
     forgotLink.addEventListener("click", function (e) {
       e.preventDefault();
-      forgotModal.style.display = "flex";
+      showElement(forgotModal, "flex");
     });
   }
 
   if (forgotCancelBtn && forgotModal) {
     forgotCancelBtn.addEventListener("click", function () {
-      forgotModal.style.display = "none";
+      hideElement(forgotModal);
       document.getElementById("forgot-email").value = "";
       document.getElementById("forgot-error").style.display = "none";
       document.getElementById("forgot-success").style.display = "none";

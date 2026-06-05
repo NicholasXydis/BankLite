@@ -1,13 +1,14 @@
 async function loadDashboard() {
   requireAuth();
-  document.body.style.visibility = "visible";
+  document.body.classList.remove("app-loading");
 
   const userName = sessionStorage.getItem("fullName");
   if (userName) {
     const firstName = userName.split(" ")[0];
-    document.getElementById("welcome-msg").textContent =
+    const welcomeMsg = document.getElementById("welcome-msg");
+    welcomeMsg.textContent =
       `${t("dashboard_welcome")} ${firstName}!`;
-    document.getElementById("welcome-msg").style.display = "block";
+    showElement(welcomeMsg, "block");
   }
 
   const errorMsg = document.getElementById("error-msg");
@@ -94,9 +95,9 @@ async function loadDashboard() {
     const hasSavings = accounts.some((a) => a.type === "Savings");
 
     if (hasChequing && hasSavings) {
-      document.getElementById("create-account-section").style.display = "none";
+      hideElement(document.getElementById("create-account-section"));
     } else {
-      document.getElementById("create-account-section").style.display = "block";
+      showElement(document.getElementById("create-account-section"), "block");
     }
   } catch (error) {
     errorMsg.textContent = error.message;
@@ -184,7 +185,7 @@ async function loadSpendingChart() {
   try {
     const accounts = await getAccounts();
     if (accounts.length === 0) return;
-    document.getElementById("chart-card").style.display = "block";
+    showElement(document.getElementById("chart-card"), "block");
 
     const endDate = new Date();
     const startDate = new Date();
@@ -296,7 +297,7 @@ async function loadSpendingChart() {
     document.getElementById("withdrawal-percent").textContent =
       total > 0 ? `${((totalWithdrawals / total) * 100).toFixed(1)}%` : "0%";
   } catch {
-    document.getElementById("chart-card").style.display = "none";
+    hideElement(document.getElementById("chart-card"));
   }
 }
 

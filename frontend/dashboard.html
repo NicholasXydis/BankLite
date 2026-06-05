@@ -17,13 +17,9 @@
     <meta content="#1a3a5c" name="theme-color" />
     <title>BankLite | Dashboard</title>
     <link href="css/styles.css" rel="stylesheet" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <link href="favicon.ico?v=1" rel="icon" type="image/x-icon" />
   </head>
-  <body class="dashboard-body" style="visibility: hidden">
+  <body class="dashboard-body app-loading">
     <div class="dashboard-layout">
       <button
         aria-label="Toggle navigation"
@@ -195,7 +191,7 @@
           class="dashboard-title"
           id="dashboard-title"
         ></h1>
-        <p id="welcome-msg" style="display: none"></p>
+        <p id="welcome-msg" hidden></p>
         <div
           aria-live="polite"
           class="error-msg"
@@ -207,7 +203,7 @@
         <div
           class="form-card form-card--create"
           id="create-account-section"
-          style="display: none"
+          hidden
         >
           <h2 class="section-title" data-i18n="dashboard_create_account">
             Create Account
@@ -241,7 +237,7 @@
             Create Account
           </button>
         </div>
-        <div class="chart-card" id="chart-card" style="display: none">
+        <div class="chart-card" id="chart-card" hidden>
           <div class="chart-header">
             <div class="chart-stat">
               <span class="chart-stat-label"
@@ -289,14 +285,14 @@
     ></script>
     <script src="js/dashboard.js"></script>
 
-    <div id="session-warning" style="display: none">
+    <div id="session-warning" hidden>
       <span id="session-countdown"></span>
       <button data-i18n="session_stay" id="session-stay-btn">
         Stay Logged In
       </button>
     </div>
 
-    <div class="modal-overlay" id="logout-modal" style="display: none">
+    <div class="modal-overlay" id="logout-modal" hidden>
       <div class="modal">
         <h3 class="modal-title" data-i18n="logout_title">Log Out</h3>
         <p class="modal-text" data-i18n="logout_confirm_text">
@@ -349,7 +345,7 @@
     <div
       class="settings-overlay"
       id="settings-overlay"
-      style="display: none"
+      hidden
     ></div>
     <div class="settings-panel" id="settings-panel">
       <div class="settings-header">
