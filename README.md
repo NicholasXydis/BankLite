@@ -1,300 +1,229 @@
-# BankLiteAPI
+# BankLite
 
-Banking REST API built with ASP.NET Core 8 and Clean Architecture.
+![CI](https://img.shields.io/github/actions/workflow/status/NicholasXydis/BankLite/ci.yml?branch=main&label=CI&style=flat&color=64748b)
+![Security](https://img.shields.io/github/actions/workflow/status/NicholasXydis/BankLite/security.yml?branch=main&label=CodeQL%20%2B%20Trivy&style=flat&color=64748b)
+![Docker](https://img.shields.io/badge/Docker-GHCR-64748b?style=flat&logo=docker&logoColor=white)
+![.NET](https://img.shields.io/badge/.NET-8-64748b?style=flat&logo=dotnet&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-64748b?style=flat&logo=postgresql&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-64748b?style=flat)
 
-_API REST bancaire construite avec ASP.NET Core 8 et Clean Architecture._
+Production-grade full-stack banking demo built with ASP.NET Core, PostgreSQL, Docker, and a responsive vanilla JavaScript frontend.
 
-![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat&logo=dotnet)
-![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=flat&logo=microsoftsqlserver)
-![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=flat&logo=jsonwebtokens)
-![xUnit](https://img.shields.io/badge/xUnit-Tests-512BD4?style=flat)
-![GitHub Actions](https://img.shields.io/badge/CI/CD-GitHub_Actions-2088FF?style=flat&logo=githubactions)
+**Live Demo:** [https://banklite.ca](https://banklite.ca)<br>
+**API Docs:** [https://banklite.ca/swagger](https://banklite.ca/swagger)<br>
+**Postman:** [postman/BankLite.postman_collection.json](postman/BankLite.postman_collection.json)
 
----
+![BankLite demo](docs/demo.gif)
 
-## Purpose / Objectif
+## Screenshots
 
-Built to demonstrate a structured backend API with authentication, financial transactions, and separation of concerns
-across multiple layers.
+| Dashboard | Alfred Chat |
+|---|---|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Alfred chat](docs/screenshots/alfred-chat.png) |
 
-_Conçu pour démontrer une API backend structurée avec authentification, transactions financières et séparation des
-responsabilités sur plusieurs couches._
+| Mobile Landing | Dark/French Transactions |
+|---|---|
+| ![Mobile landing](docs/screenshots/mobile.png) | ![Dark French transactions](docs/screenshots/transactions-fr-dark.png) |
 
----
+## About
 
-## Features / Fonctionnalités
+BankLite is a secure banking simulation with account creation, deposits, withdrawals, transfers, transaction history, real-time balance updates, and an AI banking assistant. The backend follows Clean Architecture across Domain, Application, Infrastructure, and API layers. The production stack runs in Docker with PostgreSQL, GitHub Actions, GHCR image publishing, VPS deployment, and Cloudflare in front of the application. All money is virtual.
 
-- JWT authentication with BCrypt password hashing — passwords are never stored in plain text
-- User registration and login with email normalization (stored in lowercase)
-- Chequing and savings account creation with auto-generated account numbers
-- Deposit and withdrawal with transaction details returned to client
-- Atomic transfers between accounts using Unit of Work — with rollback on failure
-- Transaction descriptions stored on every deposit, withdrawal and transfer
-- Paginated transaction history ordered by newest first
-- FluentValidation on all endpoints — input sanitization before hitting the service layer
-- Repository pattern — clean data access abstraction across all entities
-- Unit of Work pattern — atomic database operations with commit and rollback
-- Rate limiting — 5 attempts/min on login for brute force protection, 30/min globally
-- Health check endpoint at `/health` for monitoring
-- Audit logging on all financial operations and authentication events
-- Structured logging with Serilog (console and file)
-- Global exception middleware — 400 for business errors, 500 for server errors
-- Swagger UI with JWT authorization button for easy API testing
-- Seed data for local testing
-- CI/CD pipeline with GitHub Actions — runs all tests on every push
+## Security Highlights
 
----
+- BCrypt password hashing.
+- JWT authentication delivered through HttpOnly Secure cookies.
+- Refresh token rotation with SHA256 token hashing.
+- CSRF origin/referer validation on unsafe API methods.
+- CSP, HSTS, X-Frame-Options, no-store caching, and hardened response headers.
+- Account lockout after 5 failed login attempts.
+- Partitioned rate limiting for global, auth, refresh, chat, and password flows.
+- Idempotency-key support on deposit, withdrawal, internal transfer, and external transfer endpoints.
+- Serializable database transactions and PostgreSQL `xmin` optimistic concurrency.
+- Cloudflare-fronted production deployment with authenticated origin access.
+
+## Features
+
+**Auth:** registration, login, logout, refresh tokens, forgot/reset password, change password, account deletion.<br>
+**Banking:** chequing/savings accounts, deposit, withdrawal, internal transfer, external transfer by account number.<br>
+**Transactions:** pagination, type filters, date ranges, CSV export.<br>
+**Realtime:** SignalR balance updates.<br>
+**AI:** Alfred, a Groq-powered BankLite assistant.<br>
+**UI:** English/French language toggle, dark/light mode, responsive mobile experience.
 
 ## Architecture
 
-BankLiteAPI follows Clean Architecture with separation of concerns across four layers:
+```text
+BankLite/
+├─ frontend/                    Static HTML/CSS/JS app served by Nginx
+├─ backend/
+│  ├─ BankLite.Domain/          Entities and repository contracts
+│  ├─ BankLite.Application/     DTOs, validators, service interfaces, business rules
+│  ├─ BankLite.Infrastructure/  EF Core, repositories, token/email/AI integrations
+│  ├─ BankLiteAPI/BankLite.API/ Controllers, middleware, SignalR, API composition
+│  └─ BankLite.Tests/           Unit and integration tests
+├─ postman/                     Local and production Postman collections
+├─ docs/                        OpenAPI export, screenshots, benchmark evidence
+└─ docker-compose.yml           Production-style local compose stack
+```
 
-**Domain** — Core entities (`User`, `Account`, `Transaction`, `AuditLog`) and repository/service interfaces. Zero
-dependencies on other layers.
+```text
+┌──────────────────────────────────────────────┐
+│ API                                          │
+│ Controllers, middleware, SignalR, auth setup │
+└───────────────────────┬──────────────────────┘
+                        │
+┌───────────────────────▼──────────────────────┐
+│ Application                                  │
+│ Services, DTOs, validators, business rules   │
+└───────────────────────┬──────────────────────┘
+                        │
+┌───────────────────────▼──────────────────────┐
+│ Domain                                       │
+│ Entities and repository contracts            │
+└───────────────────────▲──────────────────────┘
+                        │
+┌───────────────────────┴──────────────────────┐
+│ Infrastructure                               │
+│ EF Core, PostgreSQL, repositories, providers │
+└──────────────────────────────────────────────┘
+```
 
-**Application** — Business logic, DTOs, FluentValidation validators, and service implementations (`AuthService`,
-`AccountService`, `TransactionService`).
+- **Domain:** core entities and contracts with no infrastructure dependency.
+- **Application:** use-case services, DTOs, validation, and business exceptions.
+- **Infrastructure:** EF Core repositories, unit of work, email, JWT, Groq, and persistence.
+- **API:** HTTP endpoints, authentication, rate limits, middleware, SignalR, and composition root.
 
-**Infrastructure** — EF Core repository implementations, `BankLiteDbContext`, `UnitOfWork`, and `SeedData`.
+## Tech Stack
 
-**API** — ASP.NET Core controllers , `ExceptionMiddleware`, and `Program.cs` configuration.
+| Area | Stack |
+|---|---|
+| Backend | ASP.NET Core 8, C#, EF Core, FluentValidation, Serilog, SignalR |
+| Frontend | HTML, CSS, JavaScript, Chart.js, Nginx |
+| Database | PostgreSQL 16, EF Core migrations, Respawn test resets |
+| DevOps | Docker, Docker Compose, GitHub Actions, GHCR, Cloudflare, VPS |
+| Testing | xUnit, Moq, Bogus, Respawn, Playwright, k6 |
+| Integrations | SendGrid password reset email, Groq AI chat |
 
-_BankLiteAPI applique une Clean Architecture avec une séparation des responsabilités sur quatre couches : Domain,
-Application, Infrastructure et API._
+## Testing
 
----
+| Suite | Count | Tools |
+|---|---:|---|
+| Backend unit/integration | 438 | xUnit, Moq, Bogus, Respawn |
+| End-to-end | 22 | Playwright |
+| Total | 460 | CI-backed test coverage |
 
-## Tech Stack / Technologies
+## CI/CD
 
-| Layer             | Technology                                             |
-| ----------------- | ------------------------------------------------------ |
-| Framework         | ASP.NET Core 8                                         |
-| Database          | SQL Server + Entity Framework Core 8                   |
-| Authentication    | JWT Bearer + BCrypt.Net                                |
-| Validation        | FluentValidation                                       |
-| Testing           | xUnit + Moq                                            |
-| Logging           | Serilog (Console + File)                               |
-| API Documentation | Swagger / Swashbuckle                                  |
-| CI/CD             | GitHub Actions                                         |
-| Security          | Rate Limiting + BCrypt + JWT                           |
-| Architecture      | Clean Architecture + Repository Pattern + Unit of Work |
+| Workflow | File | Purpose |
+|---|---|---|
+| CI | `.github/workflows/ci.yml` | Compose validation, backend tests, Playwright E2E |
+| Security | `.github/workflows/security.yml` | CodeQL and Trivy filesystem/image scans |
+| Publish Images | `.github/workflows/publish-images.yml` | Build, scan, and push GHCR images |
+| Deploy Production | `.github/workflows/deploy-production.yml` | SSH deploy and production smoke tests |
 
----
+## API Docs
 
-## Getting Started / Démarrage
+- Swagger UI: [https://banklite.ca/swagger](https://banklite.ca/swagger)
+- OpenAPI export: [docs/openapi.json](docs/openapi.json)
+- Postman collection: [postman/BankLite.postman_collection.json](postman/BankLite.postman_collection.json)
+- Postman environments: [postman/BankLite_Local.postman_environment.json](postman/BankLite_Local.postman_environment.json), [postman/BankLite_Production.postman_environment.json](postman/BankLite_Production.postman_environment.json)
 
-### Prerequisites / Prérequis
+## Quality Gates
+
+| SSL Labs | Lighthouse | k6 Public Web Benchmark |
+|---|---|---|
+| ![SSL Labs A+](docs/screenshots/ssl-report.png) | ![Lighthouse scores](docs/screenshots/lighthouse.png) | ![k6 load test](docs/screenshots/k6-load-test.png) |
+
+**k6 public web benchmark:** 1,000 VUs, 533,120 requests, 1,184 req/s, p95 581ms, p99 844ms, 0.00% request failure rate. See [docs/load-test.md](docs/load-test.md).
+
+<details>
+<summary><strong>Getting Started</strong></summary>
+
+### Prerequisites
 
 - .NET 8 SDK
-- SQL Server or SQL Server Express
-- EF Core CLI (dotnet-ef)
+- Docker Desktop
+- Node.js 22 for Playwright tests
+- k6 for load testing
 
-### Setup / Configuration
+### Clone
 
-**1. Clone the repository / Cloner le dépôt**
-
-```bash
-git clone https://github.com/NicholasXydis/BankLiteAPI.git
-cd BankLiteAPI/backend/BankLiteAPI
+```powershell
+git clone https://github.com/NicholasXydis/BankLite.git
+cd BankLite
 ```
 
-**2. Install EF Core CLI / Installer EF Core CLI**
+### Configure
 
-```bash
-dotnet tool install --global dotnet-ef
+```powershell
+Copy-Item .env.example .env
 ```
 
-**3. Configure your settings / Configurez vos paramètres**
+Fill `.env` with local secrets. Keep `.env` ignored and never commit it.
 
-Copy `appsettings.example.json` to `appsettings.json` and fill in your values:
+For local non-Docker API work, use `appsettings.Development.json` or .NET user secrets for development-only credentials.
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=YOUR_SERVER;Database=BankLiteDB;Trusted_Connection=True;"
-  },
-  "JwtSettings": {
-    "Secret": "YOUR_SECRET_KEY_MIN_32_CHARACTERS",
-    "Issuer": "BankLiteAPI",
-    "Audience": "BankLiteClient",
-    "ExpiryMinutes": 60
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
+### Docker
+
+```powershell
+docker compose --profile tools run --rm migrate
+docker compose up --build
 ```
 
-**4. Apply migrations / Appliquer les migrations**
+Frontend:
 
-```bash
-dotnet ef database update --project ../BankLite.Infrastructure --startup-project BankLite.API
+```text
+http://127.0.0.1:8080
 ```
 
-**5. Run the API / Lancer l'API**
+### Backend Tests
 
-```bash
-dotnet run --project BankLite.API
+```powershell
+dotnet test backend/BankLite.Tests/BankLite.Tests.csproj
 ```
 
-**6. Open Swagger / Ouvrir Swagger**
+### Playwright E2E
 
-Navigate to `https://localhost:7205/swagger`
-
----
-
-## Running Tests / Lancer les tests
-
-```bash
-dotnet test
+```powershell
+cd frontend/tests
+npm ci
+npm test
 ```
 
-13 tests covering:
+### k6 Benchmark
 
-- Authentication — login and register success and failure paths
-- Transactions — deposit, withdraw and transfer
-- Authorization — account ownership checks on all transaction operations
-- Edge cases — account not found, insufficient funds, wrong password
-
----
-
-## Example Requests / Exemples de requêtes
-
-**POST /api/auth/login**
-
-```json
-{
-  "email": "test@banklite.com",
-  "password": "Password123"
-}
+```powershell
+k6 run load-tests/banklite-benchmark.js
 ```
 
-Response:
+</details>
 
-```json
-{
-  "token": "eyJhbGci...",
-  "userId": "3fa85f64-..."
-}
-```
+<details>
+<summary><strong>Environment Variables</strong></summary>
 
----
+| Variable | Description |
+|---|---|
+| `POSTGRES_DB` | PostgreSQL database name. |
+| `POSTGRES_ADMIN_USER` | PostgreSQL admin/migration user. |
+| `POSTGRES_ADMIN_PASSWORD` | PostgreSQL admin/migration password. |
+| `POSTGRES_APP_USER` | Least-privilege application database user. |
+| `POSTGRES_APP_PASSWORD` | Application database password. |
+| `DB_CONNECTION_STRING` | Runtime API connection string for the application user. |
+| `DB_MIGRATION_CONNECTION_STRING` | Migration connection string for the admin user. |
+| `ASPNETCORE_ENVIRONMENT` | ASP.NET Core environment. |
+| `JWT_SECRET` | Cryptographically random JWT signing secret, at least 32 characters. |
+| `JWT_ISSUER` | JWT issuer. |
+| `JWT_AUDIENCE` | JWT audience. |
+| `SENDGRID_API_KEY` | SendGrid API key for password reset email. |
+| `SENDGRID_FROM_EMAIL` | From email address for outbound reset email. |
+| `SENDGRID_FROM_NAME` | From display name for outbound reset email. |
+| `GROQ_API_KEY` | Groq API key for Alfred chat. |
+| `FRONTEND_URL` | Allowed frontend origin. |
+| `RESET_PASSWORD_URL` | Password reset page URL used in reset emails. |
 
-**POST /api/transaction/transfer**
+</details>
 
-```json
-{
-  "fromAccountId": "3fa85f64-...",
-  "toAccountId": "8fb96g75-...",
-  "amount": 250.0
-}
-```
+## License
 
-Response:
-
-```json
-{
-  "message": "Transfer successful",
-  "amount": 250.0
-}
-```
-
----
-
-## API Endpoints
-
-### Auth — `/api/auth`
-
-| Method | Endpoint    | Description                 | Auth Required |
-| ------ | ----------- | --------------------------- | ------------- |
-| POST   | `/register` | Register a new user         | No            |
-| POST   | `/login`    | Login and receive JWT token | No            |
-
-### Accounts — `/api/account`
-
-| Method | Endpoint  | Description                             | Auth Required |
-| ------ | --------- | --------------------------------------- | ------------- |
-| POST   | `/create` | Create a chequing or savings account    | Yes           |
-| GET    | `/`       | Get all accounts for authenticated user | Yes           |
-
-### Transactions — `/api/transaction`
-
-| Method | Endpoint                          | Description                                  | Auth Required |
-| ------ | --------------------------------- | -------------------------------------------- | ------------- |
-| POST   | `/deposit`                        | Deposit funds — returns transaction receipt  | Yes           |
-| POST   | `/withdraw`                       | Withdraw funds — returns transaction receipt | Yes           |
-| POST   | `/transfer`                       | Atomic transfer between accounts             | Yes           |
-| GET    | `/{accountId}?page=1&pageSize=10` | Get paginated transaction history            | Yes           |
-
-### Health
-
-| Method | Endpoint  | Description               |
-| ------ | --------- | ------------------------- |
-| GET    | `/health` | Returns API health status |
-
----
-
-## Seed Data / Données de test
-
-On first run, the database is automatically seeded with a test user and two accounts:
-
-| Field            | Value             |
-| ---------------- | ----------------- |
-| Email            | test@banklite.com |
-| Password         | Password123       |
-| Chequing Balance | $1,000.00         |
-| Savings Balance  | $5,000.00         |
-
----
-
-## Security / Sécurité
-
-- Passwords hashed with BCrypt — never stored in plain text
-- JWT tokens expire after 60 minutes
-- Login endpoint rate limited to 5 attempts per minute — brute force protection
-- All other endpoints rate limited to 30 requests per minute
-- Email addresses normalized to lowercase before storage
-- Unit of Work with rollback on transfer failure
-- All sensitive configuration stored as environment variables in production
-- `appsettings.json` is excluded from version control
-
----
-
-## Project Structure / Structure du projet
-
-```
-BankLiteAPI/
-├── backend/
-│   ├── BankLite.Domain/
-│   │   ├── Entities/          # User, Account, Transaction, AuditLog
-│   │   └── Interfaces/        # Repository and service interfaces
-│   ├── BankLite.Application/
-│   │   ├── DTOs/              # Data transfer objects
-│   │   ├── Interfaces/        # Service interfaces
-│   │   ├── Services/          # AuthService, AccountService, TransactionService
-│   │   └── Validators/        # FluentValidation validators
-│   ├── BankLite.Infrastructure/
-│   │   ├── Data/              # BankLiteDbContext, UnitOfWork, SeedData
-│   │   ├── Migrations/        # EF Core migrations
-│   │   └── Repositories/      # Repository implementations
-│   ├── BankLiteAPI/
-│   │   └── BankLite.API/
-│   │       ├── Controllers/       # AuthController, AccountController, TransactionController
-│   │       ├── Middleware/        # ExceptionMiddleware
-│   │       └── Program.cs         # App configuration
-│   └── BankLite.Tests/
-│       └── Services/          # AuthServiceTests, TransactionServiceTests
-└── Frontend/
-    └── Frontend.Tests/
-```
-
----
-
-## Author / Auteur
-
-**Nicholas Xydis**  
-GitHub: [NicholasXydis](https://github.com/NicholasXydis)
+BankLite is released under the [MIT License](LICENSE).
