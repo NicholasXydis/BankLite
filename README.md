@@ -8,6 +8,11 @@ A secure, production-deployed banking site built to showcase real-world full-sta
 
 <br>
 
+[![Open Live App](https://img.shields.io/badge/OPEN%20LIVE%20APP-banklite.ca-2EA44F?style=for-the-badge&logo=googlechrome&logoColor=white)](https://banklite.ca)
+[![View Source](https://img.shields.io/badge/View%20Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/NicholasXydis/BankLite)
+
+<br>
+
 <p align="center">
   <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/c-sharp.svg" alt="C#" width="52" height="52">
   &nbsp;&nbsp;
@@ -34,54 +39,10 @@ A secure, production-deployed banking site built to showcase real-world full-sta
   <strong>460 automated tests</strong> &nbsp;|&nbsp; <strong>1,184 req/s k6 benchmark</strong> &nbsp;|&nbsp; <strong>CodeQL + Trivy security scans</strong> &nbsp;|&nbsp; <strong>Linux VPS deployed</strong>
 </p>
 
-<h2 align="center">Live Production Demo</h2>
-
-<a href="https://banklite.ca" aria-label="Open live BankLite site">
-  <svg width="400" height="58" viewBox="0 0 400 58" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="live-title live-desc">
-    <title id="live-title">Open live BankLite site</title>
-    <desc id="live-desc">Button linking to the live BankLite production site.</desc>
-    <style>
-      .live-main{font:800 16px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.08em;fill:#F8FAFC}
-      .live-site{font:800 16px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.08em;fill:#F8FAFC}
-    </style>
-    <rect x="1" y="1" width="398" height="56" rx="28" fill="#0F172A" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="2"/>
-    <circle cx="38" cy="29" r="15" fill="#1E293B"/>
-    <path d="M38 20.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Zm5.9 7.3h-3.2a14.7 14.7 0 0 0-1.2-4.5 6.7 6.7 0 0 1 4.4 4.5ZM38 22.6c.7.9 1.2 2.8 1.4 5.2h-2.8c.2-2.4.7-4.3 1.4-5.2Zm-6.2 7.5h3.5c.1 1.3.3 2.5.6 3.5a6.8 6.8 0 0 1-4.1-3.5Zm3.5-2.3h-3.5a6.8 6.8 0 0 1 4.1-3.5c-.3 1-.5 2.2-.6 3.5Zm1.3 2.3h2.8c-.2 2.4-.7 4.3-1.4 5.2-.7-.9-1.2-2.8-1.4-5.2Zm3.5 3.5c.3-1 .5-2.2.6-3.5h3.5a6.8 6.8 0 0 1-4.1 3.5Z" fill="#F8FAFC"/>
-    <text x="70" y="36" class="live-main">OPEN LIVE SITE</text>
-    <text x="258" y="36" class="live-site">BANKLITE.CA</text>
-  </svg>
-</a>
-
 <br>
 
 <img src="docs/demo.gif" alt="BankLite demo" width="92%">
 
-</div>
-
-## Screenshots
-
-### Dashboard
-
-<div align="center">
-  <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="100%">
-</div>
-
-### Alfred Chat
-
-<div align="center">
-  <img src="docs/screenshots/alfred-chat.png" alt="Alfred chat" width="100%">
-</div>
-
-### Mobile Landing
-
-<div align="center">
-  <img src="docs/screenshots/mobile.png" alt="Mobile landing" width="58%">
-</div>
-
-### Dark/French Transactions
-
-<div align="center">
-  <img src="docs/screenshots/transactions-fr-dark.png" alt="Dark French transactions" width="100%">
 </div>
 
 ## About
@@ -145,38 +106,40 @@ BankLite/
 └─ .github/workflows/           CI, security scanning, image publishing, SSH production deploy
 ```
 
-```text
+<div align="center">
+<pre>
 ┌────────────────────────────────────────────────────────────┐
 │                         Browser UI                         │
-│          Static HTML/CSS/JS, i18n, theme, page flows        │
+│          Static HTML/CSS/JS, i18n, theme, page flows       │
 └──────────────────────────────┬─────────────────────────────┘
                                │ HTTPS + SignalR
 ┌──────────────────────────────▼─────────────────────────────┐
 │                         ASP.NET API                        │
-│       Controllers, middleware, cookies, auth, rate limits   │
+│       Controllers, middleware, cookies, auth, rate limits  │
 └──────────────────────────────┬─────────────────────────────┘
                                │ DTOs + use cases
 ┌──────────────────────────────▼─────────────────────────────┐
 │                        Application                         │
-│       Services, validators, interfaces, business rules      │
+│       Services, validators, interfaces, business rules     │
 └──────────────────────────────┬─────────────────────────────┘
                                │ Domain contracts
 ┌──────────────────────────────▼─────────────────────────────┐
 │                           Domain                           │
-│              Entities, invariants, repository contracts     │
+│              Entities, invariants, repository contracts    │
 └──────────────────────────────▲─────────────────────────────┘
                                │ Implementations
 ┌──────────────────────────────┴─────────────────────────────┐
 │                       Infrastructure                       │
-│            EF Core, repositories, JWT, SendGrid, Groq       │
+│          EF Core, repositories, JWT, SendGrid, Groq        │
 └───────────────┬──────────────────────────────┬─────────────┘
                 │                              │
 ┌───────────────▼──────────────┐   ┌───────────▼─────────────┐
-│          PostgreSQL          │   │     External Providers   │
-│   Accounts, users, tokens,   │   │   SendGrid email, Groq   │
-│   transactions, audit logs   │   │   AI assistant responses │
+│          PostgreSQL          │   │     External Providers  │
+│   Accounts, users, tokens,   │   │   SendGrid email, Groq  │
+│   transactions, audit logs   │   │   AI assistant responses│
 └──────────────────────────────┘   └─────────────────────────┘
-```
+</pre>
+</div>
 
 - **Domain:** core entities and contracts with no infrastructure dependency.
 - **Application:** use-case services, DTOs, validation, and business exceptions.
@@ -185,38 +148,38 @@ BankLite/
 
 ## Tech Stack
 
-| Area | Stack |
-|---|---|
-| Backend | ASP.NET Core 8, C#, EF Core, FluentValidation, Serilog, SignalR |
-| Frontend | HTML, CSS, JavaScript, Chart.js, Nginx |
-| Database | PostgreSQL 16, EF Core migrations, Respawn test resets |
-| DevOps | Docker, Docker Compose, GitHub Actions, GHCR, Nginx, Cloudflare, Linux VPS, SSH deploy |
-| Testing | xUnit, Moq, Bogus, Respawn, Playwright, k6 |
-| Integrations | SendGrid password reset email, Groq AI chat |
+| Area         | Stack                                                                                  |
+| ------------ | -------------------------------------------------------------------------------------- |
+| Backend      | ASP.NET Core 8, C#, EF Core, FluentValidation, Serilog, SignalR                        |
+| Frontend     | HTML, CSS, JavaScript, Chart.js, Nginx                                                 |
+| Database     | PostgreSQL 16, EF Core migrations, Respawn test resets                                 |
+| DevOps       | Docker, Docker Compose, GitHub Actions, GHCR, Nginx, Cloudflare, Linux VPS, SSH deploy |
+| Testing      | xUnit, Moq, Bogus, Respawn, Playwright, k6                                             |
+| Integrations | SendGrid password reset email, Groq AI chat                                            |
 
 ## Testing
 
-| Suite | Count | Tools |
-|---|---:|---|
-| Backend unit/integration | 438 | xUnit, Moq, Bogus, Respawn |
-| End-to-end | 22 | Playwright |
-| Total | 460 | CI-backed test coverage |
+| Suite                    | Count | Tools                      |
+| ------------------------ | ----: | -------------------------- |
+| Backend unit/integration |   438 | xUnit, Moq, Bogus, Respawn |
+| End-to-end               |    22 | Playwright                 |
+| Total                    |   460 | CI-backed test coverage    |
 
 ## CI/CD
 
-| Workflow | File | Purpose |
-|---|---|---|
-| CI | `.github/workflows/ci.yml` | Compose validation, backend tests, Playwright E2E |
-| Security | `.github/workflows/security.yml` | CodeQL and Trivy filesystem/image scans |
-| Publish Images | `.github/workflows/publish-images.yml` | Build, scan, and push GHCR images |
+| Workflow          | File                                      | Purpose                                            |
+| ----------------- | ----------------------------------------- | -------------------------------------------------- |
+| CI                | `.github/workflows/ci.yml`                | Compose validation, backend tests, Playwright E2E  |
+| Security          | `.github/workflows/security.yml`          | CodeQL and Trivy filesystem/image scans            |
+| Publish Images    | `.github/workflows/publish-images.yml`    | Build, scan, and push GHCR images                  |
 | Deploy Production | `.github/workflows/deploy-production.yml` | SSH deploy to Linux VPS and production smoke tests |
 
 ## API Docs
 
 - Swagger UI: available from the API when enabled
-- OpenAPI export: docs/openapi.json
-- Postman collection: postman/BankLite.postman_collection.json
-- Postman environments: postman/BankLite_Local.postman_environment.json, postman/BankLite_Production.postman_environment.json
+- OpenAPI export: [docs/openapi.json](docs/openapi.json)
+- Postman collection: [postman/BankLite.postman_collection.json](postman/BankLite.postman_collection.json)
+- Postman environments: [postman/BankLite_Local.postman_environment.json](postman/BankLite_Local.postman_environment.json), [postman/BankLite_Production.postman_environment.json](postman/BankLite_Production.postman_environment.json)
 
 ## Quality Gates
 
@@ -274,9 +237,9 @@ docker compose --profile tools run --rm migrate
 docker compose up --build
 ```
 
-Frontend:
+Frontend available at:
 
-```text
+```
 http://127.0.0.1:8080
 ```
 
@@ -305,25 +268,25 @@ k6 run load-tests/banklite-benchmark.js
 <details>
 <summary><strong>Environment Variables</strong></summary>
 
-| Variable | Description |
-|---|---|
-| `POSTGRES_DB` | PostgreSQL database name. |
-| `POSTGRES_ADMIN_USER` | PostgreSQL admin/migration user. |
-| `POSTGRES_ADMIN_PASSWORD` | PostgreSQL admin/migration password. |
-| `POSTGRES_APP_USER` | Least-privilege application database user. |
-| `POSTGRES_APP_PASSWORD` | Application database password. |
-| `DB_CONNECTION_STRING` | Runtime API connection string for the application user. |
-| `DB_MIGRATION_CONNECTION_STRING` | Migration connection string for the admin user. |
-| `ASPNETCORE_ENVIRONMENT` | ASP.NET Core environment. |
-| `JWT_SECRET` | Cryptographically random JWT signing secret, at least 32 characters. |
-| `JWT_ISSUER` | JWT issuer. |
-| `JWT_AUDIENCE` | JWT audience. |
-| `SENDGRID_API_KEY` | SendGrid API key for password reset email. |
-| `SENDGRID_FROM_EMAIL` | From email address for outbound reset email. |
-| `SENDGRID_FROM_NAME` | From display name for outbound reset email. |
-| `GROQ_API_KEY` | Groq API key for Alfred chat. |
-| `FRONTEND_URL` | Allowed frontend origin. |
-| `RESET_PASSWORD_URL` | Password reset page URL used in reset emails. |
+| Variable                         | Description                                                          |
+| -------------------------------- | -------------------------------------------------------------------- |
+| `POSTGRES_DB`                    | PostgreSQL database name.                                            |
+| `POSTGRES_ADMIN_USER`            | PostgreSQL admin/migration user.                                     |
+| `POSTGRES_ADMIN_PASSWORD`        | PostgreSQL admin/migration password.                                 |
+| `POSTGRES_APP_USER`              | Least-privilege application database user.                           |
+| `POSTGRES_APP_PASSWORD`          | Application database password.                                       |
+| `DB_CONNECTION_STRING`           | Runtime API connection string for the application user.              |
+| `DB_MIGRATION_CONNECTION_STRING` | Migration connection string for the admin user.                      |
+| `ASPNETCORE_ENVIRONMENT`         | ASP.NET Core environment.                                            |
+| `JWT_SECRET`                     | Cryptographically random JWT signing secret, at least 32 characters. |
+| `JWT_ISSUER`                     | JWT issuer.                                                          |
+| `JWT_AUDIENCE`                   | JWT audience.                                                        |
+| `SENDGRID_API_KEY`               | SendGrid API key for password reset email.                           |
+| `SENDGRID_FROM_EMAIL`            | From email address for outbound reset email.                         |
+| `SENDGRID_FROM_NAME`             | From display name for outbound reset email.                          |
+| `GROQ_API_KEY`                   | Groq API key for Alfred chat.                                        |
+| `FRONTEND_URL`                   | Allowed frontend origin.                                             |
+| `RESET_PASSWORD_URL`             | Password reset page URL used in reset emails.                        |
 
 </details>
 
