@@ -8,14 +8,48 @@ A secure, production-deployed banking site built to showcase real-world full-sta
 
 <br>
 
-<img src="docs/readme-stack.svg" alt="BankLite stack and quality signals" width="92%">
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/c-sharp.svg" alt="C#" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/javascript.svg" alt="JavaScript" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/html5.svg" alt="HTML5" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/css3.svg" alt="CSS3" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dotnetcore/dotnetcore-original.svg" alt=".NET" width="52" height="52">
+</p>
 
-<br>
+<p align="center">
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/postgresql.svg" alt="PostgreSQL" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/docker.svg" alt="Docker" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/cloudflare.svg" alt="Cloudflare" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/linux.svg" alt="Linux VPS" width="52" height="52">
+</p>
+
+<p align="center">
+  <strong>460 automated tests</strong> &nbsp;|&nbsp; <strong>1,184 req/s k6 benchmark</strong> &nbsp;|&nbsp; <strong>CodeQL + Trivy security scans</strong> &nbsp;|&nbsp; <strong>Linux VPS deployed</strong>
+</p>
 
 <h2 align="center">Live Production Demo</h2>
 
-<a href="https://banklite.ca">
-  <img src="docs/live-demo-button.svg" alt="Open live BankLite site" width="520">
+<a href="https://banklite.ca" aria-label="Open live BankLite site">
+  <svg width="400" height="58" viewBox="0 0 400 58" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="live-title live-desc">
+    <title id="live-title">Open live BankLite site</title>
+    <desc id="live-desc">Button linking to the live BankLite production site.</desc>
+    <style>
+      .live-main{font:800 16px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.08em;fill:#F8FAFC}
+      .live-site{font:800 16px Inter,Segoe UI,Arial,sans-serif;letter-spacing:.08em;fill:#F8FAFC}
+    </style>
+    <rect x="1" y="1" width="398" height="56" rx="28" fill="#0F172A" stroke="#38BDF8" stroke-opacity="0.55" stroke-width="2"/>
+    <circle cx="38" cy="29" r="15" fill="#1E293B"/>
+    <path d="M38 20.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Zm5.9 7.3h-3.2a14.7 14.7 0 0 0-1.2-4.5 6.7 6.7 0 0 1 4.4 4.5ZM38 22.6c.7.9 1.2 2.8 1.4 5.2h-2.8c.2-2.4.7-4.3 1.4-5.2Zm-6.2 7.5h3.5c.1 1.3.3 2.5.6 3.5a6.8 6.8 0 0 1-4.1-3.5Zm3.5-2.3h-3.5a6.8 6.8 0 0 1 4.1-3.5c-.3 1-.5 2.2-.6 3.5Zm1.3 2.3h2.8c-.2 2.4-.7 4.3-1.4 5.2-.7-.9-1.2-2.8-1.4-5.2Zm3.5 3.5c.3-1 .5-2.2.6-3.5h3.5a6.8 6.8 0 0 1-4.1 3.5Z" fill="#F8FAFC"/>
+    <text x="70" y="36" class="live-main">OPEN LIVE SITE</text>
+    <text x="258" y="36" class="live-site">BANKLITE.CA</text>
+  </svg>
 </a>
 
 <br>
@@ -26,17 +60,33 @@ A secure, production-deployed banking site built to showcase real-world full-sta
 
 ## Screenshots
 
-| Dashboard | Alfred Chat |
-|---|---|
-| <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="100%"> | <img src="docs/screenshots/alfred-chat.png" alt="Alfred chat" width="100%"> |
+### Dashboard
 
-| Mobile Landing | Dark/French Transactions |
-|---|---|
-| <img src="docs/screenshots/mobile.png" alt="Mobile landing" width="100%"> | <img src="docs/screenshots/transactions-fr-dark.png" alt="Dark French transactions" width="100%"> |
+<div align="center">
+  <img src="docs/screenshots/dashboard.png" alt="Dashboard" width="100%">
+</div>
+
+### Alfred Chat
+
+<div align="center">
+  <img src="docs/screenshots/alfred-chat.png" alt="Alfred chat" width="100%">
+</div>
+
+### Mobile Landing
+
+<div align="center">
+  <img src="docs/screenshots/mobile.png" alt="Mobile landing" width="58%">
+</div>
+
+### Dark/French Transactions
+
+<div align="center">
+  <img src="docs/screenshots/transactions-fr-dark.png" alt="Dark French transactions" width="100%">
+</div>
 
 ## About
 
-BankLite is a secure banking simulation with account creation, deposits, withdrawals, transfers, transaction history, real-time balance updates, and an AI banking assistant. The backend follows Clean Architecture across Domain, Application, Infrastructure, and API layers. The production stack runs in Docker with PostgreSQL, GitHub Actions, GHCR image publishing, VPS deployment, and Cloudflare in front of the application. All money is virtual.
+BankLite is a secure banking simulation with account creation, deposits, withdrawals, transfers, transaction history, real-time balance updates, and an AI banking assistant. The backend follows Clean Architecture across Domain, Application, Infrastructure, and API layers. The production stack runs on a Linux VPS with Docker, PostgreSQL, Nginx, GitHub Actions, GHCR image publishing, SSH-based deployment, and Cloudflare in front of the application. All money is virtual.
 
 ## Security Highlights
 
@@ -64,38 +114,68 @@ BankLite is a secure banking simulation with account creation, deposits, withdra
 
 ```text
 BankLite/
-├─ frontend/                    Static HTML/CSS/JS app served by Nginx
+├─ frontend/                    Static banking UI served by Nginx
+│  ├─ css/                      Shared styles, landing page styles, themes, responsive layout
+│  ├─ js/                       API client, auth/session, i18n, and banking page controllers
+│  ├─ tests/                    Playwright E2E suite and test configuration
+│  ├─ landing.html              Public marketing/entry page
+│  ├─ index.html                Login page
+│  ├─ register.html             Registration page
+│  ├─ dashboard.html            Account overview, balances, cards, and Alfred chat entry
+│  ├─ deposit.html              Deposit workflow
+│  ├─ withdraw.html             Withdrawal workflow
+│  ├─ transfer.html             Internal and external transfer workflow
+│  ├─ transactions.html         Transaction history, filters, and CSV export
+│  ├─ reset-password.html       Password reset flow
+│  ├─ privacy.html / terms.html Legal pages
+│  ├─ nginx*.conf               Frontend and production Nginx configuration
+│  └─ Dockerfile                Production frontend image
 ├─ backend/
 │  ├─ BankLite.Domain/          Entities and repository contracts
 │  ├─ BankLite.Application/     DTOs, validators, service interfaces, business rules
-│  ├─ BankLite.Infrastructure/  EF Core, repositories, token/email/AI integrations
-│  ├─ BankLiteAPI/BankLite.API/ Controllers, middleware, SignalR, API composition
-│  └─ BankLite.Tests/           Unit and integration tests
-├─ postman/                     Local and production Postman collections
-├─ docs/                        OpenAPI export, screenshots, benchmark evidence
-└─ docker-compose.yml           Production-style local compose stack
+│  ├─ BankLite.Infrastructure/  EF Core, repositories, PostgreSQL, JWT, email, AI providers
+│  ├─ BankLiteAPI/BankLite.API/ Controllers, middleware, SignalR hubs, auth, API composition
+│  └─ BankLite.Tests/           xUnit unit and integration tests
+├─ docker/                      Linux VPS reverse proxy, deployment, and infrastructure configuration
+├─ docs/                        Demo media, screenshots, OpenAPI export, load-test evidence
+├─ load-tests/                  k6 load benchmark scripts
+├─ postman/                     Local and production Postman collections/environments
+├─ docker-compose.yml           Production-style local compose stack
+├─ docker-compose.e2e.yml       Playwright E2E compose stack
+└─ .github/workflows/           CI, security scanning, image publishing, SSH production deploy
 ```
 
 ```text
-┌──────────────────────────────────────────────┐
-│ API                                          │
-│ Controllers, middleware, SignalR, auth setup │
-└───────────────────────┬──────────────────────┘
-                        │
-┌───────────────────────▼──────────────────────┐
-│ Application                                  │
-│ Services, DTOs, validators, business rules   │
-└───────────────────────┬──────────────────────┘
-                        │
-┌───────────────────────▼──────────────────────┐
-│ Domain                                       │
-│ Entities and repository contracts            │
-└───────────────────────▲──────────────────────┘
-                        │
-┌───────────────────────┴──────────────────────┐
-│ Infrastructure                               │
-│ EF Core, PostgreSQL, repositories, providers │
-└──────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                         Browser UI                         │
+│          Static HTML/CSS/JS, i18n, theme, page flows        │
+└──────────────────────────────┬─────────────────────────────┘
+                               │ HTTPS + SignalR
+┌──────────────────────────────▼─────────────────────────────┐
+│                         ASP.NET API                        │
+│       Controllers, middleware, cookies, auth, rate limits   │
+└──────────────────────────────┬─────────────────────────────┘
+                               │ DTOs + use cases
+┌──────────────────────────────▼─────────────────────────────┐
+│                        Application                         │
+│       Services, validators, interfaces, business rules      │
+└──────────────────────────────┬─────────────────────────────┘
+                               │ Domain contracts
+┌──────────────────────────────▼─────────────────────────────┐
+│                           Domain                           │
+│              Entities, invariants, repository contracts     │
+└──────────────────────────────▲─────────────────────────────┘
+                               │ Implementations
+┌──────────────────────────────┴─────────────────────────────┐
+│                       Infrastructure                       │
+│            EF Core, repositories, JWT, SendGrid, Groq       │
+└───────────────┬──────────────────────────────┬─────────────┘
+                │                              │
+┌───────────────▼──────────────┐   ┌───────────▼─────────────┐
+│          PostgreSQL          │   │     External Providers   │
+│   Accounts, users, tokens,   │   │   SendGrid email, Groq   │
+│   transactions, audit logs   │   │   AI assistant responses │
+└──────────────────────────────┘   └─────────────────────────┘
 ```
 
 - **Domain:** core entities and contracts with no infrastructure dependency.
@@ -110,15 +190,9 @@ BankLite/
 | Backend | ASP.NET Core 8, C#, EF Core, FluentValidation, Serilog, SignalR |
 | Frontend | HTML, CSS, JavaScript, Chart.js, Nginx |
 | Database | PostgreSQL 16, EF Core migrations, Respawn test resets |
-| DevOps | Docker, Docker Compose, GitHub Actions, GHCR, Cloudflare, VPS |
+| DevOps | Docker, Docker Compose, GitHub Actions, GHCR, Nginx, Cloudflare, Linux VPS, SSH deploy |
 | Testing | xUnit, Moq, Bogus, Respawn, Playwright, k6 |
 | Integrations | SendGrid password reset email, Groq AI chat |
-
-<div align="center">
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=NicholasXydis&layout=compact&theme=tokyonight&hide_border=true)
-
-</div>
 
 ## Testing
 
@@ -135,7 +209,7 @@ BankLite/
 | CI | `.github/workflows/ci.yml` | Compose validation, backend tests, Playwright E2E |
 | Security | `.github/workflows/security.yml` | CodeQL and Trivy filesystem/image scans |
 | Publish Images | `.github/workflows/publish-images.yml` | Build, scan, and push GHCR images |
-| Deploy Production | `.github/workflows/deploy-production.yml` | SSH deploy and production smoke tests |
+| Deploy Production | `.github/workflows/deploy-production.yml` | SSH deploy to Linux VPS and production smoke tests |
 
 ## API Docs
 
@@ -146,11 +220,25 @@ BankLite/
 
 ## Quality Gates
 
-| SSL Labs | Lighthouse | k6 Public Web Benchmark |
-|---|---|---|
-| ![SSL Labs A+](docs/screenshots/ssl-report.png) | ![Lighthouse scores](docs/screenshots/lighthouse.png) | ![k6 load test](docs/screenshots/k6-load-test.png) |
+### SSL Labs
 
-**k6 public web benchmark:** 1,000 VUs, 533,120 requests, 1,184 req/s, p95 581ms, p99 844ms, 0.00% request failure rate. See [docs/load-test.md](docs/load-test.md).
+<div align="center">
+  <img src="docs/screenshots/ssl-report.png" alt="SSL Labs A+" width="100%">
+</div>
+
+### Lighthouse
+
+<div align="center">
+  <img src="docs/screenshots/lighthouse.png" alt="Lighthouse scores" width="100%">
+</div>
+
+### k6 Load Benchmark
+
+<div align="center">
+  <img src="docs/screenshots/k6-load-test.png" alt="k6 load test" width="100%">
+</div>
+
+**k6 load benchmark:** 1,000 VUs, 533,120 requests, 1,184 req/s, p95 581ms, p99 844ms, 0.00% request failure rate. See [docs/load-test.md](docs/load-test.md).
 
 <details>
 <summary><strong>Getting Started</strong></summary>
