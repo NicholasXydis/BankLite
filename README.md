@@ -8,9 +8,6 @@ A secure, production-deployed banking site built to showcase real-world full-sta
 
 <br>
 
-[![Open Live App](https://img.shields.io/badge/OPEN%20LIVE%20APP-banklite.ca-2EA44F?style=for-the-badge&logo=googlechrome&logoColor=white)](https://banklite.ca)
-[![View Source](https://img.shields.io/badge/View%20Source-GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/NicholasXydis/BankLite)
-
 <br>
 
 <p align="center">
@@ -38,6 +35,12 @@ A secure, production-deployed banking site built to showcase real-world full-sta
 <p align="center">
   <strong>460 automated tests</strong> &nbsp;|&nbsp; <strong>1,184 req/s k6 benchmark</strong> &nbsp;|&nbsp; <strong>CodeQL + Trivy security scans</strong> &nbsp;|&nbsp; <strong>Linux VPS deployed</strong>
 </p>
+
+<a href="https://banklite.ca">
+  <img src="https://img.shields.io/badge/▶%20banklite.ca-0F172A?style=for-the-badge&logoColor=38BDF8&color=0F172A&labelColor=0F172A" alt="Live Demo" height="40">
+</a>
+
+</div>
 
 <br>
 
@@ -176,7 +179,7 @@ BankLite/
 
 ## API Docs
 
-- Swagger UI: available from the API when enabled
+- Swagger UI: run locally with `ASPNETCORE_ENVIRONMENT=Development`
 - OpenAPI export: [docs/openapi.json](docs/openapi.json)
 - Postman collection: [postman/BankLite.postman_collection.json](postman/BankLite.postman_collection.json)
 - Postman environments: [postman/BankLite_Local.postman_environment.json](postman/BankLite_Local.postman_environment.json), [postman/BankLite_Production.postman_environment.json](postman/BankLite_Production.postman_environment.json)
