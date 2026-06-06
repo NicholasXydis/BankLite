@@ -37,7 +37,7 @@ A secure, production-deployed banking site built to showcase real-world full-sta
 </p>
 
 <a href="https://banklite.ca">
-  <img src="https://img.shields.io/badge/▶%20banklite.ca-0F172A?style=for-the-badge&logoColor=38BDF8&color=0F172A&labelColor=0F172A" alt="Live Demo" height="60">
+  <img src="docs/banklite-btn.svg" alt="Live Demo">
 </a>
 
 </div>
