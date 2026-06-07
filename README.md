@@ -237,6 +237,8 @@ For local non-Docker API work, use `appsettings.Development.json` or .NET user s
 
 ### Docker
 
+Docker Compose starts PostgreSQL, runs EF Core migrations, and serves the API and static frontend using the values from `.env`.
+
 ```powershell
 docker compose --profile tools run --rm migrate
 docker compose up --build
