@@ -4,7 +4,7 @@
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=4A90D9&center=true&vCenter=true&width=700&lines=Production-Grade+Banking+Site;Clean+Architecture+%7C+.NET+8+%7C+PostgreSQL;JWT+Auth+%7C+Docker+%7C+Cloudflare;460+Tests+%7C+1%2C184+req%2Fs+%7C+Live+on+VPS)](https://git.io/typing-svg)
 
-A secure, production-deployed banking site built to showcase real-world full-stack engineering.
+A secure, production-deployed banking application built to showcase real-world full-stack engineering.
 
 <br>
 
@@ -52,7 +52,7 @@ A secure, production-deployed banking site built to showcase real-world full-sta
 
 ## About
 
-BankLite is a secure banking simulation with account creation, deposits, withdrawals, transfers, transaction history, real-time balance updates, and an AI banking assistant. The backend follows Clean Architecture across Domain, Application, Infrastructure, and API layers. The production stack runs on a Linux VPS with Docker, PostgreSQL, Nginx, GitHub Actions, GHCR image publishing, SSH-based deployment, and Cloudflare in front of the application. All money is virtual.
+BankLite is a secure banking application with account creation, deposits, withdrawals, transfers, transaction history, real-time balance updates, and an AI banking assistant. The backend follows Clean Architecture across Domain, Application, Infrastructure, and API layers. The production stack runs on a Linux VPS with Docker, PostgreSQL, Nginx, GitHub Actions, GHCR image publishing, SSH-based deployment, and Cloudflare in front of the application. All money is virtual.
 
 ## Security Highlights
 
