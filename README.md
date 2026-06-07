@@ -71,7 +71,7 @@ BankLite is a secure banking simulation with account creation, deposits, withdra
 
 **Auth:** registration, login, logout, refresh tokens, forgot/reset password, change password, account deletion.<br>
 **Banking:** chequing/savings accounts, deposit, withdrawal, internal transfer, external transfer by account number.<br>
-**Transactions:** pagination, type filters, date ranges, CSV export.<br>
+**Transactions:** pagination, type filters, date-grouped history, CSV export.<br>
 **Realtime:** SignalR balance updates.<br>
 **AI:** Alfred, a Groq-powered BankLite assistant.<br>
 **UI:** English/French language toggle, dark/light mode, responsive mobile experience.
@@ -102,7 +102,7 @@ BankLite/
 │  ├─ BankLite.Infrastructure/  EF Core, repositories, PostgreSQL, JWT, email, AI providers
 │  ├─ BankLiteAPI/BankLite.API/ Controllers, middleware, SignalR hubs, auth, API composition
 │  └─ BankLite.Tests/           xUnit unit and integration tests
-├─ docker/                      Linux VPS reverse proxy, deployment, and infrastructure configuration
+├─ docker/                      Container support scripts, including PostgreSQL initialization
 ├─ docs/                        Demo media, screenshots, OpenAPI export, load-test evidence
 ├─ load-tests/                  k6 load benchmark scripts
 ├─ postman/                     Local and production Postman collections/environments
