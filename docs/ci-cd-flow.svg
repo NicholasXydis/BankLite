@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="220" viewBox="0 0 1000 220" role="img" aria-labelledby="title desc">
+  <title id="title">BankLite CI/CD flow</title>
+  <desc id="desc">A push to main runs CI and security checks. Passing checks publish the API and frontend images, deploy production, and run smoke tests. Failed checks block the release.</desc>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#3B82F6"/>
+    </marker>
+    <marker id="fail-arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#F85149"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="220" rx="18" fill="#0D1117"/>
+
+  <g font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" text-anchor="middle">
+    <rect x="30" y="42" width="150" height="58" rx="12" fill="#161B22" stroke="#30363D" stroke-width="2"/>
+    <text x="105" y="77" fill="#F0F6FC">Push to main</text>
+
+    <path d="M180 71H230" stroke="#3B82F6" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="240" y="42" width="170" height="58" rx="12" fill="#111C30" stroke="#3B82F6" stroke-width="2"/>
+    <text x="325" y="77" fill="#F0F6FC">CI + Security</text>
+
+    <path d="M410 71H460" stroke="#3B82F6" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="470" y="42" width="170" height="58" rx="12" fill="#161B22" stroke="#30363D" stroke-width="2"/>
+    <text x="555" y="68" fill="#F0F6FC" font-size="14">Publish API +</text>
+    <text x="555" y="86" fill="#F0F6FC" font-size="14">frontend images</text>
+
+    <path d="M640 71H690" stroke="#3B82F6" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="700" y="42" width="130" height="58" rx="12" fill="#161B22" stroke="#30363D" stroke-width="2"/>
+    <text x="765" y="77" fill="#F0F6FC">Deploy</text>
+
+    <path d="M830 71H880" stroke="#3B82F6" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="890" y="42" width="80" height="58" rx="12" fill="#102A1C" stroke="#238636" stroke-width="2"/>
+    <text x="930" y="68" fill="#F0F6FC" font-size="14">Smoke</text>
+    <text x="930" y="86" fill="#F0F6FC" font-size="14">tests</text>
+
+    <path d="M325 100V140" stroke="#F85149" stroke-width="3" marker-end="url(#fail-arrow)"/>
+
+    <rect x="240" y="150" width="170" height="44" rx="12" fill="#2D1619" stroke="#DA3633" stroke-width="2"/>
+    <text x="325" y="178" fill="#F0F6FC" font-size="15">Release blocked</text>
+  </g>
+</svg>

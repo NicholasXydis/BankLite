@@ -48,8 +48,6 @@ A secure, production-deployed banking application built to showcase real-world f
 <img src="docs/demo.gif" alt="BankLite demo" width="92%">
 </div>
 
-</div>
-
 ## About
 
 BankLite is a secure banking application with account creation, deposits, withdrawals, transfers, transaction history, real-time balance updates, and an AI banking assistant. The backend follows Clean Architecture across Domain, Application, Infrastructure, and API layers. The production stack runs on a Linux VPS with Docker, PostgreSQL, Nginx, GitHub Actions, GHCR image publishing, SSH-based deployment, and Cloudflare in front of the application. All money is virtual.
@@ -161,6 +159,7 @@ BankLite/
 | DevOps       | Docker, Docker Compose, GitHub Actions, Nginx, Cloudflare, Linux VPS, SSH deploy       |
 | Testing      | xUnit, Moq, Bogus, Playwright, TypeScript, k6                                          |
 | Integrations | SendGrid password reset email, Groq AI chat                                            |
+| Monitoring   | UptimeRobot, container health checks, deployment smoke tests                           |
 
 ## Testing
 
@@ -179,6 +178,21 @@ BankLite/
 | Publish Images    | `.github/workflows/publish-images.yml`    | Build, scan, and push GHCR images                  |
 | Deploy Production | `.github/workflows/deploy-production.yml` | SSH deploy to Linux VPS and production smoke tests |
 
+<div align="center">
+  <img src="docs/ci-cd-flow.svg" alt="CI and security checks gate API and frontend image publishing, production deployment, and smoke testing" width="100%">
+</div>
+
+Any required gate failure blocks the release.
+
+## Production Engineering
+
+- API and frontend containers run as non-root users with read-only filesystems.
+- PostgreSQL, API, and frontend services use container health checks.
+- Production images are pinned and published by commit SHA for traceable deployments.
+- Deployment records capture the deployed SHA, image tags, and UTC release timestamp.
+- Public health and application smoke tests run after every production deployment.
+- UptimeRobot checks production availability every five minutes.
+
 ## API Docs
 
 - Swagger UI: run locally with `ASPNETCORE_ENVIRONMENT=Development`
@@ -194,11 +208,15 @@ BankLite/
   <img src="docs/screenshots/ssl-report.png" alt="SSL Labs A+" width="100%">
 </div>
 
+**TLS configuration:** A+ across the assessed Cloudflare edge endpoints.
+
 ### Lighthouse
 
 <div align="center">
   <img src="docs/screenshots/lighthouse.png" alt="Lighthouse scores" width="100%">
 </div>
+
+**Production audit:** Lighthouse validates performance, accessibility, best practices, and SEO.
 
 ### k6 Load Benchmark
 
@@ -207,6 +225,14 @@ BankLite/
 </div>
 
 **k6 load benchmark:** 1,000 VUs, 533,120 requests, 1,184 req/s, p95 581ms, p99 844ms, 0.00% request failure rate. See [docs/load-test.md](docs/load-test.md).
+
+### Uptime Monitoring
+
+<div align="center">
+  <img src="docs/screenshots/Uptimerobot.png" alt="UptimeRobot production availability monitor" width="100%">
+</div>
+
+**External monitoring:** UptimeRobot checks BankLite every five minutes. Container health checks, deployment smoke tests, and the public `/health` endpoint provide additional runtime verification.
 
 <details>
 <summary><strong>Getting Started</strong></summary>
