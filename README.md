@@ -156,10 +156,10 @@ BankLite/
 | Backend      | ASP.NET Core 8, C#, EF Core, FluentValidation, Serilog, SignalR                        |
 | Frontend     | HTML, CSS, JavaScript                                                                  |
 | Database     | PostgreSQL 16                                                                          |
-| DevOps       | Docker, Docker Compose, GitHub Actions, Nginx, Cloudflare, Linux VPS, SSH deploy       |
+| DevOps       | Docker, GitHub Actions, Nginx, Cloudflare, Linux VPS                                   |
 | Testing      | xUnit, Moq, Bogus, Playwright, TypeScript, k6                                          |
 | Integrations | SendGrid password reset email, Groq AI chat                                            |
-| Monitoring   | UptimeRobot, container health checks, deployment smoke tests                           |
+| Monitoring   | UptimeRobot                         							|
 
 ## Testing
 
