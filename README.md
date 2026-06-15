@@ -63,7 +63,7 @@ BankLite is a secure banking application with account creation, deposits, withdr
 - Partitioned rate limiting for global, auth, refresh, chat, and password flows.
 - Idempotency-key support on deposit, withdrawal, internal transfer, and external transfer endpoints.
 - Serializable database transactions and PostgreSQL `xmin` optimistic concurrency.
-- Cloudflare-fronted production deployment with authenticated origin access.
+- Cloudflare-fronted production deployment.
 
 ## Features
 
@@ -92,7 +92,7 @@ BankLite/
 │  ├─ transactions.html         Transaction history, filters, and CSV export
 │  ├─ reset-password.html       Password reset flow
 │  ├─ privacy.html / terms.html Legal pages
-│  ├─ nginx*.conf               Frontend and production Nginx configuration
+│  ├─ nginx*.conf               Frontend Nginx server configuration
 │  └─ Dockerfile                Production frontend image
 ├─ backend/
 │  ├─ BankLite.Domain/          Entities and repository contracts
@@ -112,12 +112,27 @@ BankLite/
 <div align="center">
 <pre>
 ┌────────────────────────────────────────────────────────────┐
-│                         Browser UI                         │
-│          Static HTML/CSS/JS, i18n, theme, page flows       │
+│                      Customer Browser                      │
+│          Banking UI, auth flows, real-time updates         │
 └──────────────────────────────┬─────────────────────────────┘
                                │ HTTPS + SignalR
 ┌──────────────────────────────▼─────────────────────────────┐
-│                         ASP.NET API                        │
+│                    Cloudflare Edge Network                 │
+│              TLS, DNS, proxying, edge protection           │
+└──────────────────────────────┬─────────────────────────────┘
+                               │ Origin traffic
+┌──────────────────────────────▼─────────────────────────────┐
+│                         Linux VPS                          │
+│                  Docker Compose production host            │
+└──────────────────────────────┬─────────────────────────────┘
+                               │ Container routing
+┌──────────────────────────────▼─────────────────────────────┐
+│                    Frontend Nginx Container                │
+│        Static UI, security headers, API + realtime proxy   │
+└──────────────────────────────┬─────────────────────────────┘
+                               │ Proxied app traffic
+┌──────────────────────────────▼─────────────────────────────┐
+│                    ASP.NET API Container                   │
 │       Controllers, middleware, cookies, auth, rate limits  │
 └──────────────────────────────┬─────────────────────────────┘
                                │ DTOs + use cases
@@ -137,7 +152,7 @@ BankLite/
 └───────────────┬──────────────────────────────┬─────────────┘
                 │                              │
 ┌───────────────▼──────────────┐   ┌───────────▼─────────────┐
-│          PostgreSQL          │   │     External Providers  │
+│     PostgreSQL Container     │   │     External Providers  │
 │   Accounts, users, tokens,   │   │   SendGrid email, Groq  │
 │   transactions, audit logs   │   │   AI assistant responses│
 └──────────────────────────────┘   └─────────────────────────┘
@@ -151,15 +166,15 @@ BankLite/
 
 ## Tech Stack
 
-| Area         | Stack                                                                                  |
-| ------------ | -------------------------------------------------------------------------------------- |
-| Backend      | ASP.NET Core 8, C#, EF Core, FluentValidation, Serilog, SignalR                        |
-| Frontend     | HTML, CSS, JavaScript                                                                  |
-| Database     | PostgreSQL 16                                                                          |
-| DevOps       | Docker, GitHub Actions, Nginx, Cloudflare, Linux VPS                                   |
-| Testing      | xUnit, Moq, Bogus, Playwright, TypeScript, k6                                          |
-| Integrations | SendGrid password reset email, Groq AI chat                                            |
-| Monitoring   | UptimeRobot                         							|
+| Area         | Stack                                                           |
+| ------------ | --------------------------------------------------------------- |
+| Backend      | ASP.NET Core 8, C#, EF Core, FluentValidation, Serilog, SignalR |
+| Frontend     | HTML, CSS, JavaScript                                           |
+| Database     | PostgreSQL 16                                                   |
+| DevOps       | Docker, GitHub Actions, Nginx, Cloudflare, Linux VPS            |
+| Testing      | xUnit, Moq, Bogus, Playwright, TypeScript, k6                   |
+| Integrations | SendGrid password reset email, Groq AI chat                     |
+| Monitoring   | UptimeRobot                                                     |
 
 ## Testing
 
@@ -277,6 +292,8 @@ http://127.0.0.1:8080
 ```
 
 ### Backend Tests
+
+Backend integration tests require a local PostgreSQL test database or an overridden `ConnectionStrings__DefaultConnection`.
 
 ```powershell
 dotnet test backend/BankLite.Tests/BankLite.Tests.csproj
