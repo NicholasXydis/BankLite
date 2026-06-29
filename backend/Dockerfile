@@ -10,7 +10,7 @@ RUN dotnet restore BankLiteAPI/BankLite.API/BankLite.API.csproj
 COPY . .
 RUN dotnet publish BankLiteAPI/BankLite.API/BankLite.API.csproj --configuration Release --no-restore --output /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:93b366e510c6cd01cee608447014f7d349cb7ff8809fd0f554aa3772e8587b7e AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:e78fda31142e28746a6908e288e0d40346793f691ca99d8d150bcbe95c0ef035 AS final
 WORKDIR /app
 
 RUN apt-get update \
