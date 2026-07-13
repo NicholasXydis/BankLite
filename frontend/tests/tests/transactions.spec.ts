@@ -72,18 +72,25 @@ test('should_translate_transfer_rows_in_french_csv', async ({ page }) => {
   await page.getByLabel('Amount').fill('100');
   await submitAndExpectOK(page, '/api/transaction/transfer', () => page.getByRole('button', { name: 'Transfer' }).click());
 
-  await page.goto('/transactions.html');
-  await page.evaluate(() => localStorage.setItem('language', 'fr'));
-  await page.reload();
-  await expect(page.getByTestId('export-csv')).toBeVisible();
+  const exportCsv = async (language: 'en' | 'fr') => {
+    await page.goto('/transactions.html');
+    await page.evaluate((lang) => localStorage.setItem('language', lang), language);
+    await page.reload();
+    await expect(page.getByTestId('export-csv')).toBeVisible();
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByTestId('export-csv').click();
+    const filePath = await (await downloadPromise).path();
+    return fs.readFile(filePath!, 'utf-8');
+  };
 
-  const downloadPromise = page.waitForEvent('download');
-  await page.getByTestId('export-csv').click();
-  const download = await downloadPromise;
-  const filePath = await download.path();
-  const csv = await fs.readFile(filePath!, 'utf-8');
+  const englishCsv = await exportCsv('en');
+  expect(englishCsv).toContain('Internal transfer $100.00');
+  expect(englishCsv).toContain('Deposit $300.00');
+  expect(englishCsv).not.toContain('Internal Transfer to account');
 
-  expect(csv).toContain('Virement');
-  expect(csv).not.toContain('Internal Transfer');
-  expect(csv).not.toContain('External Transfer');
+  const frenchCsv = await exportCsv('fr');
+  expect(frenchCsv).toContain('Virement interne $100.00');
+  expect(frenchCsv).toContain('Dépôt $300.00');
+  expect(frenchCsv).not.toContain('Internal Transfer');
+  expect(frenchCsv).not.toContain('External Transfer');
 });

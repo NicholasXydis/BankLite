@@ -273,9 +273,10 @@ document
           hour: "numeric",
           minute: "2-digit",
         });
-        const isTransfer = tx.description.toLowerCase().includes("transfer");
-        const isIncoming =
-          isTransfer && tx.description.toLowerCase().includes("from");
+        const descLower = tx.description.toLowerCase();
+        const isTransfer = descLower.includes("transfer");
+        const isIncoming = isTransfer && descLower.includes("from");
+        const isExternal = isTransfer && descLower.includes("external");
         const amountValue = tx.amount.toLocaleString("en-CA", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
@@ -287,8 +288,14 @@ document
             ? t("nav_deposit")
             : t("nav_withdraw");
         let desc;
-        if (isTransfer) desc = `${t("nav_transfer")} $${amountValue}`;
-        else if (tx.type === "Deposit")
+        if (isTransfer) {
+          let transferLabel;
+          if (isExternal) transferLabel = t("csv_transfer_external");
+          else if (descLower.includes("internal"))
+            transferLabel = t("csv_transfer_internal");
+          else transferLabel = t("nav_transfer");
+          desc = `${transferLabel} $${amountValue}`;
+        } else if (tx.type === "Deposit")
           desc = `${t("nav_deposit")} $${amountValue}`;
         else desc = `${t("nav_withdraw")} $${amountValue}`;
         rows.push([date, type, amount, desc]);

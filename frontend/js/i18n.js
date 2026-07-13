@@ -206,6 +206,8 @@ const i18n = {
     csv_type: "Type",
     csv_amount: "Amount",
     csv_description: "Description",
+    csv_transfer_internal: "Internal transfer",
+    csv_transfer_external: "External transfer",
     placeholder_email: "you@example.com",
     placeholder_fullname: "Full Name",
     landing_meta_description:
@@ -438,6 +440,8 @@ const i18n = {
     csv_type: "Type",
     csv_amount: "Montant",
     csv_description: "Description",
+    csv_transfer_internal: "Virement interne",
+    csv_transfer_external: "Virement externe",
     placeholder_email: "vous@exemple.com",
     placeholder_fullname: "Nom Complet",
     landing_meta_description:
