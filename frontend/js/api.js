@@ -117,15 +117,73 @@ async function getAccounts(forceRefresh = false) {
   return data;
 }
 
-async function deposit(accountId, amount) {
-  const response = await fetch(API_URL + "/api/transaction/deposit", {
+function createIdempotencyKey() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+  const bytes = new Uint8Array(16);
+  window.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+const IDEMPOTENCY_RETRY_WINDOW_MS = 120000;
+
+function takeIdempotencyKey(intent) {
+  const storageKey = `idempotency:${intent}`;
+  const now = Date.now();
+  let key = null;
+
+  try {
+    const stored = JSON.parse(sessionStorage.getItem(storageKey) ?? "null");
+    if (stored && now - stored.createdAt < IDEMPOTENCY_RETRY_WINDOW_MS) {
+      key = stored.key;
+    }
+    if (!key) {
+      key = createIdempotencyKey();
+      sessionStorage.setItem(
+        storageKey,
+        JSON.stringify({ key, createdAt: now }),
+      );
+    }
+  } catch {
+    return { key: createIdempotencyKey(), settle: () => {} };
+  }
+
+  return {
+    key,
+    settle: () => {
+      try {
+        sessionStorage.removeItem(storageKey);
+      } catch {
+        /* ignore */
+      }
+    },
+  };
+}
+
+async function postMoneyRequest(path, intent, body) {
+  const idempotency = takeIdempotencyKey(intent);
+
+  const response = await fetch(API_URL + path, {
     method: "POST",
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      "Idempotency-Key": idempotency.key,
     },
-    body: JSON.stringify({ accountId, amount }),
+    body: JSON.stringify(body),
   });
+
+  idempotency.settle();
+  return response;
+}
+
+async function deposit(accountId, amount) {
+  const response = await postMoneyRequest(
+    "/api/transaction/deposit",
+    `deposit:${accountId}:${amount}`,
+    { accountId, amount },
+  );
 
   const data = await readJsonSafe(response);
 
@@ -142,14 +200,11 @@ async function deposit(accountId, amount) {
 }
 
 async function withdraw(accountId, amount) {
-  const response = await fetch(API_URL + "/api/transaction/withdraw", {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ accountId, amount }),
-  });
+  const response = await postMoneyRequest(
+    "/api/transaction/withdraw",
+    `withdraw:${accountId}:${amount}`,
+    { accountId, amount },
+  );
 
   const data = await readJsonSafe(response);
 
@@ -166,14 +221,11 @@ async function withdraw(accountId, amount) {
 }
 
 async function transfer(fromAccountId, toAccountId, amount) {
-  const response = await fetch(API_URL + "/api/transaction/transfer", {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ fromAccountId, toAccountId, amount }),
-  });
+  const response = await postMoneyRequest(
+    "/api/transaction/transfer",
+    `transfer:${fromAccountId}:${toAccountId}:${amount}`,
+    { fromAccountId, toAccountId, amount },
+  );
 
   const data = await readJsonSafe(response);
 
@@ -190,14 +242,11 @@ async function transfer(fromAccountId, toAccountId, amount) {
 }
 
 async function transferExternal(fromAccountId, toAccountNumber, amount) {
-  const response = await fetch(API_URL + "/api/transaction/transferexternal", {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ fromAccountId, toAccountNumber, amount }),
-  });
+  const response = await postMoneyRequest(
+    "/api/transaction/transferexternal",
+    `transferexternal:${fromAccountId}:${toAccountNumber}:${amount}`,
+    { fromAccountId, toAccountNumber, amount },
+  );
 
   const data = await readJsonSafe(response);
 
