@@ -58,17 +58,29 @@ jobs:
       - name: Configure SSH
         env:
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_SSH_HOST_KEY: ${{ secrets.VPS_SSH_HOST_KEY }}
         run: |
           set -euo pipefail
+          if [ -z "${VPS_SSH_HOST_KEY}" ]; then
+            echo "VPS_SSH_HOST_KEY secret is not set."
+            echo "Generate it on a trusted network with:"
+            echo "  ssh-keyscan -H <vps-host>"
+            echo "and store the output as the VPS_SSH_HOST_KEY repository secret."
+            exit 1
+          fi
           install -m 700 -d ~/.ssh
           printf '%s\n' "${VPS_SSH_KEY}" > ~/.ssh/banklite_deploy
           chmod 600 ~/.ssh/banklite_deploy
-          ssh-keyscan -H "${VPS_HOST}" >> ~/.ssh/known_hosts
+          printf '%s\n' "${VPS_SSH_HOST_KEY}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
 
       - name: Deploy over SSH
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/banklite_deploy "${VPS_USER}@${VPS_HOST}" "DEPLOY_SHA='${DEPLOY_SHA}' VPS_APP_PATH='${VPS_APP_PATH}' bash -s" <<'REMOTE'
+          ssh -i ~/.ssh/banklite_deploy \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile=~/.ssh/known_hosts \
+            "${VPS_USER}@${VPS_HOST}" "DEPLOY_SHA='${DEPLOY_SHA}' VPS_APP_PATH='${VPS_APP_PATH}' bash -s" <<'REMOTE'
           set -euo pipefail
 
           cd "${VPS_APP_PATH}"
@@ -76,8 +88,8 @@ jobs:
           unset DB_MIGRATION_CONNECTION_STRING
 
           test -f .env
-          cp .env ".env.before-deploy-${DEPLOY_SHA:0:12}"
-          chmod 600 ".env.before-deploy-${DEPLOY_SHA:0:12}"
+          cp .env .env.previous
+          chmod 600 .env.previous
 
           sed -i "s#^API_IMAGE=.*#API_IMAGE=ghcr.io/nicholasxydis/banklite-api:${DEPLOY_SHA}#" .env
           sed -i "s#^FRONTEND_IMAGE=.*#FRONTEND_IMAGE=ghcr.io/nicholasxydis/banklite-frontend:${DEPLOY_SHA}#" .env
@@ -103,3 +115,10 @@ jobs:
           set -euo pipefail
           curl --fail --silent --show-error --location https://banklite.ca/health | grep -F '"Healthy"'
           curl --fail --silent --show-error --location https://banklite.ca | grep -F 'lp-page'
+          not_found_status="$(curl --silent --show-error --location --output /tmp/not-found.html --write-out '%{http_code}' https://banklite.ca/this-page-does-not-exist)"
+          test "${not_found_status}" = "404"
+          grep -F 'Page Not Found' /tmp/not-found.html
+          for internal_file in nginx.conf nginx-main.conf Dockerfile; do
+            exposed_status="$(curl --silent --show-error --location --output /dev/null --write-out '%{http_code}' "https://banklite.ca/${internal_file}")"
+            test "${exposed_status}" = "404"
+          done
