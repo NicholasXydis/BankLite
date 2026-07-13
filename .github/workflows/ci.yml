@@ -17,13 +17,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  frontend-lint:
+    name: Frontend Lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend lint dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend JavaScript
+        working-directory: frontend
+        run: npm run lint
+
   compose-validation:
     name: Compose Validation
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Validate production Compose
         run: docker compose --env-file .env.example config --quiet
@@ -59,22 +82,25 @@ jobs:
           --health-retries 10
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Set up .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
         with:
           dotnet-version: 8.0.x
 
       - name: Restore backend dependencies
         run: dotnet restore backend/BankLite.Tests/BankLite.Tests.csproj
 
+      - name: Check backend formatting
+        run: dotnet format backend/BankLite.Tests/BankLite.Tests.csproj --verify-no-changes --no-restore
+
       - name: Run backend tests
         run: dotnet test backend/BankLite.Tests/BankLite.Tests.csproj --configuration Release --no-restore --collect:"XPlat Code Coverage" --results-directory backend/TestResults
 
       - name: Upload backend test results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: backend-test-results
           path: backend/TestResults
@@ -91,10 +117,10 @@ jobs:
       E2E_DATABASE_URL: postgresql://banklite_admin:banklite_e2e_admin_password@127.0.0.1:5433/banklite_e2e
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
         with:
           node-version: 22
           cache: npm
@@ -124,7 +150,7 @@ jobs:
 
       - name: Upload Playwright failure artifacts
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: playwright-failure-artifacts
           path: |

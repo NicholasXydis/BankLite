@@ -34,28 +34,31 @@ jobs:
             build-mode: manual
           - language: javascript-typescript
             build-mode: none
+          - language: actions
+            build-mode: none
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Set up .NET
         if: ${{ matrix.language == 'csharp' }}
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
         with:
           dotnet-version: 8.0.x
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v4
+        uses: github/codeql-action/init@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
         with:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
+          queries: security-and-quality
 
       - name: Build backend
         if: ${{ matrix.language == 'csharp' }}
         run: dotnet build backend/BankLiteAPI/BankLite.API/BankLite.API.csproj --configuration Release
 
       - name: Analyze
-        uses: github/codeql-action/analyze@v4
+        uses: github/codeql-action/analyze@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
         with:
           category: /language:${{ matrix.language }}
 
@@ -68,7 +71,7 @@ jobs:
       security-events: write
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
       - name: Scan repository
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
@@ -83,7 +86,7 @@ jobs:
           exit-code: "0"
 
       - name: Upload repository scan
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
         with:
           sarif_file: trivy-repository.sarif
           category: trivy-repository
@@ -116,7 +119,7 @@ jobs:
           exit-code: "0"
 
       - name: Upload backend image scan
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
         with:
           sarif_file: trivy-backend.sarif
           category: trivy-backend-image
@@ -141,7 +144,7 @@ jobs:
           exit-code: "0"
 
       - name: Upload frontend image scan
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@99df26d4f13ea111d4ec1a7dddef6063f76b97e9 # v4
         with:
           sarif_file: trivy-frontend.sarif
           category: trivy-frontend-image
