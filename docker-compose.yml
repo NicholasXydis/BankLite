@@ -46,6 +46,7 @@ services:
       ConnectionStrings__DefaultConnection: ${DB_MIGRATION_CONNECTION_STRING}
       Frontend__ResetPasswordUrl: ${RESET_PASSWORD_URL}
       Groq__ApiKey: ${GROQ_API_KEY}
+      Groq__Model: ${GROQ_MODEL:-openai/gpt-oss-120b}
       JwtSettings__Audience: ${JWT_AUDIENCE}
       JwtSettings__Issuer: ${JWT_ISSUER}
       JwtSettings__Secret: ${JWT_SECRET}
@@ -83,6 +84,7 @@ services:
       ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
       Frontend__ResetPasswordUrl: ${RESET_PASSWORD_URL}
       Groq__ApiKey: ${GROQ_API_KEY}
+      Groq__Model: ${GROQ_MODEL:-openai/gpt-oss-120b}
       JwtSettings__Audience: ${JWT_AUDIENCE}
       JwtSettings__Issuer: ${JWT_ISSUER}
       JwtSettings__Secret: ${JWT_SECRET}
