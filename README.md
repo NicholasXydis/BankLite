@@ -184,13 +184,13 @@ BankLite/
 | End-to-end               |    34 | Playwright, axe-core       |
 | Total                    |   479 | CI-backed test coverage    |
 
-End-to-end coverage includes automated accessibility scans. Every public page, the 404 page, and all authenticated pages are analysed with `axe-core` against WCAG 2.1 A/AA, so accessibility regressions fail the build. Backend formatting is enforced in CI with `dotnet format`.
+End-to-end coverage includes automated accessibility scans. Every public page, the 404 page, and all authenticated pages are analysed with `axe-core` against WCAG 2.1 A/AA, so accessibility regressions fail the build. Backend formatting (`dotnet format`) and frontend linting (ESLint) are enforced in CI.
 
 ## CI/CD
 
 | Workflow          | File                                      | Purpose                                            |
 | ----------------- | ----------------------------------------- | -------------------------------------------------- |
-| CI                | `.github/workflows/ci.yml`                | Compose validation, backend tests, Playwright E2E  |
+| CI                | `.github/workflows/ci.yml`                | Frontend lint, compose validation, backend tests, Playwright E2E |
 | Security          | `.github/workflows/security.yml`          | CodeQL and Trivy filesystem/image scans            |
 | Publish Images    | `.github/workflows/publish-images.yml`    | Build, scan, and push GHCR images                  |
 | Deploy Production | `.github/workflows/deploy-production.yml` | SSH deploy to Linux VPS and production smoke tests |
