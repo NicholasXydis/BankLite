@@ -71,7 +71,7 @@ public class ValidatorTests
     public async Task TransferValidator_InvalidAmount_FailsValidation(double amount)
     {
         var dto = new TransferDto
-            { FromAccountId = Guid.NewGuid(), ToAccountId = Guid.NewGuid(), Amount = (decimal)amount };
+        { FromAccountId = Guid.NewGuid(), ToAccountId = Guid.NewGuid(), Amount = (decimal)amount };
 
         var result = await _transferValidator.ValidateAsync(dto);
 
@@ -112,7 +112,7 @@ public class ValidatorTests
     public async Task ExternalTransferValidator_ValidRequest_PassesValidation()
     {
         var dto = new ExternalTransferDto
-            { FromAccountId = Guid.NewGuid(), ToAccountNumber = "ACC123456789", Amount = 100 };
+        { FromAccountId = Guid.NewGuid(), ToAccountNumber = "ACC123456789", Amount = 100 };
 
         var result = await _externalTransferValidator.ValidateAsync(dto);
 
@@ -126,7 +126,7 @@ public class ValidatorTests
     public async Task ExternalTransferValidator_InvalidAmount_FailsValidation(double amount)
     {
         var dto = new ExternalTransferDto
-            { FromAccountId = Guid.NewGuid(), ToAccountNumber = "ACC123456789", Amount = (decimal)amount };
+        { FromAccountId = Guid.NewGuid(), ToAccountNumber = "ACC123456789", Amount = (decimal)amount };
 
         var result = await _externalTransferValidator.ValidateAsync(dto);
 
@@ -140,7 +140,7 @@ public class ValidatorTests
     public async Task ExternalTransferValidator_InvalidAccountNumber_FailsValidation(string accountNumber)
     {
         var dto = new ExternalTransferDto
-            { FromAccountId = Guid.NewGuid(), ToAccountNumber = accountNumber, Amount = 100 };
+        { FromAccountId = Guid.NewGuid(), ToAccountNumber = accountNumber, Amount = 100 };
 
         var result = await _externalTransferValidator.ValidateAsync(dto);
 
@@ -161,7 +161,7 @@ public class ValidatorTests
     public async Task ExternalTransferValidator_EmptyFromAccountId_FailsValidation()
     {
         var dto = new ExternalTransferDto
-            { FromAccountId = Guid.Empty, ToAccountNumber = "ACC123456789", Amount = 100 };
+        { FromAccountId = Guid.Empty, ToAccountNumber = "ACC123456789", Amount = 100 };
 
         var result = await _externalTransferValidator.ValidateAsync(dto);
 
@@ -201,7 +201,7 @@ public class ValidatorTests
     public async Task RegisterUserValidator_FullNameTooLong_FailsValidation()
     {
         var dto = new RegisterUserDto
-            { FullName = new string('A', 51), Email = "test@banklite.com", Password = "Password123" };
+        { FullName = new string('A', 51), Email = "test@banklite.com", Password = "Password123" };
 
         var result = await _registerUserValidator.ValidateAsync(dto);
 
@@ -226,7 +226,7 @@ public class ValidatorTests
     public async Task RegisterUserValidator_EmailTooLong_FailsValidation()
     {
         var dto = new RegisterUserDto
-            { FullName = "Test User", Email = new string('a', 252) + "@b.com", Password = "Password123" };
+        { FullName = "Test User", Email = new string('a', 252) + "@b.com", Password = "Password123" };
 
         var result = await _registerUserValidator.ValidateAsync(dto);
 
@@ -250,7 +250,7 @@ public class ValidatorTests
     public async Task RegisterUserValidator_PasswordTooLong_FailsValidation()
     {
         var dto = new RegisterUserDto
-            { FullName = "Test User", Email = "test@banklite.com", Password = new string('a', 101) };
+        { FullName = "Test User", Email = "test@banklite.com", Password = new string('a', 101) };
 
         var result = await _registerUserValidator.ValidateAsync(dto);
 

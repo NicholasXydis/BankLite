@@ -182,11 +182,8 @@ const i18n = {
     error_too_many_login: "Too many login attempts. Please wait a minute.",
     error_too_many_register:
       "Too many registration attempts. Please wait a minute.",
-    error_too_many_attempts: "Too many attempts. Please wait a minute.",
     error_invalid_credentials: "Invalid credentials. Please try again.",
     error_email_taken: "This email is already registered.",
-    error_too_many_register:
-      "Too many registration attempts. Please wait a minute.",
     error_password_same:
       "New password must be different from current password.",
     error_insufficient_funds: "Insufficient funds.",
@@ -387,8 +384,6 @@ const i18n = {
       "Si cette adresse e-mail existe, un lien de réinitialisation vous a été envoyé.",
     error_fill_both_fields: "Veuillez remplir les deux champs.",
     success_password_changed: "Mot de passe modifié avec succès !",
-    delete_account_text:
-      "Cette action supprimera définitivement votre compte et toutes vos données. Elle est irréversible.",
     first_login: "Première connexion",
     error_select_account: "Veuillez sélectionner un compte.",
     error_valid_amount: "Veuillez saisir un montant valide.",
@@ -418,12 +413,8 @@ const i18n = {
       "Trop de tentatives de connexion. Veuillez patienter une minute.",
     error_too_many_register:
       "Trop de tentatives d'inscription. Veuillez patienter une minute.",
-    error_too_many_attempts:
-      "Trop de tentatives. Veuillez patienter une minute.",
     error_invalid_credentials: "Identifiants invalides. Veuillez réessayer.",
     error_email_taken: "Cette adresse e-mail est déjà enregistrée.",
-    error_too_many_register:
-      "Trop de tentatives d'inscription. Veuillez patienter une minute.",
     error_password_same:
       "Le nouveau mot de passe doit être différent du mot de passe actuel.",
     error_account_exists: "Vous avez déjà un compte de ce type.",

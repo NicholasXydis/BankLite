@@ -454,7 +454,7 @@ public class TransactionServiceTests
         _mockAccountRepo.Setup(r => r.GetByIdAsync(fromAccount.Id)).ReturnsAsync(fromAccount);
         _mockAccountRepo.Setup(r => r.GetByAccountNumberAsync(It.IsAny<string>())).ReturnsAsync((Account?)null);
         var dto = new ExternalTransferDto
-            { FromAccountId = fromAccount.Id, ToAccountNumber = "NOTEXIST", Amount = 300 };
+        { FromAccountId = fromAccount.Id, ToAccountNumber = "NOTEXIST", Amount = 300 };
 
         var act = async () => await _transactionService.TransferExternalAsync(dto, userId);
 

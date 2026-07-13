@@ -103,7 +103,7 @@ document
   });
 
 document.getElementById("amount").addEventListener("input", function () {
-  let raw = this.value.replace(/[^0-9.]/g, "");
+  const raw = this.value.replace(/[^0-9.]/g, "");
   const parts = raw.split(".");
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   if (parts.length > 2) parts.splice(2);
