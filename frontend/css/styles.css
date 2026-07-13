@@ -2030,6 +2030,12 @@ body.dark-mode .chatbot-typing .chatbot-bubble {
   }
 }
 
+@media (pointer: coarse) {
+  .chatbot-input {
+    font-size: 16px;
+  }
+}
+
 @media (max-height: 500px) {
   .chatbot-panel {
     top: auto;
