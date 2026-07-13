@@ -7,6 +7,11 @@ COPY nginx-main.conf /etc/nginx/nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --chown=nginx:nginx . /usr/share/nginx/html/
 
+RUN rm -f /usr/share/nginx/html/Dockerfile \
+    /usr/share/nginx/html/nginx.conf \
+    /usr/share/nginx/html/nginx-main.conf \
+    /usr/share/nginx/html/.dockerignore
+
 USER nginx
 
 EXPOSE 8080
