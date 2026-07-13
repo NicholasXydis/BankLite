@@ -19,7 +19,7 @@ A secure, production-deployed banking application built to showcase real-world f
   &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/css3.svg" alt="CSS3" width="52" height="52">
   &nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dotnetcore/dotnetcore-original.svg" alt=".NET" width="52" height="52">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dotnetcore/dotnetcore-original-wordmark.svg" alt=".NET" width="52" height="52">
 </p>
 
 <p align="center">
