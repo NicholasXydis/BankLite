@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "BankLite API",
-    "description": "A clean architecture banking API using JWT authentication in HttpOnly cookies. Browser clients must send credentials with requests. Rate limits include 30 req/min global, 5 req/min login, 3 req/min register, 10 req/min chat and refresh, 5 req/min change password, and 3 req/min forgot/reset password.",
+    "description": "A clean architecture banking API using JWT authentication in HttpOnly cookies. Browser clients must send credentials with requests. Rate limits are applied per endpoint group: 30 req/min on account, transaction, user, and logout endpoints, 5 req/min login, 3 req/min register, 10 req/min chat and refresh, 5 req/min change password, and 3 req/min forgot/reset password.",
     "contact": {
       "name": "Nick",
       "url": "https://github.com/NicholasXydis"

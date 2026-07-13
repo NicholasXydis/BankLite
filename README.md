@@ -2,7 +2,7 @@
 
 # BankLite
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=4A90D9&center=true&vCenter=true&width=700&lines=Production-Grade+Banking+Site;Clean+Architecture+%7C+.NET+8+%7C+PostgreSQL;JWT+Auth+%7C+Docker+%7C+Cloudflare;460+Tests+%7C+1%2C184+req%2Fs+%7C+Live+on+VPS)](https://git.io/typing-svg)
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&pause=1000&color=4A90D9&center=true&vCenter=true&width=700&lines=Production-Grade+Banking+Site;Clean+Architecture+%7C+.NET+8+%7C+PostgreSQL;JWT+Auth+%7C+Docker+%7C+Cloudflare;478+Tests+%7C+1%2C184+req%2Fs+%7C+Live+on+VPS)](https://git.io/typing-svg)
 
 A secure, production-deployed banking application built to showcase real-world full-stack engineering.
 
@@ -33,7 +33,7 @@ A secure, production-deployed banking application built to showcase real-world f
 </p>
 
 <p align="center">
-  <strong>460 automated tests</strong> &nbsp;|&nbsp; <strong>1,184 req/s k6 benchmark</strong> &nbsp;|&nbsp; <strong>CodeQL + Trivy security scans</strong> &nbsp;|&nbsp; <strong>Linux VPS deployed</strong>
+  <strong>478 automated tests</strong> &nbsp;|&nbsp; <strong>1,184 req/s k6 benchmark</strong> &nbsp;|&nbsp; <strong>CodeQL + Trivy security scans</strong> &nbsp;|&nbsp; <strong>Linux VPS deployed</strong>
 </p>
 
 <a href="https://banklite.ca">
@@ -60,7 +60,7 @@ BankLite is a secure banking application with account creation, deposits, withdr
 - CSRF origin/referer validation on unsafe API methods.
 - CSP, HSTS, X-Frame-Options, no-store caching, and hardened response headers.
 - Account lockout after 5 failed login attempts.
-- Partitioned rate limiting for global, auth, refresh, chat, and password flows.
+- Partitioned rate limiting across account, transaction, user, auth, refresh, chat, and password flows.
 - Idempotency-key support on deposit, withdrawal, internal transfer, and external transfer endpoints.
 - Serializable database transactions and PostgreSQL `xmin` optimistic concurrency.
 - Cloudflare-fronted production deployment.
@@ -180,9 +180,11 @@ BankLite/
 
 | Suite                    | Count | Tools                      |
 | ------------------------ | ----: | -------------------------- |
-| Backend unit/integration |   438 | xUnit, Moq, Bogus, Respawn |
-| End-to-end               |    22 | Playwright                 |
-| Total                    |   460 | CI-backed test coverage    |
+| Backend unit/integration |   445 | xUnit, Moq, Bogus, Respawn |
+| End-to-end               |    33 | Playwright, axe-core       |
+| Total                    |   478 | CI-backed test coverage    |
+
+End-to-end coverage includes automated accessibility scans. Every public page, the 404 page, and all authenticated pages are analysed with `axe-core` against WCAG 2.1 A/AA, so accessibility regressions fail the build. Backend formatting is enforced in CI with `dotnet format`.
 
 ## CI/CD
 
