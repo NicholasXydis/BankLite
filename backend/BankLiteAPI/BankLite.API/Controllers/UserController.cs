@@ -12,6 +12,7 @@ namespace BankLite.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
+    [EnableRateLimiting("fixed")]
     [Tags("User")]
     public class UserController : BaseController
     {

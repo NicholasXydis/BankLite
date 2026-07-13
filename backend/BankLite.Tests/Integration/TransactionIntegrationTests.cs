@@ -652,13 +652,13 @@ public class TransactionIntegrationTests : IAsyncLifetime
         var request1 = new HttpRequestMessage(HttpMethod.Post, "/api/transaction/transfer");
         request1.Headers.Add("Idempotency-Key", key);
         request1.Content = JsonContent.Create(new TransferDto
-            { FromAccountId = fromAccountId, ToAccountId = toAccount!.Id, Amount = 100 });
+        { FromAccountId = fromAccountId, ToAccountId = toAccount!.Id, Amount = 100 });
         await _client.SendAsync(request1);
 
         var request2 = new HttpRequestMessage(HttpMethod.Post, "/api/transaction/transfer");
         request2.Headers.Add("Idempotency-Key", key);
         request2.Content = JsonContent.Create(new TransferDto
-            { FromAccountId = fromAccountId, ToAccountId = toAccount.Id, Amount = 100 });
+        { FromAccountId = fromAccountId, ToAccountId = toAccount.Id, Amount = 100 });
         await _client.SendAsync(request2);
 
         var db = GetDb();
@@ -740,7 +740,7 @@ public class TransactionIntegrationTests : IAsyncLifetime
         AuthenticateClient(token1);
         var response = await _client.PostAsJsonAsync("/api/transaction/transferexternal",
             new ExternalTransferDto
-                { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 200 });
+            { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 200 });
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
@@ -759,7 +759,7 @@ public class TransactionIntegrationTests : IAsyncLifetime
         AuthenticateClient(token1);
         await _client.PostAsJsonAsync("/api/transaction/transferexternal",
             new ExternalTransferDto
-                { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 200 });
+            { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 200 });
 
         db = GetDb();
         db.Accounts.First(a => a.Id == fromAccountId).Balance.Should().Be(300);
@@ -780,7 +780,7 @@ public class TransactionIntegrationTests : IAsyncLifetime
         AuthenticateClient(token1);
         var response = await _client.PostAsJsonAsync("/api/transaction/transferexternal",
             new ExternalTransferDto
-                { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 200 });
+            { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 200 });
         var content = await response.Content.ReadAsStringAsync();
 
         content.Should().Contain("Transfer successful");
@@ -800,7 +800,7 @@ public class TransactionIntegrationTests : IAsyncLifetime
         AuthenticateClient(token1);
         await _client.PostAsJsonAsync("/api/transaction/transferexternal",
             new ExternalTransferDto
-                { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 500 });
+            { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 500 });
 
         db = GetDb();
         db.Accounts.First(a => a.Id == fromAccountId).Balance.Should().Be(0);
@@ -820,7 +820,7 @@ public class TransactionIntegrationTests : IAsyncLifetime
         AuthenticateClient(token1);
         var response = await _client.PostAsJsonAsync("/api/transaction/transferexternal",
             new ExternalTransferDto
-                { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 500 });
+            { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 500 });
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -837,7 +837,7 @@ public class TransactionIntegrationTests : IAsyncLifetime
 
         var response = await _client.PostAsJsonAsync("/api/transaction/transferexternal",
             new ExternalTransferDto
-                { FromAccountId = fromAccountId, ToAccountNumber = fromAccount.AccountNumber, Amount = 100 });
+            { FromAccountId = fromAccountId, ToAccountNumber = fromAccount.AccountNumber, Amount = 100 });
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
@@ -871,13 +871,13 @@ public class TransactionIntegrationTests : IAsyncLifetime
         var request1 = new HttpRequestMessage(HttpMethod.Post, "/api/transaction/transferexternal");
         request1.Headers.Add("Idempotency-Key", key);
         request1.Content = JsonContent.Create(new ExternalTransferDto
-            { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 100 });
+        { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 100 });
         await _client.SendAsync(request1);
 
         var request2 = new HttpRequestMessage(HttpMethod.Post, "/api/transaction/transferexternal");
         request2.Headers.Add("Idempotency-Key", key);
         request2.Content = JsonContent.Create(new ExternalTransferDto
-            { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 100 });
+        { FromAccountId = fromAccountId, ToAccountNumber = toAccount.AccountNumber, Amount = 100 });
         await _client.SendAsync(request2);
 
         db = GetDb();
@@ -914,6 +914,29 @@ public class TransactionIntegrationTests : IAsyncLifetime
         var (_, accountId) = await RegisterAndCreateAccountAsync();
 
         var response = await _client.GetAsync($"/api/transaction/{accountId}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(-99)]
+    [InlineData(0)]
+    public async Task GetTransactions_NonPositivePageSize_ReturnsOkNotServerError(int pageSize)
+    {
+        var (_, accountId) = await RegisterAndCreateAccountAsync();
+
+        var response = await _client.GetAsync($"/api/transaction/{accountId}?page=1&pageSize={pageSize}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task GetTransactions_ExcessivePageSize_IsClampedAndReturnsOk()
+    {
+        var (_, accountId) = await RegisterAndCreateAccountAsync();
+
+        var response = await _client.GetAsync($"/api/transaction/{accountId}?page=1&pageSize=100000");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }

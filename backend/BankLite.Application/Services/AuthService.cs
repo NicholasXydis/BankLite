@@ -150,12 +150,21 @@ public class AuthService : IAuthService
         User? refreshedUser = null;
         var newRefreshToken = string.Empty;
         var isInvalid = false;
+        var reuseDetectedForUserId = Guid.Empty;
 
         await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
             var existing = await _refreshTokenRepository.GetByTokenAsync(HashToken(refreshToken));
-            if (existing == null || existing.IsRevoked || existing.ExpiresAt < DateTime.UtcNow)
+            if (existing == null || existing.ExpiresAt < DateTime.UtcNow)
             {
+                isInvalid = true;
+                return;
+            }
+
+            if (existing.IsRevoked)
+            {
+                await _refreshTokenRepository.RevokeAllForUserAsync(existing.UserId);
+                reuseDetectedForUserId = existing.UserId;
                 isInvalid = true;
                 return;
             }
@@ -164,6 +173,13 @@ public class AuthService : IAuthService
             newRefreshToken = await GenerateRefreshTokenAsync(existing.UserId, false);
             refreshedUser = existing.User;
         });
+
+        if (reuseDetectedForUserId != Guid.Empty)
+        {
+            _logger.LogWarning(
+                "Refresh token reuse detected for user {UserId}. All refresh tokens for that user were revoked.",
+                reuseDetectedForUserId);
+        }
 
         if (isInvalid || refreshedUser == null) throw new UnauthorizedAppException("Invalid or expired refresh token.");
 
@@ -224,9 +240,11 @@ public class AuthService : IAuthService
             resetToken.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
             await _userRepository.UpdateAsync(resetToken.User);
             userId = resetToken.UserId;
+
+            await _refreshTokenRepository.RevokeAllForUserAsync(userId);
         });
 
-        _logger.LogInformation("Password reset successful for user {UserId}", userId);
+        _logger.LogInformation("Password reset successful for user {UserId}, all sessions revoked", userId);
     }
 
     private async Task<string> GenerateRefreshTokenAsync(Guid userId, bool saveImmediately = true)

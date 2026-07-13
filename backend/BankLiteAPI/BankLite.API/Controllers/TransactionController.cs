@@ -173,6 +173,11 @@ namespace BankLite.API.Controllers
                 pageSize = 100;
             }
 
+            if (pageSize < 1)
+            {
+                pageSize = 1;
+            }
+
             if (page < 1)
             {
                 page = 1;

@@ -658,6 +658,84 @@ public class AuthIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Refresh_ReusingRevokedToken_RevokesTheWholeTokenFamily()
+    {
+        var email = _faker.Internet.Email();
+        await RegisterUserAsync(email);
+        var loginResponse = await LoginUserAsync(email, "Password123!");
+        var stolenToken = ExtractCookieValue(loginResponse, "refreshToken");
+
+        var firstRotation = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        firstRotation.Headers.Add("Cookie", $"refreshToken={stolenToken}");
+        var firstResponse = await _client.SendAsync(firstRotation);
+        firstResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var currentToken = ExtractCookieValue(firstResponse, "refreshToken");
+
+        var replay = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        replay.Headers.Add("Cookie", $"refreshToken={stolenToken}");
+        var replayResponse = await _client.SendAsync(replay);
+        replayResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var descendant = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        descendant.Headers.Add("Cookie", $"refreshToken={currentToken}");
+        var descendantResponse = await _client.SendAsync(descendant);
+
+        descendantResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Refresh_NormalRotation_KeepsWorkingAcrossMultipleRefreshes()
+    {
+        var email = _faker.Internet.Email();
+        await RegisterUserAsync(email);
+        var loginResponse = await LoginUserAsync(email, "Password123!");
+        var token = ExtractCookieValue(loginResponse, "refreshToken");
+
+        for (var i = 0; i < 3; i++)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+            request.Headers.Add("Cookie", $"refreshToken={token}");
+            var response = await _client.SendAsync(request);
+
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            token = ExtractCookieValue(response, "refreshToken");
+        }
+    }
+
+    [Fact]
+    public async Task ResetPassword_ValidFlow_RevokesExistingRefreshTokens()
+    {
+        var email = _faker.Internet.Email();
+        await RegisterUserAsync(email);
+        var loginResponse = await LoginUserAsync(email, "Password123!");
+        var refreshToken = ExtractCookieValue(loginResponse, "refreshToken");
+
+        var beforeReset = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        beforeReset.Headers.Add("Cookie", $"refreshToken={refreshToken}");
+        var beforeResponse = await _client.SendAsync(beforeReset);
+        beforeResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var rotatedToken = ExtractCookieValue(beforeResponse, "refreshToken");
+
+        await _client.PostAsJsonAsync("/api/auth/forgot-password",
+            new ForgotPasswordDto { Email = email });
+
+        var rawToken = _factory.LastResetToken;
+        if (rawToken == null) return;
+
+        var resetResponse = await _client.PostAsJsonAsync("/api/auth/reset-password",
+            new ResetPasswordDto { Token = rawToken, NewPassword = "NewPassword123!" });
+        resetResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var afterReset = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refresh");
+        afterReset.Headers.Add("Cookie", $"refreshToken={rotatedToken}");
+        var afterResponse = await _client.SendAsync(afterReset);
+
+        afterResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
     public async Task ResetPassword_ValidFlow_OldPasswordFailsAfterReset()
     {
         var email = _faker.Internet.Email();

@@ -152,6 +152,7 @@ namespace BankLite.API.Controllers
 
         [HttpPost("refresh/logout")]
         [Authorize]
+        [EnableRateLimiting("fixed")]
         [SwaggerOperation(Summary = "Logout", Description = "Revokes the refresh token and clears all auth cookies.")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorResponseDto), 401)]

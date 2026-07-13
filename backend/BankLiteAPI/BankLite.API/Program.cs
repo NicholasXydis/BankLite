@@ -44,7 +44,7 @@ builder.Services.AddSwaggerGen(c =>
             Title = "BankLite API",
             Version = "v1",
             Description =
-                "A clean architecture banking API using JWT authentication in HttpOnly cookies. Browser clients must send credentials with requests. Rate limits include 30 req/min global, 5 req/min login, 3 req/min register, 10 req/min chat and refresh, 5 req/min change password, and 3 req/min forgot/reset password.",
+                "A clean architecture banking API using JWT authentication in HttpOnly cookies. Browser clients must send credentials with requests. Rate limits are applied per endpoint group: 30 req/min on account, transaction, user, and logout endpoints, 5 req/min login, 3 req/min register, 10 req/min chat and refresh, 5 req/min change password, and 3 req/min forgot/reset password.",
             Contact = new OpenApiContact { Name = "Nick", Url = new Uri("https://github.com/NicholasXydis") }
         });
 
