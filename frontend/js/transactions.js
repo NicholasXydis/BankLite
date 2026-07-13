@@ -273,22 +273,24 @@ document
           hour: "numeric",
           minute: "2-digit",
         });
-        const amount = `${tx.type === "Deposit" ? "+" : "-"}$${tx.amount.toLocaleString(
-          "en-CA",
-          {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          },
-        )}`;
-        const type =
-          tx.type === "Deposit" ? t("nav_deposit") : t("nav_withdraw");
-        let desc = tx.description;
-        if (desc.startsWith("Deposit of"))
-          desc = `${t("nav_deposit")} $${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2 })}`;
-        if (desc.startsWith("Withdrawal of"))
-          desc = `${t("nav_withdraw")} $${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2 })}`;
-        if (desc.startsWith("Transfer"))
-          desc = `${t("nav_transfer")} $${tx.amount.toLocaleString("en-CA", { minimumFractionDigits: 2 })}`;
+        const isTransfer = tx.description.toLowerCase().includes("transfer");
+        const isIncoming =
+          isTransfer && tx.description.toLowerCase().includes("from");
+        const amountValue = tx.amount.toLocaleString("en-CA", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        const amount = `${tx.type === "Deposit" || isIncoming ? "+" : "-"}$${amountValue}`;
+        const type = isTransfer
+          ? t("nav_transfer")
+          : tx.type === "Deposit"
+            ? t("nav_deposit")
+            : t("nav_withdraw");
+        let desc;
+        if (isTransfer) desc = `${t("nav_transfer")} $${amountValue}`;
+        else if (tx.type === "Deposit")
+          desc = `${t("nav_deposit")} $${amountValue}`;
+        else desc = `${t("nav_withdraw")} $${amountValue}`;
         rows.push([date, type, amount, desc]);
       });
 

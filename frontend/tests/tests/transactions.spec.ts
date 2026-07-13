@@ -53,3 +53,37 @@ test('should_export_csv_and_download_expected_file', async ({ page }) => {
   expect(csv).toMatch(/Amount/);
   expect(csv).toMatch(/Description/);
 });
+
+test('should_translate_transfer_rows_in_french_csv', async ({ page }) => {
+  const user = testUser();
+  await registerUser(page, user.email, user.password, user.fullName);
+  await submitAndExpectOK(page, '/api/account/create', () => page.getByTestId('create-account-btn').click());
+  await page.getByLabel('Account Type').selectOption('1');
+  await submitAndExpectOK(page, '/api/account/create', () => page.getByTestId('create-account-btn').click());
+
+  await page.goto('/deposit.html');
+  await page.getByLabel('Amount').fill('300');
+  await submitAndExpectOK(page, '/api/transaction/deposit', () => page.getByRole('button', { name: 'Deposit' }).click());
+
+  await page.goto('/transfer.html');
+  const savingsOption = (await page.getByLabel('To Account').locator('option').allTextContents())
+    .find((option: string) => option.includes('Savings'));
+  await page.getByLabel('To Account').selectOption({ label: savingsOption! });
+  await page.getByLabel('Amount').fill('100');
+  await submitAndExpectOK(page, '/api/transaction/transfer', () => page.getByRole('button', { name: 'Transfer' }).click());
+
+  await page.goto('/transactions.html');
+  await page.evaluate(() => localStorage.setItem('language', 'fr'));
+  await page.reload();
+  await expect(page.getByTestId('export-csv')).toBeVisible();
+
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByTestId('export-csv').click();
+  const download = await downloadPromise;
+  const filePath = await download.path();
+  const csv = await fs.readFile(filePath!, 'utf-8');
+
+  expect(csv).toContain('Virement');
+  expect(csv).not.toContain('Internal Transfer');
+  expect(csv).not.toContain('External Transfer');
+});
