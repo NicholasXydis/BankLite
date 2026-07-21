@@ -16,16 +16,16 @@ A secure, production-deployed banking application built to showcase real-world f
   <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/javascript.svg" alt="JavaScript" width="52" height="52">
   &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dot-net/dot-net-original.svg" alt=".NET" width="52" height="52">
+  &nbsp;&nbsp;
+  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/postgresql.svg" alt="PostgreSQL" width="52" height="52">
 </p>
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/postgresql.svg" alt="PostgreSQL" width="52" height="52">
-  &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/docker.svg" alt="Docker" width="52" height="52">
   &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/cloudflare.svg" alt="Cloudflare" width="52" height="52">
   &nbsp;&nbsp;
-  <img src="https://cdn.jsdelivr.net/gh/xandemon/developer-icons@main/icons/nginx.svg" alt="Nginx" width="52" height="52">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg" alt="Nginx" width="52" height="52">
   &nbsp;&nbsp;
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg" alt="GitHub Actions" width="52" height="52">
   &nbsp;&nbsp;
