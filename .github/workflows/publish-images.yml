@@ -6,6 +6,8 @@ on:
       - Security
     types:
       - completed
+    branches:
+      - main
 
 permissions:
   actions: read
