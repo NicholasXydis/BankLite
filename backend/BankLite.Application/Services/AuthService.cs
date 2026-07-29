@@ -37,7 +37,7 @@ public class AuthService : IAuthService
 
     public async Task<(string Token, string RefreshToken, AuthResponseDto Response)> RegisterAsync(RegisterUserDto dto)
     {
-        var normalizedEmail = dto.Email.ToLower();
+        var normalizedEmail = dto.Email.ToLowerInvariant();
         if (await _userRepository.ExistsAsync(normalizedEmail))
         {
             _logger.LogWarning("Registration failed because the email is already registered");
@@ -64,7 +64,7 @@ public class AuthService : IAuthService
                 Details = $"User {user.Id} registered",
                 PerformedAt = DateTime.UtcNow
             });
-            refreshToken = await GenerateRefreshTokenAsync(user.Id, false);
+            refreshToken = await GenerateRefreshTokenAsync(user.Id);
         });
 
         _logger.LogInformation("User registered successfully: {UserId}", user.Id);
@@ -86,7 +86,7 @@ public class AuthService : IAuthService
 
         await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {
-            user = await _userRepository.GetByEmailAsync(dto.Email.ToLower());
+            user = await _userRepository.GetByEmailAsync(dto.Email.ToLowerInvariant());
             if (user == null)
             {
                 _logger.LogWarning("Login failed because the user was not found");
@@ -128,7 +128,7 @@ public class AuthService : IAuthService
                 Details = $"User {user.Id} logged in",
                 PerformedAt = DateTime.UtcNow
             });
-            refreshToken = await GenerateRefreshTokenAsync(user.Id, false);
+            refreshToken = await GenerateRefreshTokenAsync(user.Id);
         });
 
         if (rejectionMessage != null || user == null)
@@ -170,7 +170,7 @@ public class AuthService : IAuthService
             }
 
             await _refreshTokenRepository.RevokeAsync(existing);
-            newRefreshToken = await GenerateRefreshTokenAsync(existing.UserId, false);
+            newRefreshToken = await GenerateRefreshTokenAsync(existing.UserId);
             refreshedUser = existing.User;
         });
 
@@ -204,7 +204,7 @@ public class AuthService : IAuthService
 
     public async Task ForgotPasswordAsync(string email, string resetBaseUrl, string lang = "en")
     {
-        var user = await _userRepository.GetByEmailAsync(email.ToLower());
+        var user = await _userRepository.GetByEmailAsync(email.ToLowerInvariant());
         if (user == null) return;
 
         var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
@@ -247,7 +247,7 @@ public class AuthService : IAuthService
         _logger.LogInformation("Password reset successful for user {UserId}, all sessions revoked", userId);
     }
 
-    private async Task<string> GenerateRefreshTokenAsync(Guid userId, bool saveImmediately = true)
+    private async Task<string> GenerateRefreshTokenAsync(Guid userId)
     {
         var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         var refreshToken = new RefreshToken
@@ -257,7 +257,6 @@ public class AuthService : IAuthService
             ExpiresAt = DateTime.UtcNow.AddDays(1)
         };
         await _refreshTokenRepository.AddAsync(refreshToken);
-        if (saveImmediately) await _unitOfWork.SaveAsync();
 
         return token;
     }
