@@ -43,7 +43,9 @@ updates:
           - version-update:semver-major
 
   - package-ecosystem: npm
-    directory: /frontend/tests
+    directories:
+      - /frontend
+      - /frontend/tests
     schedule:
       interval: weekly
       day: monday

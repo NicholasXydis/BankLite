@@ -1,9 +1,16 @@
 {
   "name": "banklite-frontend",
+  "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
-    "lint": "eslint js"
+    "lint": "eslint js",
+    "audit:dependencies": "npm audit --audit-level=high"
+  },
+  "overrides": {
+    "brace-expansion": "^5.0.8",
+    "minimatch": "^10.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

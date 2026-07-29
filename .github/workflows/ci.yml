@@ -40,6 +40,10 @@ jobs:
         working-directory: frontend
         run: npm run lint
 
+      - name: Audit frontend dependencies
+        working-directory: frontend
+        run: npm run audit:dependencies
+
   compose-validation:
     name: Compose Validation
     runs-on: ubuntu-24.04
@@ -93,10 +97,19 @@ jobs:
         run: dotnet restore backend/BankLite.Tests/BankLite.Tests.csproj
 
       - name: Check backend formatting
-        run: dotnet format backend/BankLite.Tests/BankLite.Tests.csproj --verify-no-changes --no-restore
+        run: |
+          for project in \
+            backend/BankLite.Domain/BankLite.Domain.csproj \
+            backend/BankLite.Application/BankLite.Application.csproj \
+            backend/BankLite.Infrastructure/BankLite.Infrastructure.csproj \
+            backend/BankLiteAPI/BankLite.API/BankLite.API.csproj \
+            backend/BankLite.Tests/BankLite.Tests.csproj
+          do
+            dotnet format "$project" --verify-no-changes --no-restore
+          done
 
       - name: Run backend tests
-        run: dotnet test backend/BankLite.Tests/BankLite.Tests.csproj --configuration Release --no-restore --collect:"XPlat Code Coverage" --results-directory backend/TestResults
+        run: dotnet test backend/BankLite.Tests/BankLite.Tests.csproj --configuration Release --no-restore --collect:"XPlat Code Coverage" --settings backend/coverage.runsettings --results-directory backend/TestResults
 
       - name: Upload backend test results
         if: ${{ !cancelled() }}
