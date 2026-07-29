@@ -9,7 +9,7 @@ public class ForgotPasswordValidator : AbstractValidator<ForgotPasswordDto>
     {
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")
-            .Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("Please enter a valid email address.")
-            .MaximumLength(256);
+            .Matches(EmailRules.Pattern).WithMessage("Please enter a valid email address.")
+            .MaximumLength(EmailRules.MaxLength);
     }
 }

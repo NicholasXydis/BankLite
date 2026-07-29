@@ -173,6 +173,9 @@ public class ValidatorTests
     [InlineData("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "test@banklite.com", "Password123")]
     [InlineData("Test User", "test@banklite.com", "Abcde123")]
     [InlineData("Test User", "test@banklite.com", "Abcdefgh1")]
+    [InlineData("Anne-Marie Tremblay", "test@banklite.com", "Password123")]
+    [InlineData("Conor O'Brien", "test@banklite.com", "Password123")]
+    [InlineData("Robert Allard Jr.", "test@banklite.com", "Password123")]
     public async Task RegisterUserValidator_ValidData_PassesValidation(string fullName, string email, string password)
     {
         var dto = new RegisterUserDto { FullName = fullName, Email = email, Password = password };

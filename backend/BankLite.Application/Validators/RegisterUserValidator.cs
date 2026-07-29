@@ -11,10 +11,15 @@ public class RegisterUserValidator : AbstractValidator<RegisterUserDto>
             .NotEmpty()
             .MaximumLength(50)
             .Must(x => x == null || x == x.Trim()).WithMessage("Full name cannot have leading or trailing spaces")
-            .Must(x => x == null || x.All(c => char.IsLetter(c) || char.IsWhiteSpace(c)))
-            .WithMessage("Full name can only contain letters and spaces.");
-        RuleFor(x => x.Email).NotEmpty().Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$")
-            .WithMessage("Please enter a valid email address").MaximumLength(256);
+            .Must(x => x == null || x.All(IsAllowedFullNameCharacter))
+            .WithMessage("Full name can only contain letters, spaces, hyphens, apostrophes, and periods.");
+        RuleFor(x => x.Email).NotEmpty().Matches(EmailRules.Pattern)
+            .WithMessage("Please enter a valid email address").MaximumLength(EmailRules.MaxLength);
         RuleFor(x => x.Password).NotEmpty().MinimumLength(8).MaximumLength(100);
+    }
+
+    private static bool IsAllowedFullNameCharacter(char c)
+    {
+        return char.IsLetter(c) || char.IsWhiteSpace(c) || c is '-' or '\'' or '.';
     }
 }
