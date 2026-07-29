@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using SendGrid;
 using Serilog;
 using Serilog.Events;
+using System.Net;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.RateLimiting;
@@ -28,9 +29,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((context, config) =>
 {
     config
-        .MinimumLevel.Is(context.HostingEnvironment.IsDevelopment()
-            ? LogEventLevel.Information
-            : LogEventLevel.Warning)
+        .MinimumLevel.Information()
+        .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
         .WriteTo.Console();
 });
 
@@ -264,7 +264,9 @@ app.MapHealthChecks("/health", new HealthCheckOptions
                 status = report.Status.ToString(),
                 checks = report.Entries.Select(e => new
                 {
-                    name = e.Key, status = e.Value.Status.ToString(), description = e.Value.Description
+                    name = e.Key,
+                    status = e.Value.Status.ToString(),
+                    description = e.Value.Description
                 })
             }
             : new { status = report.Status.ToString() };
@@ -307,8 +309,18 @@ static string GetRateLimitPartitionKey(HttpContext context, string policyName)
         return $"{policyName}:user:{userId}";
     }
 
-    string remoteIp = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-    return $"{policyName}:ip:{remoteIp}";
+    return $"{policyName}:ip:{ResolveClientIp(context)}";
+}
+
+static string ResolveClientIp(HttpContext context)
+{
+    string? cloudflareIp = context.Request.Headers["CF-Connecting-IP"].FirstOrDefault();
+    if (!string.IsNullOrWhiteSpace(cloudflareIp) && IPAddress.TryParse(cloudflareIp, out IPAddress? parsed))
+    {
+        return parsed.ToString();
+    }
+
+    return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 }
 
 public partial class Program;
