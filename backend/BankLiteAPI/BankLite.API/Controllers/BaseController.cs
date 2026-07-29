@@ -18,5 +18,23 @@ namespace BankLite.API.Controllers
 
             return null;
         }
+
+        protected CookieOptions CreateAuthCookieOptions(string path, DateTimeOffset? expires = null)
+        {
+            return new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = UseSecureCookies(),
+                SameSite = SameSiteMode.Lax,
+                Path = path,
+                Expires = expires
+            };
+        }
+
+        private bool UseSecureCookies()
+        {
+            IWebHostEnvironment environment = HttpContext.RequestServices.GetRequiredService<IWebHostEnvironment>();
+            return !(environment.IsDevelopment() || environment.IsEnvironment("Testing")) || Request.IsHttps;
+        }
     }
 }

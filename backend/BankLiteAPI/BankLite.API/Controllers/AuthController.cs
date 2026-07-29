@@ -17,7 +17,6 @@ namespace BankLite.API.Controllers
     public class AuthController : BaseController
     {
         private readonly IAuthService _authService;
-        private readonly IWebHostEnvironment _environment;
         private readonly IValidator<ForgotPasswordDto> _forgotPasswordValidator;
         private readonly FrontendSettings _frontendSettings;
         private readonly JwtSettings _jwtSettings;
@@ -29,7 +28,7 @@ namespace BankLite.API.Controllers
         public AuthController(IAuthService authService, IValidator<RegisterUserDto> registerValidator,
             IValidator<LoginUserDto> loginValidator,
             IValidator<ForgotPasswordDto> forgotPasswordValidator, IValidator<ResetPasswordDto> resetPasswordValidator,
-            IWebHostEnvironment environment, IOptions<JwtSettings> jwtSettings,
+            IOptions<JwtSettings> jwtSettings,
             IOptions<FrontendSettings> frontendSettings)
         {
             _authService = authService;
@@ -37,7 +36,6 @@ namespace BankLite.API.Controllers
             _loginValidator = loginValidator;
             _forgotPasswordValidator = forgotPasswordValidator;
             _resetPasswordValidator = resetPasswordValidator;
-            _environment = environment;
             _jwtSettings = jwtSettings.Value;
             _frontendSettings = frontendSettings.Value;
         }
@@ -188,24 +186,6 @@ namespace BankLite.API.Controllers
         private CookieOptions AccessTokenDeleteCookieOptions()
         {
             return CreateAuthCookieOptions("/");
-        }
-
-        private CookieOptions CreateAuthCookieOptions(string path, DateTimeOffset? expires = null)
-        {
-            bool secure = UseSecureCookies();
-            return new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = secure,
-                SameSite = secure ? SameSiteMode.None : SameSiteMode.Lax,
-                Path = path,
-                Expires = expires
-            };
-        }
-
-        private bool UseSecureCookies()
-        {
-            return !(_environment.IsDevelopment() || _environment.IsEnvironment("Testing")) || Request.IsHttps;
         }
     }
 }

@@ -17,15 +17,12 @@ namespace BankLite.API.Controllers
     public class UserController : BaseController
     {
         private readonly IValidator<ChangePasswordDto> _changePasswordValidator;
-        private readonly IWebHostEnvironment _environment;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService, IValidator<ChangePasswordDto> changePasswordValidator,
-            IWebHostEnvironment environment)
+        public UserController(IUserService userService, IValidator<ChangePasswordDto> changePasswordValidator)
         {
             _userService = userService;
             _changePasswordValidator = changePasswordValidator;
-            _environment = environment;
         }
 
         [HttpGet("profile")]
@@ -89,26 +86,9 @@ namespace BankLite.API.Controllers
 
             await _userService.DeleteAccountAsync(userId);
 
-            Response.Cookies.Delete("accessToken", AuthCookieDeleteOptions("/"));
-            Response.Cookies.Delete("refreshToken", AuthCookieDeleteOptions("/api/auth/refresh"));
+            Response.Cookies.Delete("accessToken", CreateAuthCookieOptions("/"));
+            Response.Cookies.Delete("refreshToken", CreateAuthCookieOptions("/api/auth/refresh"));
             return Ok(new MessageResponseDto { Message = "Account deleted successfully" });
-        }
-
-        private CookieOptions AuthCookieDeleteOptions(string path)
-        {
-            bool secure = UseSecureCookies();
-            return new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = secure,
-                SameSite = secure ? SameSiteMode.None : SameSiteMode.Lax,
-                Path = path
-            };
-        }
-
-        private bool UseSecureCookies()
-        {
-            return !(_environment.IsDevelopment() || _environment.IsEnvironment("Testing")) || Request.IsHttps;
         }
     }
 }
