@@ -9,7 +9,7 @@
     "audit:dependencies": "npm audit --audit-level=high"
   },
   "overrides": {
-    "brace-expansion": "^5.0.8",
+    "brace-expansion": "^5.0.9",
     "minimatch": "^10.0.3"
   },
   "devDependencies": {
