@@ -9,10 +9,10 @@
     "test:ui": "playwright test --ui"
   },
   "devDependencies": {
-    "@axe-core/playwright": "^4.12.1",
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.62.1",
     "dotenv": "^16.6.1",
-    "pg": "^8.22.0",
+    "pg": "^8.23.0",
     "typescript": "^5.8.3"
   }
 }
