@@ -16,6 +16,7 @@ on:
 permissions:
   contents: read
   deployments: write
+  packages: read
 
 concurrency:
   group: deploy-production
@@ -74,6 +75,18 @@ jobs:
           printf '%s\n' "${VPS_SSH_HOST_KEY}" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
+      - name: Authenticate VPS to GHCR
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          printf '%s' "${GHCR_TOKEN}" |
+            ssh -i ~/.ssh/banklite_deploy \
+              -o StrictHostKeyChecking=yes \
+              -o UserKnownHostsFile=~/.ssh/known_hosts \
+              "${VPS_USER}@${VPS_HOST}" \
+              "docker login ghcr.io --username '${GITHUB_ACTOR}' --password-stdin"
+
       - name: Deploy over SSH
         run: |
           set -euo pipefail
@@ -82,6 +95,7 @@ jobs:
             -o UserKnownHostsFile=~/.ssh/known_hosts \
             "${VPS_USER}@${VPS_HOST}" "DEPLOY_SHA='${DEPLOY_SHA}' VPS_APP_PATH='${VPS_APP_PATH}' bash -s" <<'REMOTE'
           set -euo pipefail
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
 
           cd "${VPS_APP_PATH}"
           unset DB_CONNECTION_STRING
